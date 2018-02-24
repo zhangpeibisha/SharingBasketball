@@ -1,7 +1,6 @@
 package com.taobao.service.sms;
 
 
-
 import com.taobao.utils.properties.PropertiesUtil;
 
 import java.util.ArrayList;
@@ -10,13 +9,16 @@ import java.util.ArrayList;
  * Create by zhangpe0312@qq.com on 2018/2/24.
  */
 public class SMS {
-    private String url = "http://utf8.api.smschinese.cn/?Uid=本站用户名&Key=接口安全秘钥&smsMob=手机号码&smsText=验证码:8888";
+    private String url = "Uid=本站用户名&Key=接口安全秘钥&smsMob=手机号码&smsText=验证码:8888";
     private String uid;
     private String key;
     private ArrayList<String> toClien = new ArrayList<>();
     private String smsText;
 
+    //使得实例化这个类必须通过 SMSBulider来实现
+    private SMS() {
 
+    }
 
     class SMSBulider {
         SMS sms = new SMS();
@@ -42,32 +44,40 @@ public class SMS {
             return this;
         }
 
-        public String send() {
+        /**
+         * 配置好数据然后返回一个被填充的SMS
+         *
+         * @return
+         */
+        public SMS send() {
             String url = sms.getUrl();
 
-            String Uid = PropertiesUtil.readValue("sms.properties","本站用户名");
-            String Key = PropertiesUtil.readValue("sms.properties","接口安全秘钥");
-            String company = PropertiesUtil.readValue("sms.properties","公司名称");
+            String Uid = PropertiesUtil.readValue("sms.properties", "本站用户名");
+            String Key = PropertiesUtil.readValue("sms.properties", "接口安全秘钥");
+            String company = PropertiesUtil.readValue("sms.properties", "公司名称");
 
+            String sendText = "【" + company + "】" + sms.getSmsText();
             //本站用户名
             url.replaceAll("本站用户名", Uid);
             //注册时填写的接口秘钥
             url.replaceAll("接口安全秘钥", Key);
             //发送的信息
-            url.replaceAll("验证码:8888", "" + sms.getSmsText());
+            url.replaceAll("验证码:8888", sendText);
 
             //设置要发送的用户
             StringBuffer toClien = new StringBuffer();
-            for (int i = 0; i <sms.getToClien().size() ; i++) {
+            for (int i = 0; i < sms.getToClien().size(); i++) {
                 toClien.append(sms.getToClien().get(i));
-                if (i != sms.getToClien().size()-1){
+                if (i != sms.getToClien().size() - 1) {
                     toClien.append(",");
                 }
             }
 
             url.replaceAll("手机号码", toClien.toString());
 
-            return url;
+            sms.setUrl(url);
+
+            return sms;
         }
     }
 

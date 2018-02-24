@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-4.3.xsd">
+
+    <!-- 配置数据源 Druid -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close">
+        <!-- MySQL数据库配置 -->
+        <property name="url"
+                  value="${url.jdbc}" />
+        <property name="username" value="${url.name}" />
+        <property name="password" value="${url.pass}" />
+        <!-- SQL Server数据库配置 -->
+        <!-- <property name="url" value="jdbc:sqlserver://localhost:1433;DatabaseName=yfkj"
+            /> <property name="username" value="sa" /> <property name="password" value="123456"
+            /> -->
+        <!-- Oracle数据库配置 -->
+        <!-- <property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:yfkj"
+            /> <property name="username" value="SYSTEM" /> <property name="password"
+            value="SkyNet888999" /> -->
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="1" />
+        <property name="minIdle" value="1" />
+        <property name="maxActive" value="20" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="60000" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+        <property name="poolPreparedStatements" value="true" />
+        <property name="maxPoolPreparedStatementPerConnectionSize"
+                  value="20" />
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="stat,log4j,wall" />
+    </bean>
+
+    <!-- 配置hibernate的SessionFactory -->
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <!-- 注入数据源 相关信息看源码 -->
+        <property name="dataSource" ref="dataSource" />
+        <!-- hibernate配置信息 -->
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                <prop key="hibernate.format_sql">${hibernate.format_sql}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+
+                <!-- 开启二级缓存 ehcache -->
+                <prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop>
+                <prop key="hibernate.cache.use_query_cache">${hibernate.cache.use_query_cache}</prop>
+                <prop key="hibernate.cache.region.factory_class">${hibernate.cache.region.factory_class}</prop>
+                <prop key="hibernate.cache.provider_configuration_file_resource_path">${hibernate.cache.provider_configuration_file_resource_path}
+                </prop>
+
+                <!--修改配置属性-->
+                <!--<prop key="hibernate.current_session_context_class">${hibernate.current_session_context_class}</prop>-->
+
+            </props>
+        </property>
+        <!-- 扫描hibernate注解配置的entity -->
+        <property name="packagesToScan" value="com.taobao.domain" />
+    </bean>
+
+    <!-- 配置事务管理器 -->
+    <bean id="transactionManager"
+          class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+    <!-- 设置HibernateDaoSupport抽象类-->
+    <bean id="hibernateDaoSupport"
+          class="org.springframework.orm.hibernate3.support.HibernateDaoSupport"
+          abstract="true">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+
+
+    <!-- 配置事务增强处理Bean，指定事务管理器 -->
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <!-- 配置详细事务处理语义 -->
+        <tx:attributes>
+            <tx:method name="insert*" propagation="REQUIRED" />
+            <tx:method name="update*" propagation="REQUIRED" />
+            <tx:method name="delete*" propagation="REQUIRED" />
+
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="select*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="load*" propagation="SUPPORTS" read-only="true" />
+
+            <!-- 其他采用默认事务方式 -->
+            <tx:method name="*" />
+
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- Spring aop事务管理 -->
+    <!-- 配置切入点 -->
+    <!-- execution()语法:execution (* com.xx.xx.impl..*.*(..))
+    首先明白这个表达式是用来匹配方法的,各种条件是为了筛选整个项目的方法。
+    (类的访问修饰符
+    第一个*表示方法返回值类型[*表示所有类型]
+    com.xx.xx.impl表示包路径[*表示所有包]
+    .[.表示当前包下所有类的方法,..表示当前包下及此包下所有子包中的所有类的方法]
+    第二个*表示类名[*表示所有类,可以匹配以X开头或结尾如X*、*X、X*X的类名]
+    第三个*表示方法名[*表示所有方法,可以匹配以X开头或结尾的如X*、*X、X*X的方法名]
+    (..)表示方法参数[..表示任何参数]
+    )-->
+    <aop:config>
+        <!-- 配置切入点 -->
+        <aop:pointcut id="transactionPointcut"
+                      expression="execution(* dao.service..*.*(..))" />
+        <!-- 指定在txAdvice切入点应用txAdvice事务增强处理 -->
+        <aop:advisor pointcut-ref="transactionPointcut"
+                     advice-ref="transactionAdvice" />
+    </aop:config>
+
+
+    <!-- 使用annotation定义事务：如果没有用到注解事物~可以关闭 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+
+</beans>

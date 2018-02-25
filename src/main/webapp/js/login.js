@@ -1,23 +1,26 @@
 $(document).ready(function(){
-    var loginUrl = "http://localhost:63342/login.do";
+    var loginUrl = "http://localhost:8080/login.do";
 
     //登录
     $("#login").click(function(){
         var name = $("#user").val();
         var password = $("#password").val();
-
+        var login = name+"login";
         if (name == null || password == null || name == "" || password == "") {
             alert("输入不能为空");
             return;
         }
 
         password= hex_md5(password);
+        login = hex_md5(login);
+
         $.ajax({
             type: 'GET',
             url: loginUrl,
             data: {
                 user:name,
-                password:password
+                password:password,
+                login:login
             },
             success: function () {
                 alert("登陆成功！");

@@ -2,10 +2,7 @@ package com.taobao.web.control;
 
 import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
 import com.taobao.dao.entity.User;
-import com.taobao.utils.format.ChangeFormat;
 import com.taobao.utils.sign.MD5;
-import com.taobao.utils.url.HttpReques;
-import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,7 +42,9 @@ public class UserControl {
         try {
             String user = req.getParameter("user");
             //加密后的字符串与登陆页面过来的值是否相同
-            if (!req.getParameter("login").equals(md5.encryption(user+"login"))) {
+            logger.info("加密验证信息为 " +  md5.encryption(user+"login"));
+            logger.info("传送过来的验证信息为 " + req.getParameter("login"));
+            if (!req.getParameter("login").equals(md5.encryption(user+"login").toLowerCase())) {
                 map.put("data", "3");
                 logger.error("用户 " + user + "未通过登陆页面请求数据");
                 return map;
@@ -121,7 +120,7 @@ public class UserControl {
         try {
             String user = req.getParameter("user");
             //加密后的字符串与登陆页面过来的值是否相同
-            if (!req.getParameter("updateOldPassword").equals(md5.encryption(user + "updateOldPassword"))) {
+            if (!req.getParameter("updateOldPassword").equals(md5.encryption(user + "updateOldPassword").toLowerCase())) {
                 map.put("data", "3");
                 logger.error("用户 " + user + "未通过登陆页面请求数据");
                 return map;

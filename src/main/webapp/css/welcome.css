@@ -1,0 +1,8 @@
+.welcome-bac{
+    background: url("../img/login.jpg") no-repeat;
+    background-size: cover;
+}
+.welcome-mid{
+    background-color: #ffffff;
+    height: 786px;
+}

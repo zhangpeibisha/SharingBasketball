@@ -23,8 +23,7 @@ public class User {
     private String userID;
 
     //校园卡ID  青山学院校园卡id为 12位
-
-    private int schoolID;
+    private String schoolID;
 
     //账户密码 最少6位 最长18位
     private String password;
@@ -59,11 +58,11 @@ public class User {
     }
 
     @Column(name = "schoolID", nullable = false, length = 12, unique = true)
-    public int getSchoolID() {
+    public String getSchoolID() {
         return schoolID;
     }
 
-    public void setSchoolID(int schoolID) {
+    public void setSchoolID(String schoolID) {
         this.schoolID = schoolID;
     }
 

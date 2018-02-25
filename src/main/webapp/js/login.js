@@ -18,8 +18,11 @@ $(document).ready(function(){
     //注册
     $("#register").click(function () {
         $(location).attr('href', 'register.html');
-    })
+    });
 
-
+    //忘记密码
+    $("#forget").click(function () {
+        $(location).attr('href', 'forgetPassword.html');
+    });
 
 });

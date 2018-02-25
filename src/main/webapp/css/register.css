@@ -2,3 +2,27 @@
     background: url("../img/login.jpg") no-repeat;
     background-size: cover;
 }
+.register-mid{
+    margin-left: 20%;
+    margin-top: 300px;
+    height: 270px;
+    width: 60%;
+    background-color: #ffffff;
+    border-radius: 20px;
+}
+.register-title{
+    line-height: 60px;
+}
+.register-input{
+    width: 450px;
+}
+.register-ok{
+    font-size: 20px;
+    line-height: 34px;
+    color: #5cb85c;
+}
+.register-remove{
+    font-size: 20px;
+    line-height: 34px;
+    color: #b92c28;
+}

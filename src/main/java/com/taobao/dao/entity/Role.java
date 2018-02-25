@@ -1,14 +1,19 @@
 package com.taobao.dao.entity;
 
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/24.
- *
+ * <p>
  * 角色实体
  */
 @Entity
@@ -22,11 +27,11 @@ public class Role {
     private String roleID;
 
     //角色名字
-    @Column(name = "name", nullable = false, length = 10 , unique = true)
+    @Column(name = "name", nullable = false, length = 10, unique = true)
     private String name;
 
     //角色描述 默认没有描述
-    @Column(name = "description", nullable = false, length = 200 , columnDefinition = " ")
+    @Column(name = "description", nullable = false, length = 200, columnDefinition = " ")
     private String description;
 
     //创建时间
@@ -34,14 +39,19 @@ public class Role {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
-    //一个角色有多个用户
-    private List<User> users ;
+    //一个角色有多个用户 一个用户一个角色 被维护端
+    @OneToMany(targetEntity=Order.class,cascade=CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
+    @JoinColumn(name="role",updatable=false)
+    private Set<User> users;
 
-    //一个角色有多个权限
-    private List<Permissions> permissions;
-
-
-
+    //一个角色有多个权限 一个权限有多个角色 维护端
+    @ManyToMany
+    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+    @JoinTable(name = "role_permissions",                       //指定第三张表
+            joinColumns = {@JoinColumn(name = "role")},             //本表与中间表的外键对应
+            inverseJoinColumns = {@JoinColumn(name = "user")})
+    private Set<Permissions> permissions = new HashSet<>();
 
 
     //set and get
@@ -78,19 +88,11 @@ public class Role {
         this.createTime = createTime;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return users;
     }
 
-    public void setUsers(List<User> users) {
+    public void setUsers(Set<User> users) {
         this.users = users;
-    }
-
-    public List<Permissions> getPermissions() {
-        return permissions;
-    }
-
-    public void setPermissions(List<Permissions> permissions) {
-        this.permissions = permissions;
     }
 }

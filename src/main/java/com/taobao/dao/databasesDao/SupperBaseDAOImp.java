@@ -3,7 +3,10 @@ package com.taobao.dao.databasesDao;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.SessionFactoryUtils;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.persistence.Table;
@@ -24,12 +27,17 @@ import java.lang.reflect.ParameterizedType;
  * <p>
  * 功能:实现dao接口
  */
+@Transactional
+@Repository
 public abstract class SupperBaseDAOImp<T> implements SupperBaseDAO<T> {
 
     private Class<T> clazz;
-    @Resource(name = "sessionFactory")
-    protected SessionFactory sessionFactory;
-    protected static Logger logger = Logger.getLogger(SupperBaseDAOImp.class);
+
+    @Resource
+    public SessionFactory sessionFactory;
+
+    private static Logger logger = Logger.getLogger(SupperBaseDAOImp.class);
+
 
     /**
      * 构造方法，构造时得到泛型对应的类
@@ -870,4 +878,5 @@ public abstract class SupperBaseDAOImp<T> implements SupperBaseDAO<T> {
     public <T> List<T> findEntityBySQL(String sql, Class<T> clas, Integer startRow, Integer pageSize) {
         return sessionFactory.getCurrentSession().createSQLQuery(sql).addEntity(clas).setFirstResult(startRow).setMaxResults(pageSize).list();
     }
+
 }

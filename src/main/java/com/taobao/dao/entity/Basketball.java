@@ -1,6 +1,5 @@
 package com.taobao.dao.entity;
 
-import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -42,12 +41,14 @@ public class Basketball {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
-    //一个篮球只有一个出租规则 这个对于规则位规则加入篮球
-//    @OneToOne(mappedBy = "id",cascade = CascadeType.ALL)
+    //一个篮球只有一个出租规则 一个出租规则由多个篮球  多方 维护端
+    @ManyToOne(targetEntity=Rent.class)
+    @JoinColumn(name = "rent")
     private Rent rent;
 
+
     //一个篮球属于一个订单 被维护端
-    @OneToOne(mappedBy="basketball")
+    @OneToOne(mappedBy = "basketball",cascade = CascadeType.ALL)
     private Order order;
 
     //set and get
@@ -106,5 +107,13 @@ public class Basketball {
 
     public void setRent(Rent rent) {
         this.rent = rent;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 }

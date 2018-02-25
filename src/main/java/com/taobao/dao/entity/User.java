@@ -1,10 +1,14 @@
 package com.taobao.dao.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/24.
@@ -15,38 +19,30 @@ import java.util.List;
 @Table(name = "user")
 public class User {
 
-    @Id
-    @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(generator = "generator")
-    @GenericGenerator(name = "generator", strategy = "uuid")
+
     private String userID;
 
     //校园卡ID  青山学院校园卡id为 12位
-    @Column(name = "schoolID", nullable = false, length = 12, unique = true)
+
     private int schoolID;
 
     //账户密码 最少6位 最长18位
-    @Column(name = "password", nullable = false, length = 18, unique = true)
     private String password;
 
     //用户手机号码 长度11位
-    @Column(name = "phone", nullable = false, length = 11, unique = true)
-    private int  phone;
+    private String  phone;
 
     //用户注册时间
-    @Column(name = "createTime", length = 19, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
     //默认钱为0元
-    @Column(name = "money", nullable = false, length = 10 , columnDefinition = "0")
     private double money ;
 
     //一个用户拥有一个角色  维护端
     private Role role;
 
-    //一个用户有多个订单
-    private Order order;
+    //一个用户有多个订单 被维护端
+    private Set<Order> orders = new HashSet<>();
 
 
 
@@ -54,6 +50,10 @@ public class User {
 
     //set and get
 
+    @Id
+    @Column(name = "id", unique = true, length = 32, nullable = false)
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "uuid")
     public String getUserID() {
         return userID;
     }
@@ -62,6 +62,7 @@ public class User {
         this.userID = userID;
     }
 
+    @Column(name = "schoolID", nullable = false, length = 12, unique = true)
     public int getSchoolID() {
         return schoolID;
     }
@@ -70,6 +71,7 @@ public class User {
         this.schoolID = schoolID;
     }
 
+    @Column(name = "password", nullable = false, length = 18, unique = true)
     public String getPassword() {
         return password;
     }
@@ -78,14 +80,17 @@ public class User {
         this.password = password;
     }
 
-    public int getPhone() {
+    @Column(name = "phone", nullable = false, length = 11, unique = true)
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(int phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
+    @Column(name = "createTime", length = 19, nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getCreateTime() {
         return createTime;
     }
@@ -94,6 +99,7 @@ public class User {
         this.createTime = createTime;
     }
 
+    @Column(name = "money", nullable = false, length = 10 , columnDefinition = "0")
     public double getMoney() {
         return money;
     }
@@ -102,7 +108,8 @@ public class User {
         this.money = money;
     }
 
-
+    @ManyToOne(targetEntity = Role.class)
+    @JoinColumn(name="role")
     public Role getRole() {
         return role;
     }
@@ -111,11 +118,14 @@ public class User {
         this.role = role;
     }
 
-    public Order getOrder() {
-        return order;
+    @OneToMany(targetEntity=Order.class,cascade=CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
+    @JoinColumn(name="user",updatable=false)
+    public Set<Order> getOrders() {
+        return orders;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 }

@@ -1,9 +1,14 @@
 package com.taobao.dao.entity;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/24.
@@ -33,7 +38,13 @@ public class Permissions {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
-
+    //权限与角色为多对多关系  一个角色有多个权限 一个权限有多个角色
+    @ManyToMany
+    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+    @JoinTable(name = "role_permissions",                       //指定第三张表
+            joinColumns = {@JoinColumn(name = "user")},             //本表与中间表的外键对应
+            inverseJoinColumns = {@JoinColumn(name = "role")})
+    private Set<Role> roles  = new HashSet<>();
 
     //set and get
 
@@ -67,5 +78,13 @@ public class Permissions {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

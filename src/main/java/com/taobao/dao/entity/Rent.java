@@ -1,9 +1,13 @@
 package com.taobao.dao.entity;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/24.
@@ -34,6 +38,11 @@ public class Rent {
     private Date createTime;
 
 
+    //一个出租规则对应多个篮球 一个篮球只有一个出租规则 被维护端
+    @OneToMany(targetEntity=Basketball.class,cascade=CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
+    @JoinColumn(name="rent",updatable=false)
+    private Set<Basketball> basketballs = new HashSet<>();
 
 
     //set and get
@@ -68,5 +77,13 @@ public class Rent {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Set<Basketball> getBasketballs() {
+        return basketballs;
+    }
+
+    public void setBasketballs(Set<Basketball> basketballs) {
+        this.basketballs = basketballs;
     }
 }

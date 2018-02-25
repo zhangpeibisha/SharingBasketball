@@ -2,6 +2,9 @@ package com.taobao.dao.databasesDaoImpl;
 
 import com.taobao.dao.databasesDao.SupperBaseDAOImp;
 import com.taobao.dao.entity.User;
+import org.hibernate.Session;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -10,7 +13,11 @@ import java.util.List;
  *
  * 用户的操作数据库的最高层服务类
  */
-public class UserDao extends SupperBaseDAOImp<User> {
+@Transactional
+@Service
+public class UserDaoImpl extends SupperBaseDAOImp<User> {
+
+
 
     @Override
     public <T> List<T> findByCriteria(T object, Integer startRow, Integer pageSize) {
@@ -21,4 +28,7 @@ public class UserDao extends SupperBaseDAOImp<User> {
     public <T> Long findByCriteriaCount(T object) {
         return null;
     }
+
+
+
 }

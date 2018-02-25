@@ -34,12 +34,14 @@ public class Order {
     @Column(name = "castMoney", nullable = false, length = 10 , columnDefinition = "-1")
     private double castMoney;
 
-    //一个订单对应一个篮球 维护端
+    //一个订单对应一个篮球  一个篮球对应一个订单  维护端
     @OneToOne
     @JoinColumn(name = "basketball")
     private Basketball basketball;
 
-    //一个订单对应一个用户 维护端
+    //一个订单对应一个用户  一个用户对应多个订单 维护端 ok
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name = "user")
     private User user;
 
 
@@ -92,4 +94,6 @@ public class Order {
     public void setUser(User user) {
         this.user = user;
     }
+
+
 }

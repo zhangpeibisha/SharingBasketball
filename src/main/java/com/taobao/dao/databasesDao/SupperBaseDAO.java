@@ -2,6 +2,7 @@ package com.taobao.dao.databasesDao;
 
 import org.hibernate.ScrollableResults;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
  * iterator方法操作大量数据时会溢出，注意使用情景，使用srcoll可以获取比较好的性能
  * 如果dml操作涉及大量数据且会填充2级缓存时，在此方法中执行sql语句前必须关闭2级缓存，语句执行后清除缓存
  */
+
 public interface SupperBaseDAO<T> {
 
     /**

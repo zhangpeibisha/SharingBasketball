@@ -64,13 +64,10 @@
                 <prop key="hibernate.cache.provider_configuration_file_resource_path">${hibernate.cache.provider_configuration_file_resource_path}
                 </prop>
 
-                <!--修改配置属性-->
-                <!--<prop key="hibernate.current_session_context_class">${hibernate.current_session_context_class}</prop>-->
-
             </props>
         </property>
         <!-- 扫描hibernate注解配置的entity -->
-        <property name="packagesToScan" value="com.taobao.domain" />
+        <property name="packagesToScan" value="com.taobao" />
     </bean>
 
     <!-- 配置事务管理器 -->

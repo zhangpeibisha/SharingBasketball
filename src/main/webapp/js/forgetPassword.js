@@ -17,12 +17,11 @@ $(document).ready(function () {
                $("#getCode").removeAttr("disabled");
            }
        },1000)
-    })
+    });
 
     $("#sub").click(function () {
         alert("验证成功！");
-    })
-
-
+        $(location).attr('href','changePassword.html');
+    });
 
 });

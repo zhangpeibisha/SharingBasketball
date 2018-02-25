@@ -7,8 +7,8 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/24.
@@ -41,12 +41,8 @@ public class User {
     //一个用户拥有一个角色  维护端
     private Role role;
 
-    //一个用户有多个订单 被维护端
+    //一个用户有多个订单 一个订单一个用户
     private Set<Order> orders = new HashSet<>();
-
-
-
-
 
     //set and get
 
@@ -99,7 +95,7 @@ public class User {
         this.createTime = createTime;
     }
 
-    @Column(name = "money", nullable = false, length = 10 , columnDefinition = "0")
+    @Column(name = "money", nullable = false, length = 10)
     public double getMoney() {
         return money;
     }
@@ -118,9 +114,8 @@ public class User {
         this.role = role;
     }
 
-    @OneToMany(targetEntity=Order.class,cascade=CascadeType.ALL)
-    @Fetch(FetchMode.JOIN)
-    @JoinColumn(name="user",updatable=false)
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
     public Set<Order> getOrders() {
         return orders;
     }

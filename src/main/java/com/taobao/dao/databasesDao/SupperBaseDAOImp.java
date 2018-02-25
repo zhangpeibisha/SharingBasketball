@@ -3,7 +3,6 @@ package com.taobao.dao.databasesDao;
 import org.apache.log4j.Logger;
 import org.hibernate.*;
 import org.hibernate.transform.Transformers;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate4.SessionFactoryUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

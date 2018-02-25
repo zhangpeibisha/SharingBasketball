@@ -18,35 +18,29 @@ import java.util.Set;
 @Table(name = "rent")
 public class Rent {
 
-    @Id
-    @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(generator = "generator")
-    @GenericGenerator(name = "generator", strategy = "uuid")
+
     private String rentID;
 
     //押金
-    @Column(name = "deposit", nullable = false, length = 10)
     private int deposit;
 
     //计费位按每小时多少钱算
-    @Column(name = "billing", nullable = false, length = 10)
     private double billing;
 
     //创建时间
-    @Column(name = "createTime", length = 19, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
 
     //一个出租规则对应多个篮球 一个篮球只有一个出租规则 被维护端
-    @OneToMany(targetEntity=Basketball.class,cascade=CascadeType.ALL)
-    @Fetch(FetchMode.JOIN)
-    @JoinColumn(name="rent",updatable=false)
     private Set<Basketball> basketballs = new HashSet<>();
 
 
     //set and get
 
+    @Id
+    @Column(name = "id", unique = true, length = 32, nullable = false)
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "uuid")
     public String getRentID() {
         return rentID;
     }
@@ -55,6 +49,7 @@ public class Rent {
         this.rentID = rentID;
     }
 
+    @Column(name = "deposit", nullable = false, length = 10)
     public int getDeposit() {
         return deposit;
     }
@@ -63,6 +58,7 @@ public class Rent {
         this.deposit = deposit;
     }
 
+    @Column(name = "billing", nullable = false, length = 10)
     public double getBilling() {
         return billing;
     }
@@ -71,6 +67,8 @@ public class Rent {
         this.billing = billing;
     }
 
+    @Column(name = "createTime", length = 19, nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getCreateTime() {
         return createTime;
     }
@@ -79,6 +77,7 @@ public class Rent {
         this.createTime = createTime;
     }
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "rent")
     public Set<Basketball> getBasketballs() {
         return basketballs;
     }

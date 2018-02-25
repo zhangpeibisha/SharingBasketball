@@ -11,42 +11,34 @@ import java.util.Date;
  * 订单实体
  */
 @Entity
-@Table(name = "order")
+@Table(name = "order_basketball_user")
 public class Order {
 
-    @Id
-    @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(generator = "generator")
-    @GenericGenerator(name = "generator", strategy = "uuid")
+
     private String orderID;
 
     //借出时间就是订单创建时间
-    @Column(name = "lendTime", length = 19, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private Date lendTime;
 
     //归还时间
-    @Column(name = "returnTime", length = 19, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private Date returnTime;
 
     //消费金额 默认设置位 -1 -1则为未付款
-    @Column(name = "castMoney", nullable = false, length = 10 , columnDefinition = "-1")
     private double castMoney;
 
     //一个订单对应一个篮球  一个篮球对应一个订单  维护端
-    @OneToOne
-    @JoinColumn(name = "basketball")
     private Basketball basketball;
 
     //一个订单对应一个用户  一个用户对应多个订单 维护端 ok
-    @ManyToOne(targetEntity = User.class)
-    @JoinColumn(name = "user")
     private User user;
 
 
     //set and get
 
+    @Id
+    @Column(name = "id", unique = true, length = 32, nullable = false)
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "uuid")
     public String getOrderID() {
         return orderID;
     }
@@ -55,6 +47,8 @@ public class Order {
         this.orderID = orderID;
     }
 
+    @Column(name = "lendTime", length = 19, nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getLendTime() {
         return lendTime;
     }
@@ -63,6 +57,8 @@ public class Order {
         this.lendTime = lendTime;
     }
 
+    @Column(name = "returnTime", length = 19, nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getReturnTime() {
         return returnTime;
     }
@@ -71,6 +67,7 @@ public class Order {
         this.returnTime = returnTime;
     }
 
+    @Column(name = "castMoney", nullable = false, length = 10)
     public double getCastMoney() {
         return castMoney;
     }
@@ -79,14 +76,8 @@ public class Order {
         this.castMoney = castMoney;
     }
 
-    public Basketball getBasketball() {
-        return basketball;
-    }
-
-    public void setBasketball(Basketball basketball) {
-        this.basketball = basketball;
-    }
-
+    @ManyToOne(targetEntity = User.class)
+    @JoinColumn(name="user")
     public User getUser() {
         return user;
     }
@@ -95,5 +86,13 @@ public class Order {
         this.user = user;
     }
 
+    @OneToOne
+    @JoinColumn(name = "basketball")
+    public Basketball getBasketball() {
+        return basketball;
+    }
 
+    public void setBasketball(Basketball basketball) {
+        this.basketball = basketball;
+    }
 }

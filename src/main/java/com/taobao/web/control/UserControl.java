@@ -1,6 +1,8 @@
 package com.taobao.web.control;
 
+import com.taobao.dao.databasesDaoImpl.RoleDaoImpl;
 import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
+import com.taobao.dao.entity.Role;
 import com.taobao.dao.entity.User;
 import com.taobao.utils.sign.MD5;
 import org.apache.log4j.Logger;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +32,9 @@ public class UserControl {
     @Autowired
     private UserDaoImpl userDao;
 
+    @Autowired
+    private RoleDaoImpl roleDao;
+
     /**
      * 登陆采用Get方法
      *
@@ -42,8 +48,6 @@ public class UserControl {
         try {
             String user = req.getParameter("user");
             //加密后的字符串与登陆页面过来的值是否相同
-            logger.info("加密验证信息为 " +  md5.encryption(user+"login"));
-            logger.info("传送过来的验证信息为 " + req.getParameter("login"));
             if (!req.getParameter("login").equals(md5.encryption(user+"login").toLowerCase())) {
                 map.put("data", "3");
                 logger.error("用户 " + user + "未通过登陆页面请求数据");
@@ -51,12 +55,18 @@ public class UserControl {
             }
             String password = req.getParameter("password");
 
+
+
             int resutl = userDao.findUserBySchoolID(user, password);
 
             map.put("data", resutl + "");
 
             logger.info("用户 " + user + " 登陆登陆代码位 " + resutl);
+
+
+
         } catch (Exception e) {
+            e.printStackTrace();
             logger.error("url格式错误 " + req.getRequestURL());
             map.put("data", "3");
         }

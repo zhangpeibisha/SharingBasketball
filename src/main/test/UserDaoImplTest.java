@@ -1,6 +1,8 @@
+import com.taobao.dao.databasesDaoImpl.RoleDaoImpl;
 import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
 import com.taobao.dao.entity.Role;
 import com.taobao.dao.entity.User;
+import org.hibernate.SessionFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +28,18 @@ public class UserDaoImplTest {
     @Autowired
     UserDaoImpl userDao;
 
+    @Autowired
+    RoleDaoImpl roleDao;
+
+
     @Test
     public void testFindByCriteria() throws Exception {
-        User user = new User();
-        user.setCreateTime(new Date());
-        user.setMoney(20);
-        user.setPassword("1234569877");
-        user.setPhone("18203085236");
-        userDao.save(user);
+       Role role = new Role();
+       role.setCreateTime(new Date());
+       role.setDescription("ceshi ");
+       role.setName("ceshi001");
+       roleDao.save(role);
+
     }
 
 

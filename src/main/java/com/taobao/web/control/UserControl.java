@@ -1,11 +1,11 @@
 package com.taobao.web.control;
 
 import com.taobao.dao.databasesDaoImpl.RoleDaoImpl;
+import com.taobao.dao.databasesDaoImpl.SchoolCardDaoImpl;
 import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
-import com.taobao.dao.entity.Role;
+import com.taobao.dao.entity.SchoolCard;
 import com.taobao.dao.entity.User;
 import com.taobao.service.sms.SendSMS;
-import com.taobao.utils.sign.MD5;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,6 +36,9 @@ public class UserControl {
     @Autowired
     private SendSMS sendSMS;
 
+    @Autowired
+    private SchoolCardDaoImpl schooleCardDao;
+
     /**
      * 登陆采用Get方法
      *
@@ -43,19 +46,23 @@ public class UserControl {
      */
     @RequestMapping(value = "/login", method = {RequestMethod.GET})
     public @ResponseBody
-    Map<String, String> login(HttpServletRequest req) {
+    Map<String, String> login(HttpServletRequest req , HttpSession session) {
         Map<String, String> map = new HashMap<>();
 
         try {
             String user = req.getParameter("user");
             String password = req.getParameter("password");
 
-            int resutl = userDao.findUserBySchoolID(user, password);
+            System.out.println("打印密码 " + password);
+            Map<String,Object> result = userDao.findUserBySchoolIDOrPhone(user, password);
 
-            map.put("data", resutl + "");
+            map.put("data", (String) result.get("result"));
 
-            logger.info("用户 " + user + " 登陆登陆代码位 " + resutl);
-
+            //登陆成功时，session记录用户信息
+            if (result.get("result").equals("0")){
+                logger.info("用户 " + user + " 登陆成功");
+                session.setAttribute("user",result.get("user"));
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,27 +82,27 @@ public class UserControl {
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    Map<String, String> register(HttpServletRequest req) {
+    Map<String, String> register(HttpServletRequest req , HttpSession session) {
         Map<String, String> map = new HashMap<>();
 
         try {
 
             String password = req.getParameter("password");
-            String phone = req.getParameter("password");
+            String phone = req.getParameter("phone");
             String schoolID = req.getParameter("user");
-            String roleName = req.getParameter("role");
+
             //生成用户信息
             User user = new User();
             //使用加密码
             user.setPassword(password);
-            user.setRole(roleDao.findRoleByName(roleName));
+            user.setRole(roleDao.findRoleByName("ceshi001"));
             user.setCreateTime(new Date());
             user.setPhone(phone);
             user.setSchoolID(schoolID);
             user.setMoney(0);
+            user.setSchooleCard((SchoolCard) session.getAttribute("card"));
             userDao.save(user);
-
-            logger.info("用户 " + schoolID + " 注册成功，角色为 " + roleName);
+            logger.info("用户 " + schoolID + " 注册成功");
             map.put("data", "0");
         } catch (Exception e) {
             logger.error("用户注册失败 " + e);
@@ -103,6 +110,41 @@ public class UserControl {
         }
         return map;
     }
+
+    /**
+     * 验证校园卡密码和卡号
+     * @param req
+     * @return
+     */
+    @RequestMapping(value = "/isSchoolCard", method = RequestMethod.POST)
+    public @ResponseBody
+    Map<String, String> isSchoolCard(HttpServletRequest req,HttpSession session) {
+        Map<String, String> map = new HashMap<>();
+
+        try {
+            String card = req.getParameter("user");
+            String password = req.getParameter("password");
+
+            SchoolCard card1 = schooleCardDao.findCardByIDAndPassword(card,password);
+
+            if (card1!=null){
+                map.put("data","0");
+                session.setAttribute("card",card1);
+                logger.info("校园卡号用户 " + card1 + " 验证校园卡成功");
+                return map;
+            }
+            map.put("data","1");
+            logger.info("校园卡号用户验证校园卡失败");
+        }catch (Exception e){
+            map.put("data","2");
+            logger.info("校园卡号用户验证校园卡异常 " + e);
+        }
+
+        return map;
+    }
+
+
+
 
     /**
      * 更新密码

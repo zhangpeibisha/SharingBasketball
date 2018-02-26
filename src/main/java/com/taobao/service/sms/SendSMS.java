@@ -77,8 +77,8 @@ public class SendSMS {
     }
 
     /**
-     *
      * 给指定用户发送短信
+     *
      * @param smsMod 指定发送人的信息
      * @return 包含了 加密后的验证码 发送结果
      * @throws IOException 发生IO错误
@@ -87,8 +87,8 @@ public class SendSMS {
         Map<String, String> map = new HashMap<>();
         String code = getSix();
         String result = sendVerificationCode(smsMod, code);
-        map.put("code",md5.encryption(code).toLowerCase());
-        map.put("result",getResultCode(result));
+        map.put("code", md5.encryption(code).toLowerCase());
+        map.put("result", getResultCode(result));
         return map;
     }
 

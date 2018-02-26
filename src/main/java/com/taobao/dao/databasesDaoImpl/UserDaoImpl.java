@@ -6,7 +6,9 @@ import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/24.
@@ -32,17 +34,32 @@ public class UserDaoImpl extends SupperBaseDAOImp<User> {
      *
      * @param user     校园卡id
      * @param password 用户登陆密码
-     * @return 返回参数代码
+     * @return 返回参数代码 并将获取到的用户实例返回 key:user
      */
-    public int findUserBySchoolID(String user, String password) {
-        User haveUser = findByProperty("schoolID", user);
-        if (haveUser == null) {
-            return 1;
-        } else if (haveUser.getPassword().equals(password)) {
-            return 0;
-        } else {
-            return 2;
+    public Map<String,Object> findUserBySchoolIDOrPhone(String user, String password) {
+
+        Map<String,Object> map = new HashMap<>();
+
+        int length = user.length();
+        User haveUser;
+        if (length ==  11){
+            haveUser = findByProperty("phone", user);
+        }else if (length == 12){
+            haveUser = findByProperty("schoolID", user);
+        }else{
+            map.put("result" , "2");
+            return map;
         }
+
+        if (haveUser == null) {
+            map.put("result" , "1");
+        } else if (haveUser.getPassword().equals(password)) {
+            map.put("result" , "0");
+            map.put("user" , haveUser);
+        } else {
+            map.put("result" , "2");
+        }
+        return map;
     }
 
     /**

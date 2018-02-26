@@ -118,3 +118,26 @@
 * 参数说明：
     data：0为修改成功，1为修改失败 , 2没有这个用户
     
+    
+*权限存入到了session中 通过  httpSessionBindingEvent.getSession().setAttribute("permissions",permissions); 设置的
+通过 httpSession.getAtribute("permissions");获取
+    
+6.校园卡验证
+* 用户注册时需要验证校园卡的账号和密码
+*URL：http://localhost:8080/isSchoolCard.do?user=校园卡卡号&password=校园卡密码
+*请求数据：
+{
+   user：校园卡号
+   password:校园卡加密码
+}
+
+*返回参数
+{
+   data:返回代码
+}
+
+代码说明： 0验证成功 1验证失败 2验证异常
+
+*测试账号
+*校园卡号：201410610113
+*密码：123456

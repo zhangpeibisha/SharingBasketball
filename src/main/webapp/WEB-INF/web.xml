@@ -131,6 +131,17 @@
   </listener>
 
 
+  <!--用户每次访问时触发的监听器-->
+  <listener>
+    <listener-class>com.taobao.web.listener.ServletRequest</listener-class>
+  </listener>
+
+  <!--系统初始化的时候触发的监听器-->
+  <listener>
+    <listener-class>com.taobao.web.listener.ServletContext</listener-class>
+  </listener>
+
+
   <!-- 配置session超时时间，单位分钟 -->
   <session-config>
     <session-timeout>30</session-timeout>

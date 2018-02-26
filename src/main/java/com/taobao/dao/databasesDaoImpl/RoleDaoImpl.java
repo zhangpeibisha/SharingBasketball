@@ -22,4 +22,8 @@ public class RoleDaoImpl extends SupperBaseDAOImp<Role>{
     public <T> Long findByCriteriaCount(T object) {
         return null;
     }
+
+    public Role findRoleByName(String name){
+        return findByProperty("name",name);
+    }
 }

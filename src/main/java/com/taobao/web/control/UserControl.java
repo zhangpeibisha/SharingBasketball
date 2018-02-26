@@ -4,6 +4,7 @@ import com.taobao.dao.databasesDaoImpl.RoleDaoImpl;
 import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
 import com.taobao.dao.entity.Role;
 import com.taobao.dao.entity.User;
+import com.taobao.service.sms.SendSMS;
 import com.taobao.utils.sign.MD5;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +28,13 @@ public class UserControl {
     private static Logger logger = Logger.getLogger(UserControl.class);
 
     @Autowired
-    private MD5 md5;
-
-    @Autowired
     private UserDaoImpl userDao;
 
     @Autowired
     private RoleDaoImpl roleDao;
+
+    @Autowired
+    private SendSMS sendSMS;
 
     /**
      * 登陆采用Get方法
@@ -47,15 +48,7 @@ public class UserControl {
 
         try {
             String user = req.getParameter("user");
-            //加密后的字符串与登陆页面过来的值是否相同
-            if (!req.getParameter("login").equals(md5.encryption(user+"login").toLowerCase())) {
-                map.put("data", "3");
-                logger.error("用户 " + user + "未通过登陆页面请求数据");
-                return map;
-            }
             String password = req.getParameter("password");
-
-
 
             int resutl = userDao.findUserBySchoolID(user, password);
 
@@ -64,109 +57,70 @@ public class UserControl {
             logger.info("用户 " + user + " 登陆登陆代码位 " + resutl);
 
 
-
         } catch (Exception e) {
             e.printStackTrace();
-            logger.error("url格式错误 " + req.getRequestURL());
+            logger.error("url格式错误 " + req.getRequestURL() + " " + e);
             map.put("data", "3");
         }
         return map;
     }
 
     /**
-     * 验证校园卡是否正确
-     *
-     * @param req
-     * @return
-     */
-    @RequestMapping(value = "/schoolCard", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, String> schoolCard(HttpServletRequest req) {
-        Map<String, String> map = new HashMap<>();
-
-
-        return map;
-    }
-
-    /**
      * 注册账号接口
+     * 注册的都是普通用户，所以默认添加为普通用户，有更改
+     * 请通过后台管理员修改
      *
      * @param req
-     * @return
+     * @return 返回请求结果
      */
-    @RequestMapping(value = "/register", method = RequestMethod.GET)
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
     Map<String, String> register(HttpServletRequest req) {
         Map<String, String> map = new HashMap<>();
 
+        try {
 
-        //暂时用来测试添加代码
+            String password = req.getParameter("password");
+            String phone = req.getParameter("password");
+            String schoolID = req.getParameter("user");
+            String roleName = req.getParameter("role");
+            //生成用户信息
+            User user = new User();
+            //使用加密码
+            user.setPassword(password);
+            user.setRole(roleDao.findRoleByName(roleName));
+            user.setCreateTime(new Date());
+            user.setPhone(phone);
+            user.setSchoolID(schoolID);
+            user.setMoney(0);
+            userDao.save(user);
 
-        //生成角色
-        Role role = new Role();
-        role.setCreateTime(new Date());
-        role.setDescription("ceshi ");
-        role.setName("ceshi001");
-        roleDao.save(role);
-
-        //生成用户信息
-        User user = new User();
-
-        //加密密码
-        String password = "1234567897899";
-        String passwordMd5 = md5.encryption(password).toLowerCase();
-        logger.info("passwrodMD5 " + passwordMd5 + " length " + passwordMd5.length());
-        //使用加密码
-        user.setPassword(passwordMd5);
-        user.setRole(roleDao.findByProperty("name","ceshi001"));
-        user.setCreateTime(new Date());
-        user.setPhone("18203085236");
-        user.setSchoolID("201410610113");
-        user.setMoney(0);
-        userDao.save(user);
-
-
+            logger.info("用户 " + schoolID + " 注册成功，角色为 " + roleName);
+            map.put("data", "0");
+        } catch (Exception e) {
+            logger.error("用户注册失败 " + e);
+            map.put("data", "1");
+        }
         return map;
     }
 
     /**
-     * 找回密码接口 通过手机短信
+     * 更新密码
      *
      * @param req
-     * @return
+     * @return 返回修改结果
      */
-    @RequestMapping(value = "/updatePasswordBySMS", method = RequestMethod.POST)
-    public @ResponseBody
-    Map<String, String> updatePasswordBySMS(HttpServletRequest req) {
-        Map<String, String> map = new HashMap<>();
-
-        return map;
-    }
-
-    /**
-     * 通过旧密码更新新密码
-     *
-     * @param req
-     * @return
-     */
-    @RequestMapping(value = "/updatePasswordByOldPassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public @ResponseBody
     Map<String, String> updatePasswordByOldPassword(HttpServletRequest req) {
         Map<String, String> map = new HashMap<>();
 
         try {
             String user = req.getParameter("user");
-            //加密后的字符串与登陆页面过来的值是否相同
-            if (!req.getParameter("updateOldPassword").equals(md5.encryption(user + "updateOldPassword").toLowerCase())) {
-                map.put("data", "3");
-                logger.error("用户 " + user + "未通过登陆页面请求数据");
-                return map;
-            }
+            User haveUser = userDao.findUserBySchoolID(user);
 
-            User haveUser = userDao.findByProperty("schoolID",user);
-
-            if (haveUser == null){
-                map.put("data","2");
+            if (haveUser == null) {
+                map.put("data", "2");
                 logger.info("没有找到用户 " + user + " 更改密码失败");
                 return map;
             }
@@ -176,11 +130,11 @@ public class UserControl {
             haveUser.setPassword(newPassword);
             userDao.update(haveUser);
 
-            map.put("data","0");
+            map.put("data", "0");
 
             logger.info("用户 " + user + " 更改密码成功");
         } catch (Exception e) {
-            logger.error("url格式错误 " + req.getRequestURL());
+            logger.error("url格式错误 " + req.getRequestURL() + " " + e);
             map.put("data", "3");
         }
         return map;
@@ -189,30 +143,41 @@ public class UserControl {
 
     /**
      * 发送短信验证码
-     *
+     * 用户注册过后使用的
      * @param req
      * @return
      */
-    @RequestMapping(value = "/sendSMS", method = RequestMethod.POST)
+    @RequestMapping(value = "/sendSMSCode", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> sendSMS(HttpServletRequest req) {
+    Map<String, String> sendSMSCode(HttpServletRequest req) {
         Map<String, String> map = new HashMap<>();
 
         try {
 
-            String user = req.getParameter("user");
-
-            if (!req.getParameter("sendSMS").equals(md5.encryption(user + "send"))) {
-                map.put("data", "2");
+            String regsterPhone = req.getParameter("phone");
+            //为了注册的时候使用
+            if (regsterPhone!=null){
+                map = sendSMS.sendVerificationCode(regsterPhone);
+                map.put("data","0");
+                logger.info("手机号码为 " + regsterPhone + " 的用户申请的验证码为 " + map.get("code"));
                 return map;
+            }else{
+                //为了注册后使用验证码
+
+                String user = req.getParameter("user");
+                //查找这个用户得到手机号码
+                User haveUser = userDao.findUserBySchoolID(user);
+                if (haveUser == null) {
+                    map.put("data", "2");
+                    logger.error("用户 " + user + "不存在，发送信息失败");
+                    return map;
+                }
+                String phone = haveUser.getPhone();
+                //发送手机号码
+                map = sendSMS.sendVerificationCode(phone);
+                map.put("data", "0");
+                logger.info("用户 " + user + " 申请验证码 " + map.get("code") + " 成功");
             }
-            //生成验证码
-
-            //查找这个用户得到手机号码
-
-            //发送手机号码
-
-            map.put("data", "0");
         } catch (Exception e) {
             logger.error("请求url异常 " + req.getRequestURL());
             map.put("data", "2");

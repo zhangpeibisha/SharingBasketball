@@ -16,3 +16,6 @@
 .login-input{
     width:500px;
 }
+#forget{
+    cursor: pointer;
+}

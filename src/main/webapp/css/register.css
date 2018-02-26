@@ -5,16 +5,13 @@
 .register-mid{
     margin-left: 20%;
     margin-top: 300px;
-    height: 320px;
     width: 60%;
     background-color: #ffffff;
     border-radius: 20px;
+    padding-bottom: 5px;
 }
 .register-title{
     line-height: 60px;
-}
-.register-input{
-    width: 450px;
 }
 .register-ok{
     font-size: 20px;
@@ -25,4 +22,11 @@
     font-size: 20px;
     line-height: 34px;
     color: #b92c28;
+}
+.register-bu{
+    margin-left: 134px;
+
+}
+#login{
+    cursor: pointer;
 }

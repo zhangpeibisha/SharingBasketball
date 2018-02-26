@@ -44,4 +44,13 @@ public class UserDaoImpl extends SupperBaseDAOImp<User> {
             return 2;
         }
     }
+
+    /**
+     * 通过用户名直接获取到用户的所有信息
+     * @param user 用户的校园卡id
+     * @return 用户信息
+     */
+    public User findUserBySchoolID(String user){
+        return findByProperty("schoolID", user);
+    }
 }

@@ -47,22 +47,13 @@ public class UserControl {
 
         try {
             String user = req.getParameter("user");
-            //加密后的字符串与登陆页面过来的值是否相同
-            if (!req.getParameter("login").equals(md5.encryption(user+"login").toLowerCase())) {
-                map.put("data", "3");
-                logger.error("用户 " + user + "未通过登陆页面请求数据");
-                return map;
-            }
             String password = req.getParameter("password");
-
-
 
             int resutl = userDao.findUserBySchoolID(user, password);
 
             map.put("data", resutl + "");
 
             logger.info("用户 " + user + " 登陆登陆代码位 " + resutl);
-
 
 
         } catch (Exception e) {
@@ -118,7 +109,7 @@ public class UserControl {
         logger.info("passwrodMD5 " + passwordMd5 + " length " + passwordMd5.length());
         //使用加密码
         user.setPassword(passwordMd5);
-        user.setRole(roleDao.findByProperty("name","ceshi001"));
+        user.setRole(roleDao.findByProperty("name", "ceshi001"));
         user.setCreateTime(new Date());
         user.setPhone("18203085236");
         user.setSchoolID("201410610113");
@@ -130,43 +121,22 @@ public class UserControl {
     }
 
     /**
-     * 找回密码接口 通过手机短信
+     * 更新密码
      *
      * @param req
-     * @return
+     * @return 返回修改结果
      */
-    @RequestMapping(value = "/updatePasswordBySMS", method = RequestMethod.POST)
-    public @ResponseBody
-    Map<String, String> updatePasswordBySMS(HttpServletRequest req) {
-        Map<String, String> map = new HashMap<>();
-
-        return map;
-    }
-
-    /**
-     * 通过旧密码更新新密码
-     *
-     * @param req
-     * @return
-     */
-    @RequestMapping(value = "/updatePasswordByOldPassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> updatePasswordByOldPassword(HttpServletRequest req) {
         Map<String, String> map = new HashMap<>();
 
         try {
             String user = req.getParameter("user");
-            //加密后的字符串与登陆页面过来的值是否相同
-            if (!req.getParameter("updateOldPassword").equals(md5.encryption(user + "updateOldPassword").toLowerCase())) {
-                map.put("data", "3");
-                logger.error("用户 " + user + "未通过登陆页面请求数据");
-                return map;
-            }
+            User haveUser = userDao.findUserBySchoolID(user);
 
-            User haveUser = userDao.findByProperty("schoolID",user);
-
-            if (haveUser == null){
-                map.put("data","2");
+            if (haveUser == null) {
+                map.put("data", "2");
                 logger.info("没有找到用户 " + user + " 更改密码失败");
                 return map;
             }
@@ -176,7 +146,7 @@ public class UserControl {
             haveUser.setPassword(newPassword);
             userDao.update(haveUser);
 
-            map.put("data","0");
+            map.put("data", "0");
 
             logger.info("用户 " + user + " 更改密码成功");
         } catch (Exception e) {
@@ -206,8 +176,6 @@ public class UserControl {
                 map.put("data", "2");
                 return map;
             }
-            //生成验证码
-
             //查找这个用户得到手机号码
 
             //发送手机号码

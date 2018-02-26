@@ -1,83 +1,117 @@
 package com.taobao.service.sms;
 
-
-import com.taobao.exception.sms.SMSException;
 import com.taobao.utils.properties.PropertiesUtil;
-import com.taobao.utils.url.HttpReques;
+import com.taobao.utils.sign.MD5;
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 /**
- * Create by zhangpe0312@qq.com on 2018/2/24.
+ * Create by zhangpe0312@qq.com on 2018/2/26.
  */
 @Service
 public class SendSMS {
 
+    private static Logger logger = Logger.getLogger(SendSMS.class);
+
+    @Autowired
+    MD5 md5;
+
     /**
-     * 传入了一个被填充好了数据的SMS数据包
+     * 给指定人员发送信息
      *
-     * @param url 请求路径
-     * @param sms 请求数据
-     * @return 返回发送结果
-     * <p>
-     * 返回参数意义
-     * 短信发送后返回值	说　明
-     * -1	没有该用户账户
-     * -2	接口密钥不正确 [查看密钥]
-     * 不是账户登陆密码
-     * <p>
-     * -21	MD5接口密钥加密不正确
-     * -3	短信数量不足
-     * -11	该用户被禁用
-     * -14	短信内容出现非法字符
-     * -4	手机号格式不正确
-     * -41	手机号码为空
-     * -42	短信内容为空
-     * -51	短信签名格式不正确
-     * 接口签名格式为：【签名内容】
-     * -6	IP限制
-     * 大于0	短信发送数量
+     * @param smsMod  准备发送的人
+     * @param smsText 准备发送的信息
+     * @return 发送结果
+     * @throws IOException IO错误
      */
-    private String send(String url, SMS sms) {
+    public String send(String smsMod, String smsText) throws IOException {
 
-        String result = HttpReques.sendGet(url, sms.getUrl());
+        String Uid = PropertiesUtil.readValue("sms.properties", "Uid");
+        String Key = PropertiesUtil.readValue("sms.properties", "Key");
 
-        switch (result) {
-            case "-1":
-                throw new SMSException("-1", "没有该用户账户");
-            case "-2":
-                throw new SMSException("-2", "接口密钥不正确 [查看密钥]");
-            case "-21":
-                throw new SMSException("-21", "MD5接口密钥加密不正确");
-            case "-3":
-                throw new SMSException("-3", "短信数量不足");
-            case "-11":
-                throw new SMSException("-11", "该用户被禁用");
-            case "-14":
-                throw new SMSException("-14", "短信内容出现非法字符");
-            case "-4":
-                throw new SMSException("-4", "手机号格式不正确");
-            case "-41":
-                throw new SMSException("-41", "手机号码为空");
-            case "-42":
-                throw new SMSException("-42", "短信内容为空");
-            case "-51":
-                throw new SMSException("-51", "短信签名格式不正确");
-            case "-6":
-                throw new SMSException("-6", "IP限制");
-            default:
-                return result;
+        HttpClient client = new HttpClient();
+        PostMethod post = new PostMethod("http://sms.webchinese.cn/web_api/");
+        post.addRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=gbk");// 在头文件中设置转码
+        NameValuePair[] data = {new NameValuePair("Uid", Uid), // 注册的用户名
+                new NameValuePair("Key", Key), // 注册成功后,登录网站使用的密钥
+                new NameValuePair("smsMob", smsMod), // 手机号码
+                new NameValuePair("smsText", smsText)};//设置短信内容
+        post.setRequestBody(data);
+
+        client.executeMethod(post);
+        Header[] headers = post.getResponseHeaders();
+        int statusCode = post.getStatusCode();
+        System.out.println("statusCode:" + statusCode);
+        for (Header h : headers) {
+            System.out.println(h.toString());
         }
+        String result = new String(post.getResponseBodyAsString().getBytes("gbk"));
+        System.out.println(result);
+        post.releaseConnection();
+
+        return getResultCode(result);
     }
 
     /**
-     * 发送验证码信息
+     * 给单个用户发送验证信息
      *
-     * @return
+     * @param smsMod           准备发送的用户
+     * @param VerificationCode 验证码
+     * @return 返回发送结果
+     * @throws IOException IO异常
      */
-    public String sendVerCode(SMS sms) {
-
-        String sendUrl = PropertiesUtil.readValue("sms.properties", "发送验证码Url");
-
-        return send(sendUrl, sms);
+    private String sendVerificationCode(String smsMod, String VerificationCode) throws IOException {
+        String Code = PropertiesUtil.readValue("sms.properties", "VerificationCode");
+        Code = Code.replace("Code", Code);
+        return send(smsMod, Code);
     }
+
+    /**
+     *
+     * 给指定用户发送短信
+     * @param smsMod 指定发送人的信息
+     * @return 包含了 加密后的验证码 发送人手机号码 发送结果
+     * @throws IOException 发生IO错误
+     */
+    public Map<String, String> sendVerificationCode(String smsMod) throws IOException {
+        Map<String, String> map = new HashMap<>();
+        String code = getSix();
+        String result = sendVerificationCode(smsMod, code);
+        map.put("user",smsMod);
+        map.put("code",md5.encryption(code).toLowerCase());
+        map.put("result",getResultCode(result));
+        return map;
+    }
+
+    /**
+     * 产生随机的六位数
+     *
+     * @return 返回一个随机刘伟数
+     */
+    private String getSix() {
+        Random rad = new Random();
+
+        String result = rad.nextInt(1000000) + "";
+
+        if (result.length() != 6) {
+            return getSix();
+        }
+        return result;
+    }
+
+
+    private String getResultCode(String code) {
+        return code.substring(code.lastIndexOf("GMT"));
+    }
+
 }

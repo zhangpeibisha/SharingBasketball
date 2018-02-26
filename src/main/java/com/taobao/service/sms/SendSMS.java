@@ -80,14 +80,13 @@ public class SendSMS {
      *
      * 给指定用户发送短信
      * @param smsMod 指定发送人的信息
-     * @return 包含了 加密后的验证码 发送人手机号码 发送结果
+     * @return 包含了 加密后的验证码 发送结果
      * @throws IOException 发生IO错误
      */
     public Map<String, String> sendVerificationCode(String smsMod) throws IOException {
         Map<String, String> map = new HashMap<>();
         String code = getSix();
         String result = sendVerificationCode(smsMod, code);
-        map.put("user",smsMod);
         map.put("code",md5.encryption(code).toLowerCase());
         map.put("result",getResultCode(result));
         return map;
@@ -109,9 +108,10 @@ public class SendSMS {
         return result;
     }
 
-
     private String getResultCode(String code) {
         return code.substring(code.lastIndexOf("GMT"));
     }
+
+    //暂时不做管理员批量发送信息的功能
 
 }

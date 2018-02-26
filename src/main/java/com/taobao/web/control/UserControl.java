@@ -94,10 +94,37 @@ public class UserControl {
      * @param req
      * @return
      */
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    @RequestMapping(value = "/register", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> register(HttpServletRequest req) {
         Map<String, String> map = new HashMap<>();
+
+
+        //暂时用来测试添加代码
+
+        //生成角色
+        Role role = new Role();
+        role.setCreateTime(new Date());
+        role.setDescription("ceshi ");
+        role.setName("ceshi001");
+        roleDao.save(role);
+
+        //生成用户信息
+        User user = new User();
+
+        //加密密码
+        String password = "1234567897899";
+        String passwordMd5 = md5.encryption(password).toLowerCase();
+        logger.info("passwrodMD5 " + passwordMd5 + " length " + passwordMd5.length());
+        //使用加密码
+        user.setPassword(passwordMd5);
+        user.setRole(roleDao.findByProperty("name","ceshi001"));
+        user.setCreateTime(new Date());
+        user.setPhone("18203085236");
+        user.setSchoolID("201410610113");
+        user.setMoney(0);
+        userDao.save(user);
+
 
         return map;
     }

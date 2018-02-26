@@ -66,7 +66,7 @@ public class User {
         this.schoolID = schoolID;
     }
 
-    @Column(name = "password", nullable = false, length = 18, unique = true)
+    @Column(name = "password", nullable = false , length = 32 , unique = true)
     public String getPassword() {
         return password;
     }

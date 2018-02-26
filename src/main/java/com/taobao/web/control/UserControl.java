@@ -28,9 +28,6 @@ public class UserControl {
     private static Logger logger = Logger.getLogger(UserControl.class);
 
     @Autowired
-    private MD5 md5;
-
-    @Autowired
     private UserDaoImpl userDao;
 
     @Autowired
@@ -113,7 +110,7 @@ public class UserControl {
      * @param req
      * @return 返回修改结果
      */
-    @RequestMapping(value = "/updatePassword", method = RequestMethod.GET)
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     public @ResponseBody
     Map<String, String> updatePasswordByOldPassword(HttpServletRequest req) {
         Map<String, String> map = new HashMap<>();
@@ -146,29 +143,41 @@ public class UserControl {
 
     /**
      * 发送短信验证码
-     *
+     * 用户注册过后使用的
      * @param req
      * @return
      */
-    @RequestMapping(value = "/sendSMS", method = RequestMethod.POST)
+    @RequestMapping(value = "/sendSMSCode", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> sendSMS(HttpServletRequest req) {
+    Map<String, String> sendSMSCode(HttpServletRequest req) {
         Map<String, String> map = new HashMap<>();
 
         try {
-            String user = req.getParameter("user");
-            //查找这个用户得到手机号码
-            User haveUser = userDao.findUserBySchoolID(user);
-            if (haveUser == null) {
-                map.put("data", "2");
-                logger.error("用户 " + user + "不存在，发送信息失败");
+
+            String regsterPhone = req.getParameter("phone");
+            //为了注册的时候使用
+            if (regsterPhone!=null){
+                map = sendSMS.sendVerificationCode(regsterPhone);
+                map.put("data","0");
+                logger.info("手机号码为 " + regsterPhone + " 的用户申请的验证码为 " + map.get("code"));
                 return map;
+            }else{
+                //为了注册后使用验证码
+
+                String user = req.getParameter("user");
+                //查找这个用户得到手机号码
+                User haveUser = userDao.findUserBySchoolID(user);
+                if (haveUser == null) {
+                    map.put("data", "2");
+                    logger.error("用户 " + user + "不存在，发送信息失败");
+                    return map;
+                }
+                String phone = haveUser.getPhone();
+                //发送手机号码
+                map = sendSMS.sendVerificationCode(phone);
+                map.put("data", "0");
+                logger.info("用户 " + user + " 申请验证码 " + map.get("code") + " 成功");
             }
-            String phone = haveUser.getPhone();
-            //发送手机号码
-            map = sendSMS.sendVerificationCode(phone);
-            map.put("data", "0");
-            logger.info("用户 " + user + " 申请验证码 " + map.get("code") + " 成功");
         } catch (Exception e) {
             logger.error("请求url异常 " + req.getRequestURL());
             map.put("data", "2");

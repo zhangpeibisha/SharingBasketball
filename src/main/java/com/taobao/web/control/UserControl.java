@@ -137,7 +137,6 @@ public class UserControl {
             map.put("data","2");
             logger.info("校园卡号用户验证校园卡异常 " + e);
         }
-
         return map;
     }
 

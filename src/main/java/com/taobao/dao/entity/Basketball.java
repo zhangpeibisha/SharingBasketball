@@ -45,8 +45,8 @@ public class Basketball {
 
     @Id
     @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(generator = "generator")
-    @GenericGenerator(name = "generator", strategy = "uuid")
+    @GeneratedValue(strategy=GenerationType.TABLE,generator="tableGenerator")
+    @TableGenerator(name="tableGenerator",allocationSize=1)
     public String getBasketballID() {
         return basketballID;
     }
@@ -119,7 +119,7 @@ public class Basketball {
         this.isRent = isRent;
     }
 
-    @Column(name = "nowPerssure" , length = 10)
+    @Column(name = "nowPerssure", length = 10)
     public double getNowPerssure() {
         return nowPerssure;
     }

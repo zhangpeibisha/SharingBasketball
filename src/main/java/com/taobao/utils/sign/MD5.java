@@ -20,7 +20,7 @@ public class MD5  {
     //加密后输出编码格式
     private String encoding = "utf-8";
     //输出后是否大写
-    private Boolean uppercase = true;
+    private Boolean uppercase = false;
 
     /**
      * 加密

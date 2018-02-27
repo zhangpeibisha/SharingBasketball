@@ -32,8 +32,9 @@ $(document).ready(function () {
             console.info(name);
             pass= hex_md5(pass);
             console.info(pass);
+            alert("url " + userUrl + " name " + name + " password " + pass)
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: userUrl,
                 data: {
                     user:name,

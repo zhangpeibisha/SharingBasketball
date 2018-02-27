@@ -26,7 +26,7 @@
 
 2. 用户注册
 * 描述：用户注册接口，使用md5加密方法
-* URL：http://localhost:8080/register.do?user=用户名字&password=用户加密后的密码&phone=手机号码&role=角色名字
+* URL：http://localhost:8080/register.do?user=用户名字&password=用户加密后的密码&phone=手机号码
 * HTTP请求方式： POST
 * 请求参数：
     {

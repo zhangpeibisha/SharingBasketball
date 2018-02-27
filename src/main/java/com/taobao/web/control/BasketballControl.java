@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/26.
@@ -31,30 +31,31 @@ public class BasketballControl {
     /**
      * 返回可以租借、并且完好的篮球列表
      *
-     * @param req
-     * @return
+     * @return 返回可用篮球列表数据
      */
     @RequestMapping(name = "/rentList", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, Object> rentList(HttpServletRequest req) {
+    Map<String, Object> rentList() {
         Map<String, Object> map = new HashMap<>();
-
         try {
-
             String sql = "select * from basketball where isBad=? and isRent=?";
             List<Basketball> basketballs = basketballDao.findBySql(sql, 0, 0);
-            if (basketballs.size()!=0){
-
+            if (basketballs.size() != 0) {
                 //删除压力值不合格的篮球
-                for (Basketball basketball : basketballs){
-                    if (basketball.getNowPerssure()<basketball.getPressure()){
+                for (Basketball basketball : basketballs) {
+                    if (basketball.getNowPerssure() < basketball.getPressure()) {
                         basketballs.remove(basketball);
                     }
                 }
-                map.put("basketballs", basketballs);
-                map.put("data", "0");
-                logger.info("申请获取能够使用的篮球列表成功 数量为： " + basketballs);
-            }else {
+                if (basketballs.size() != 0) {
+                    map.put("basketballs", basketballs);
+                    map.put("data", "0");
+                    logger.info("申请获取能够使用的篮球列表成功 数量为： " + basketballs);
+                } else {
+                    map.put("data", "1");
+                    logger.info("申请获取能够使用的篮球列表失败，没有可出租的篮球了 ");
+                }
+            } else {
                 map.put("data", "1");
                 logger.info("申请获取能够使用的篮球列表失败，没有可出租的篮球了 ");
             }
@@ -62,8 +63,6 @@ public class BasketballControl {
             map.put("data", "2");
             logger.error("申请获取能够使用的篮球列表异常 " + e);
         }
-
         return map;
     }
-
 }

@@ -22,7 +22,7 @@ public class Rent {
     private int rentID;
 
     //押金
-    private int deposit;
+    private double deposit;
 
     //计费位按每小时多少钱算
     private double billing;
@@ -50,11 +50,11 @@ public class Rent {
     }
 
     @Column(name = "deposit", nullable = false, length = 10)
-    public int getDeposit() {
+    public double getDeposit() {
         return deposit;
     }
 
-    public void setDeposit(int deposit) {
+    public void setDeposit(double deposit) {
         this.deposit = deposit;
     }
 

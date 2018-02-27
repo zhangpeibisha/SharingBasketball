@@ -102,6 +102,7 @@ public class UserControl {
                 user.setPhone(phone);
                 user.setSchoolID(schoolID);
                 user.setSchooleCard((SchoolCard) session.getAttribute("card"));
+                user.setRole(roleDao.findRoleByName("普通用户"));
                 userDao.save(user);
                 logger.info("用户 " + schoolID + " 注册成功");
                 map.put("data", "0");

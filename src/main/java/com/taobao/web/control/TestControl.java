@@ -1,11 +1,7 @@
 package com.taobao.web.control;
 
-import com.taobao.dao.databasesDaoImpl.BasketballDaoImpl;
-import com.taobao.dao.databasesDaoImpl.SchoolCardDaoImpl;
-import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
-import com.taobao.dao.entity.Basketball;
-import com.taobao.dao.entity.SchoolCard;
-import com.taobao.dao.entity.User;
+import com.taobao.dao.databasesDaoImpl.*;
+import com.taobao.dao.entity.*;
 import com.taobao.utils.sign.MD5;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -35,71 +31,132 @@ public class TestControl {
     private BasketballDaoImpl basketballDao;
 
     @Autowired
+    private RoleDaoImpl roleDao;
+
+    @Autowired
+    private RentDaoImpl rentDao;
+
+
+    @Autowired
     MD5 md5;
 
     /**
      * 添加校园卡
+     *
      * @return
      */
-    @RequestMapping(value = "/testAddSchool" , method = RequestMethod.GET)
-    public @ResponseBody Map<String,String> testAddEntity() {
+    @RequestMapping(value = "/testAddSchool", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> testAddEntity() {
 
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         SchoolCard schoolCard = new SchoolCard();
         schoolCard.setMoney(10);
         schoolCard.setPassword(md5.encryption("123456"));
         schoolCard.setSchoolID("123456789111");
         schoolCardDao.save(schoolCard);
 
-        map.put("data","添加成功");
+        map.put("data", "添加成功");
         return map;
     }
 
     /**
      * 添加用户
+     *
      * @return
      */
-    @RequestMapping(value = "/testAddUser" , method = RequestMethod.GET)
-    public @ResponseBody Map<String,String> testAddUser() {
+    @RequestMapping(value = "/testAddUser", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> testAddUser() {
 
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
 
         User user = new User();
         user.setSchoolID("123456789111");
         user.setPhone("18203085236");
         user.setCreateTime(new Date());
+        user.setRole(roleDao.findRoleByName("普通用户"));
+        user.setSchooleCard(schoolCardDao.findByProperty("schoolID","123456789111"));
         user.setPassword(md5.encryption("123456"));
         userDao.save(user);
 
-        map.put("data","添加成功");
+        map.put("data", "添加成功");
         return map;
     }
 
-    @RequestMapping(value = "/testAddBasketball" , method = RequestMethod.GET)
-    public @ResponseBody Map<String,String> testAddBasketball() {
+    @RequestMapping(value = "/testAddBasketball", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> testAddBasketball() {
 
-        Map<String,String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
 
-        for (int i = 0; i <50 ; i++) {
+        for (int i = 0; i < 50; i++) {
             Basketball basketball = new Basketball();
-            basketball.setIsBad(i%2);
+            basketball.setIsBad(i % 2);
             basketball.setCreateTime(new Date());
-            if (i%2 == 0){
+            if (i % 2 == 0) {
                 basketball.setModel("A型");
-            }else {
+            } else {
                 basketball.setModel("B型");
             }
-            basketball.setIsRent(i%2);
+            basketball.setIsRent(i % 2);
             basketball.setPressure(0.06);
-            basketball.setNowPerssure((Math.random()*10)*0.01);
+            basketball.setNowPerssure((Math.random() * 10) * 0.01);
+            basketball.setRent(rentDao.findByProperty("id",1));
             basketballDao.save(basketball);
         }
 
 
-        map.put("data","添加成功");
+        map.put("data", "添加成功");
 
         return map;
     }
 
 
+    @RequestMapping(value = "/testAddRole", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> testAddRole() {
+        Map<String, String> map = new HashMap<>();
+
+        Role role = new Role();
+        role.setName("普通用户");
+        role.setDescription("一般用户能够操作的接口和页面的权限集合");
+        role.setCreateTime(new Date());
+        roleDao.save(role);
+
+        map.put("data", "添加成功");
+
+        return map;
+    }
+
+
+    @RequestMapping(value = "/testAddRent", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> testAddRent() {
+
+        Map<String, String> map = new HashMap<>();
+
+        Rent rent = new Rent();
+        rent.setCreateTime(new Date());
+        rent.setDeposit(50);
+        rent.setBilling(0.5);
+        rentDao.save(rent);
+        map.put("data", "添加成功");
+        return map;
+    }
+
+
+    /**
+     * 测试代码样板
+     *
+     * @return
+     */
+    @RequestMapping(value = "/testModel", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, String> testModel() {
+
+        Map<String, String> map = new HashMap<>();
+        map.put("data", "添加成功");
+        return map;
+    }
 }

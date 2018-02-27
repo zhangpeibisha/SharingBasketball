@@ -22,20 +22,21 @@ $(document).ready(function () {
             alert("密码之多18位数");
             return;
         }
-
         if(pass!=pass1){
             alert("两次输入的密码不一致！");
             $("#password1").val("");
             return;
         }
         else{
-            pass= hex_md5(pass);
             alert("in");
+            console.info(name);
+            pass= hex_md5(pass);
+            console.info(pass);
             $.ajax({
                 type: 'POST',
                 url: userUrl,
                 data: {
-                    card:name,
+                    user:name,
                     password:pass
                 },
                 success: function (data) {

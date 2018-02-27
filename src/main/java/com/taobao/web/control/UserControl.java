@@ -163,15 +163,12 @@ public class UserControl {
         try {
             String user = req.getParameter("user");
             User haveUser = userDao.findUserBySchoolID(user);
-
             if (haveUser == null) {
                 map.put("data", "2");
                 logger.info("没有找到用户 " + user + " 更改密码失败");
                 return map;
             }
-
             String newPassword = req.getParameter("password");
-
             haveUser.setPassword(newPassword);
             userDao.update(haveUser);
 

@@ -122,7 +122,7 @@
 *权限存入到了session中 通过  httpSessionBindingEvent.getSession().setAttribute("permissions",permissions); 设置的
 通过 httpSession.getAtribute("permissions");获取
     
-6.校园卡验证
+6. 校园卡验证
 * 用户注册时需要验证校园卡的账号和密码
 *URL：http://localhost:8080/isSchoolCard.do?user=校园卡卡号&password=校园卡密码
 *请求数据：
@@ -141,3 +141,47 @@
 *测试账号
 *校园卡号：201410610113
 *密码：123456
+
+7. 缴费模块
+* 用户租借完成后进行订单付费
+*URL：http://localhost:8080/payment.do?user=校园卡卡号&orderNumber=订单号
+* HTTP请求方式： POST
+*请求数据：
+{
+   user：校园卡号
+   orderNumber:订单号
+}
+*返回参数
+{
+   money:付款金额,
+   deposit:存款
+}
+
+8. 租借模块
+* 显示所有可以租借的篮球
+*URL：http://localhost:8080/rentList.do?
+* HTTP请求方式： POST
+*请求数据：
+{
+    无
+}
+*返回参数
+{
+   可租借篮球列表(篮球id，篮球型号，小时计费)
+}
+
+9. 请求租借模块
+* 显示所有可以租借的篮球
+*URL：http://localhost:8080/rent.do
+* HTTP请求方式： POST
+*请求数据：
+{
+    user：校园卡号
+    basketballId:篮球id
+}
+*返回参数
+{
+   data：0;
+}
+* 参数说明：
+    data：0为租借成功，1为租借失败

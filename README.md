@@ -7,7 +7,7 @@
 1. 用户登录
 * 描述：控制用户登录的接口，使用md5加密方法
 * URL：http://localhost:8080/login.do?user=用户名&password=用户密码
-* HTTP请求方式： POST(改为GET方法)
+* HTTP请求方式： GET
 * 请求参数：
     {
         user:xxx,
@@ -153,7 +153,7 @@
 8. 租借模块
 * 显示所有可以租借的篮球
 *URL：http://localhost:8080/rentList.do?
-* HTTP请求方式： POST（GET）
+* HTTP请求方式： GET
 *请求数据：
 {
     无

@@ -36,8 +36,8 @@ public class SendSMS {
      */
     public String send(String smsMod, String smsText) throws IOException {
 
-        String Uid = PropertiesUtil.readValue("sms.properties", "Uid");
-        String Key = PropertiesUtil.readValue("sms.properties", "Key");
+        String Uid = "李尚84393031";
+        String Key = "54523c8063c3a90b5a53";
 
         HttpClient client = new HttpClient();
         PostMethod post = new PostMethod("http://sms.webchinese.cn/web_api/");
@@ -71,8 +71,8 @@ public class SendSMS {
      * @throws IOException IO异常
      */
     private String sendVerificationCode(String smsMod, String VerificationCode) throws IOException {
-        String Code = PropertiesUtil.readValue("sms.properties", "VerificationCode");
-        Code = Code.replace("Code", Code);
+        String Code = "欢迎你使用青山学院的共享篮球系统，你这次的验证码为Code,请你尽快到指定的页面进行验证。";
+        Code = Code.replace("Code", VerificationCode);
         return send(smsMod, Code);
     }
 

@@ -89,7 +89,7 @@ public class UserControl {
 
             String password = req.getParameter("password");
             String phone = req.getParameter("phone");
-            String schoolID = req.getParameter("user");
+            String schoolID = req.getParameter("card");
             String code = req.getParameter("code");
 
             if (session.getAttribute("code").equals(code)){
@@ -101,7 +101,6 @@ public class UserControl {
                 user.setCreateTime(new Date());
                 user.setPhone(phone);
                 user.setSchoolID(schoolID);
-                user.setMoney(0);
                 user.setSchooleCard((SchoolCard) session.getAttribute("card"));
                 userDao.save(user);
                 logger.info("用户 " + schoolID + " 注册成功");
@@ -227,11 +226,20 @@ public class UserControl {
                 logger.info("用户 " + user + " 申请验证码 " + map.get("code") + " 成功");
             }
         } catch (Exception e) {
-            logger.error("请求url异常 " + req.getRequestURL());
+            logger.error("请求异常 " + req.getRequestURL());
             map.put("data", "2");
             return map;
         }
         return map;
     }
+
+    @RequestMapping(value = "" , method = RequestMethod.POST)
+    public @ResponseBody Map<String,String> recharge(){
+        Map<String, String> map = new HashMap<>();
+
+        return map;
+    }
+
+
 
 }

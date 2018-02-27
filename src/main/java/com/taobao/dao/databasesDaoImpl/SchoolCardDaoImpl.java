@@ -33,10 +33,15 @@ public class SchoolCardDaoImpl extends SupperBaseDAOImp<SchoolCard> {
      */
     public SchoolCard findCardByIDAndPassword(String cardId , String password){
 
+        if (cardId == null || password == null){
+            logger.error("输入参数为空，不进行查询");
+            return null;
+        }
+
         try {
             SchoolCard card = findByProperty("schoolID",cardId);
 
-            if (card.getPassword().equals(password)){
+            if (card!=null && card.getPassword().equals(password)){
                 return card;
             }
             logger.error("校园卡 " + cardId + " 验证密码失败 ");

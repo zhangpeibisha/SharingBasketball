@@ -116,7 +116,7 @@ public class UserControl {
      * @param req
      * @return
      */
-    @RequestMapping(value = "/isSchoolCard", method = RequestMethod.POST)
+    @RequestMapping(value = "/isSchoolCard", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> isSchoolCard(HttpServletRequest req,HttpSession session) {
         Map<String, String> map = new HashMap<>();
@@ -124,9 +124,7 @@ public class UserControl {
         try {
             String card = req.getParameter("user");
             String password = req.getParameter("password");
-
             SchoolCard card1 = schooleCardDao.findCardByIDAndPassword(card,password);
-
             if (card1!=null){
                 map.put("data","0");
                 session.setAttribute("card",card1);

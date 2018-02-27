@@ -17,17 +17,20 @@ public class Basketball {
 
     private String basketballID;
 
-    //是否损坏
+    //是否损坏 0 为正常  1损坏
     private int isBad;
 
-    //是否出租
+    //是否出租 0 为能够出租 1为不出租
     private int isRent;
 
     //篮球型号
     private String model;
 
-    //这个篮球正常使用的压力值
-    private int pressure;
+    //这个篮球正常使用的压力值  单位MPa
+    private double pressure;
+
+    //这个篮球实际的压力值 单位 MPa
+    private double nowPerssure;
 
     //上架时间
     private Date createTime;
@@ -80,11 +83,11 @@ public class Basketball {
     }
 
     @Column(name = "pressure", nullable = false, length = 10)
-    public int getPressure() {
+    public double getPressure() {
         return pressure;
     }
 
-    public void setPressure(int pressure) {
+    public void setPressure(double pressure) {
         this.pressure = pressure;
     }
 
@@ -116,9 +119,17 @@ public class Basketball {
         this.isRent = isRent;
     }
 
+    @Column(name = "nowPerssure" , length = 10)
+    public double getNowPerssure() {
+        return nowPerssure;
+    }
+
+    public void setNowPerssure(double nowPerssure) {
+        this.nowPerssure = nowPerssure;
+    }
 
     @ManyToOne(targetEntity = Rent.class)
-    @JoinColumn(name="rent")
+    @JoinColumn(name = "rent")
     public Rent getRent() {
         return rent;
     }
@@ -126,4 +137,6 @@ public class Basketball {
     public void setRent(Rent rent) {
         this.rent = rent;
     }
+
+
 }

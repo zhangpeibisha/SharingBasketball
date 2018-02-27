@@ -73,13 +73,13 @@
     
 4. 验证码接口（这个就是申请验证码的接口）
 
-* 描述：用户找回密码验证接口
-* 找回密码 URL：http://localhost:8080/sendSMSCode.do?user=用户名
-* 注册 URL： http://localhost:8080/sendSMSCode.do?phone=手机号码
+* 描述：用户注册以及忘记密码时候申请验证码的接口
+* URL： http://localhost:8080/sendSMSCode.do
 * HTTP请求方式： GET
 * 请求参数：
     {
-        phone：xxx(user:xxx)
+        phone：xxx,
+        user:xxx(此为注册特有)
     }
 * 参数说明：
     user:用户id，
@@ -87,29 +87,33 @@
     
 * 返回参数：
 {
-    data:0
+    hasRegister:0,
+    result:0
 }
 * 参数说明：
-    data：0为发送验证码失败，1为发送成功
+    hasRegister:0为已经注册，1为未注册,
+    result：0为发送验证码失败，1为发送成功
+* 注释：
+    注册时需要验证号码未被注册 ，忘记密码需要验证号码已经注册。
     
 5. 修改密码
 * 描述：用户找回密码验证接口
-* URL：http://localhost:8080/updatePassword.do?user="用户名"&password="新密码"
+* URL：http://localhost:8080/updatePassword.do
 *HTTP请求方式： POST
 * 请求参数：
     {
-        user:xxx,
+        phone:xxx,
         password:xxx
     }
 * 参数说明：
-    user:用户id
+    phone:手机号
     password:新密码
 * 返回参数：
 {
     data:0
 }
 * 参数说明：
-    data：0为修改成功，1为修改失败 , 2没有这个用户
+    data：0为修改成功，1为修改失败
     
     
 *权限存入到了session中 通过  httpSessionBindingEvent.getSession().setAttribute("permissions",permissions); 设置的
@@ -163,7 +167,7 @@
 {
    data:返回结果参数
    basketballs：当查询成功、并且数量不为0的时候有这个参数，这个参数代表可用篮球的一个数组
-}
+} 
 
 当前页数起始数据是 1
 
@@ -185,3 +189,4 @@
 }
 * 参数说明：
     data：0为租借成功，1为租借失败
+    

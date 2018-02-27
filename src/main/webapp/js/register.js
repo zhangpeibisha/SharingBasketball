@@ -74,7 +74,16 @@ $(document).ready(function () {
             },
             success: function (data) {
                 console.info(data);
-                alert("注册成功！");
+                if(data.data=="0"){
+                    alert("注册成功");
+                    $(location).attr('href', 'welcome.html');
+                }
+                else if(data.data=="1"){
+                    alert("error！");
+                }
+                else if(data.data=="2"){
+                    alert("验证码输入错误！");
+                }
             },
             dataType: "json"
         });

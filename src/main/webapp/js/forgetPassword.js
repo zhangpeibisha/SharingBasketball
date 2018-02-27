@@ -21,7 +21,8 @@ $(document).ready(function () {
 
     $("#sub").click(function () {
         alert("验证成功！");
-        $(location).attr('href','changePassword.html');
+        var user = $("#user").val();
+        $(location).attr('href','changePassword.html?user='+user);
     });
 
 });

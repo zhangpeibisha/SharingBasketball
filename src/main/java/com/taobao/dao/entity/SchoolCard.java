@@ -14,6 +14,8 @@ public class SchoolCard {
     private String id;
     private String schoolID;
     private String password;
+    private int money;
+
 
     //校园卡与用户一对一
     private User user;
@@ -47,6 +49,15 @@ public class SchoolCard {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Column(name = "money" , nullable = false , length = 10)
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
     }
 
     @OneToOne(mappedBy = "schooleCard", cascade = CascadeType.ALL)

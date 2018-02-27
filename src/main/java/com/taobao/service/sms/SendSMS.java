@@ -58,8 +58,7 @@ public class SendSMS {
         String result = new String(post.getResponseBodyAsString().getBytes("gbk"));
         System.out.println(result);
         post.releaseConnection();
-
-        return getResultCode(result);
+        return result;
     }
 
     /**
@@ -86,9 +85,14 @@ public class SendSMS {
     public Map<String, String> sendVerificationCode(String smsMod) throws IOException {
         Map<String, String> map = new HashMap<>();
         String code = getSix();
-        String result = sendVerificationCode(smsMod, code);
-        map.put("code", md5.encryption(code).toLowerCase());
-        map.put("result", getResultCode(result));
+        try {
+            String result = sendVerificationCode(smsMod, code);
+            map.put("code", md5.encryption(code));
+            map.put("result", result);
+        }catch (Exception e){
+            logger.error("发送发生错误 " + e);
+            e.printStackTrace();
+        }
         return map;
     }
 
@@ -109,6 +113,7 @@ public class SendSMS {
     }
 
     private String getResultCode(String code) {
+        System.out.println("code " + code);
         return code.substring(code.lastIndexOf("GMT"));
     }
 

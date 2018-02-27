@@ -195,22 +195,20 @@ public class UserControl {
     public @ResponseBody
     Map<String, String> sendSMSCode(HttpServletRequest req , HttpSession session) {
         Map<String, String> map = new HashMap<>();
-
+        Map<String,String> result;
         try {
-
             String regsterPhone = req.getParameter("phone");
             //为了注册的时候使用
             if (regsterPhone!=null){
-                map = sendSMS.sendVerificationCode(regsterPhone);
+                result = sendSMS.sendVerificationCode(regsterPhone);
                 map.put("data","0");
-                logger.info("手机号码为 " + regsterPhone + " 的用户申请的验证码为 " + map.get("code"));
+                logger.info("手机号码为 " + regsterPhone + " 的用户申请的验证码为 " + result.get("code"));
 
                 //将验证码放入session中
-                session.setAttribute("code" , map.get("code"));
+                session.setAttribute("code" , result.get("code"));
                 return map;
             }else{
                 //为了注册后使用验证码
-
                 String user = req.getParameter("user");
                 //查找这个用户得到手机号码
                 User haveUser = userDao.findUserBySchoolID(user);
@@ -221,12 +219,13 @@ public class UserControl {
                 }
                 String phone = haveUser.getPhone();
                 //发送手机号码
-                map = sendSMS.sendVerificationCode(phone);
+                result = sendSMS.sendVerificationCode(phone);
                 map.put("data", "0");
-                logger.info("用户 " + user + " 申请验证码 " + map.get("code") + " 成功");
+                logger.info("用户 " + user + " 申请验证码 " + result.get("code") + " 成功");
             }
         } catch (Exception e) {
-            logger.error("请求异常 " + req.getRequestURL());
+            logger.error("请求异常 " + req.getRequestURL() + " " + e);
+            e.printStackTrace();
             map.put("data", "2");
             return map;
         }

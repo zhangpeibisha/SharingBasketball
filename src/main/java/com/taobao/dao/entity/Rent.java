@@ -19,7 +19,7 @@ import java.util.Set;
 public class Rent {
 
 
-    private String rentID;
+    private int rentID;
 
     //押金
     private int deposit;
@@ -39,13 +39,13 @@ public class Rent {
 
     @Id
     @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="tableGenerator")
-    @TableGenerator(name="tableGenerator",allocationSize=1)
-    public String getRentID() {
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "identity")
+    public int getRentID() {
         return rentID;
     }
 
-    public void setRentID(String rentID) {
+    public void setRentID(int rentID) {
         this.rentID = rentID;
     }
 

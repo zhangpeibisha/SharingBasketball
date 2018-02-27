@@ -15,7 +15,7 @@ import java.util.Date;
 public class Order {
 
 
-    private String orderID;
+    private int orderID;
 
     //借出时间就是订单创建时间
     private Date lendTime;
@@ -37,13 +37,13 @@ public class Order {
 
     @Id
     @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="tableGenerator")
-    @TableGenerator(name="tableGenerator",allocationSize=1)
-    public String getOrderID() {
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "identity")
+    public int getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(String orderID) {
+    public void setOrderID(int orderID) {
         this.orderID = orderID;
     }
 

@@ -17,7 +17,7 @@ import java.util.Set;
 public class Permissions {
 
 
-    private String permissionsID;
+    private int permissionsID;
 
     //权限url
     private String url;
@@ -34,13 +34,13 @@ public class Permissions {
 
     @Id
     @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="tableGenerator")
-    @TableGenerator(name="tableGenerator",allocationSize=1)
-    public String getPermissionsID() {
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "identity")
+    public int getPermissionsID() {
         return permissionsID;
     }
 
-    public void setPermissionsID(String permissionsID) {
+    public void setPermissionsID(int permissionsID) {
         this.permissionsID = permissionsID;
     }
 

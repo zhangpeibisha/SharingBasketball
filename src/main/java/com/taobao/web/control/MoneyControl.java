@@ -26,11 +26,10 @@ public class MoneyControl {
     @Autowired
     MD5 md5;
 
-    @RequestMapping(name = "/testAddEntity" , method = RequestMethod.GET)
+    @RequestMapping(value = "/testAddEntity" , method = RequestMethod.GET)
     public @ResponseBody Map<String,String> testAddEntity() {
 
         Map<String,String> map = new HashMap<>();
-
         SchoolCard schoolCard = new SchoolCard();
         schoolCard.setMoney(10);
         schoolCard.setPassword(md5.encryption("123456"));

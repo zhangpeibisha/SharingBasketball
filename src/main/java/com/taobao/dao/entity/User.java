@@ -28,7 +28,7 @@ public class User implements HttpSessionBindingListener {
     @Autowired
     private UserDaoImpl userDao;
 
-    private String userID;
+    private int userID;
 
     //校园卡ID  青山学院校园卡id为 12位
     private String schoolID;
@@ -58,13 +58,13 @@ public class User implements HttpSessionBindingListener {
 
     @Id
     @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="tableGenerator")
-    @TableGenerator(name="tableGenerator",allocationSize=1)
-    public String getUserID() {
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "identity")
+    public int getUserID() {
         return userID;
     }
 
-    public void setUserID(String userID) {
+    public void setUserID(int userID) {
         this.userID = userID;
     }
 

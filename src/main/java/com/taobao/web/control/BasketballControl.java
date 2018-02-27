@@ -33,7 +33,7 @@ public class BasketballControl {
      *
      * @return 返回可用篮球列表数据
      */
-    @RequestMapping(name = "/rentList", method = RequestMethod.GET)
+    @RequestMapping(value = "/rentList", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, Object> rentList() {
         Map<String, Object> map = new HashMap<>();

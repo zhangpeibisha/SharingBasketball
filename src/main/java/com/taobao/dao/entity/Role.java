@@ -17,7 +17,7 @@ import java.util.Set;
 @Table(name = "role")
 public class Role {
 
-    private String roleID;
+    private int roleID;
 
     //角色名字
     private String name;
@@ -37,13 +37,13 @@ public class Role {
 
     @Id
     @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="tableGenerator")
-    @TableGenerator(name="tableGenerator",allocationSize=1)
-    public String getRoleID() {
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "identity")
+    public int getRoleID() {
         return roleID;
     }
 
-    public void setRoleID(String roleID) {
+    public void setRoleID(int roleID) {
         this.roleID = roleID;
     }
 

@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Table(name = "SchooleCard")
 public class SchoolCard {
 
-    private String id;
+    private int id;
     private String schoolID;
     private String password;
     private int money;
@@ -23,13 +23,13 @@ public class SchoolCard {
 
     @Id
     @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="tableGenerator")
-    @TableGenerator(name="tableGenerator",allocationSize=1)
-    public String getId() {
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "identity")
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

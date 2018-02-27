@@ -15,7 +15,7 @@ import java.util.Date;
 public class Basketball {
 
 
-    private String basketballID;
+    private int basketballID;
 
     //是否损坏 0 为正常  1损坏
     private int isBad;
@@ -45,13 +45,13 @@ public class Basketball {
 
     @Id
     @Column(name = "id", unique = true, length = 32, nullable = false)
-    @GeneratedValue(strategy=GenerationType.TABLE,generator="tableGenerator")
-    @TableGenerator(name="tableGenerator",allocationSize=1)
-    public String getBasketballID() {
+    @GeneratedValue(generator = "generator")
+    @GenericGenerator(name = "generator", strategy = "identity")
+    public int getBasketballID() {
         return basketballID;
     }
 
-    public void setBasketballID(String basketballID) {
+    public void setBasketballID(int basketballID) {
         this.basketballID = basketballID;
     }
 

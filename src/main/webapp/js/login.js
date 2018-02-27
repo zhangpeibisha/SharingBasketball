@@ -12,7 +12,8 @@ $(document).ready(function(){
         }
 
         password= hex_md5(password);
-
+        console.info(name);
+        console.info(password);
         $.ajax({
             type: 'GET',
             url: loginUrl,
@@ -22,7 +23,15 @@ $(document).ready(function(){
             },
             success: function (data) {
                 console.info(data);
-                $(location).attr('href', 'welcome.html');
+                if(data.data=="0"){
+                     $(location).attr('href', 'welcome.html');
+                }
+                else if(data.data=="1"){
+                    alert("当前用户不存在！");
+                }
+                else if(data.data=="2"){
+                    alert("用户名或密码不正确！");
+                }
             },
             dataType: "json"
         });

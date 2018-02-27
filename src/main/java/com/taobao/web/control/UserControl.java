@@ -90,22 +90,28 @@ public class UserControl {
             String password = req.getParameter("password");
             String phone = req.getParameter("phone");
             String schoolID = req.getParameter("user");
+            String code = req.getParameter("code");
 
-            //生成用户信息
-            User user = new User();
-            //使用加密码
-            user.setPassword(password);
-            user.setRole(roleDao.findRoleByName("ceshi001"));
-            user.setCreateTime(new Date());
-            user.setPhone(phone);
-            user.setSchoolID(schoolID);
-            user.setMoney(0);
-            user.setSchooleCard((SchoolCard) session.getAttribute("card"));
-            userDao.save(user);
-            logger.info("用户 " + schoolID + " 注册成功");
-            map.put("data", "0");
+            if (session.getAttribute("code").equals(code)){
+                //生成用户信息
+                User user = new User();
+                //使用加密码
+                user.setPassword(password);
+                user.setRole(roleDao.findRoleByName("ceshi001"));
+                user.setCreateTime(new Date());
+                user.setPhone(phone);
+                user.setSchoolID(schoolID);
+                user.setMoney(0);
+                user.setSchooleCard((SchoolCard) session.getAttribute("card"));
+                userDao.save(user);
+                logger.info("用户 " + schoolID + " 注册成功");
+                map.put("data", "0");
+            }else {
+                logger.error("用户验证码输入错误 " + schoolID);
+                map.put("data", "2");
+            }
         } catch (Exception e) {
-            logger.error("用户注册失败 " + e);
+            logger.error("用户注册异常 " + e);
             map.put("data", "1");
         }
         return map;
@@ -188,7 +194,7 @@ public class UserControl {
      */
     @RequestMapping(value = "/sendSMSCode", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> sendSMSCode(HttpServletRequest req) {
+    Map<String, String> sendSMSCode(HttpServletRequest req , HttpSession session) {
         Map<String, String> map = new HashMap<>();
 
         try {
@@ -199,6 +205,9 @@ public class UserControl {
                 map = sendSMS.sendVerificationCode(regsterPhone);
                 map.put("data","0");
                 logger.info("手机号码为 " + regsterPhone + " 的用户申请的验证码为 " + map.get("code"));
+
+                //将验证码放入session中
+                session.setAttribute("code" , map.get("code"));
                 return map;
             }else{
                 //为了注册后使用验证码

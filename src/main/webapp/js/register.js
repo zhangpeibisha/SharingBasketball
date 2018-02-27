@@ -20,7 +20,7 @@ $(document).ready(function () {
             return;
         }
         if(pass.length>18){
-            alert("密码之多18位数");
+            alert("密码至多18位数");
             return;
         }
         if(pass!=pass1){

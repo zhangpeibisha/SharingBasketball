@@ -39,10 +39,12 @@ $(document).ready(function () {
                 },
                 success: function (data) {
                     if(data.data=="0"){
+                        alert("验证成功！");
                         $("#getCode").removeAttr("disabled");
                         $("#user").attr("disabled","true");
                         $("#password").attr("disabled","true");
                         $("#password1").attr("disabled","true");
+                        $("#valid").attr("disabled","true");
                     }
                     else if(data.data=="1")
                         alert("校园卡不存在或密码错误！");
@@ -60,7 +62,7 @@ $(document).ready(function () {
         var phone = $("#telphone").val();
         var code = $("#code").val();
         pass= hex_md5(pass);
-
+        code= hex_md5(code);
         $.ajax({
             type: 'POST',
             url: registerUrl,

@@ -1,7 +1,9 @@
 package com.taobao.web.control;
 
+import com.taobao.dao.databasesDaoImpl.BasketballDaoImpl;
 import com.taobao.dao.databasesDaoImpl.SchoolCardDaoImpl;
 import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
+import com.taobao.dao.entity.Basketball;
 import com.taobao.dao.entity.SchoolCard;
 import com.taobao.dao.entity.User;
 import com.taobao.utils.sign.MD5;
@@ -28,6 +30,9 @@ public class TestControl {
 
     @Autowired
     private UserDaoImpl userDao;
+
+    @Autowired
+    private BasketballDaoImpl basketballDao;
 
     @Autowired
     MD5 md5;
@@ -67,6 +72,32 @@ public class TestControl {
         userDao.save(user);
 
         map.put("data","添加成功");
+        return map;
+    }
+
+    @RequestMapping(value = "/testAddBasketball" , method = RequestMethod.GET)
+    public @ResponseBody Map<String,String> testAddBasketball() {
+
+        Map<String,String> map = new HashMap<>();
+
+        for (int i = 0; i <50 ; i++) {
+            Basketball basketball = new Basketball();
+            basketball.setIsBad(i%2);
+            basketball.setCreateTime(new Date());
+            if (i%2 == 0){
+                basketball.setModel("A型");
+            }else {
+                basketball.setModel("B型");
+            }
+            basketball.setIsRent(i%2);
+            basketball.setPressure(0.06);
+            basketball.setNowPerssure((Math.random()*10)*0.01);
+            basketballDao.save(basketball);
+        }
+
+
+        map.put("data","添加成功");
+
         return map;
     }
 

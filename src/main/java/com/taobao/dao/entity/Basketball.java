@@ -51,54 +51,35 @@ public class Basketball {
         return basketballID;
     }
 
-    public void setBasketballID(int basketballID) {
-        this.basketballID = basketballID;
-    }
 
     @Column(name = "isBad", nullable = false)
     public int getIsBad() {
         return isBad;
     }
 
-    public void setBad(int bad) {
-        isBad = bad;
-    }
 
     @Column(name = "isRent", nullable = false)
     public int getIsRent() {
         return isRent;
     }
 
-    public void setRent(int rent) {
-        isRent = rent;
-    }
 
     @Column(name = "model", nullable = false, length = 10)
     public String getModel() {
         return model;
     }
 
-    public void setModel(String model) {
-        this.model = model;
-    }
 
     @Column(name = "pressure", nullable = false, length = 10)
     public double getPressure() {
         return pressure;
     }
 
-    public void setPressure(double pressure) {
-        this.pressure = pressure;
-    }
 
     @Column(name = "createTime", length = 19, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     public Date getCreateTime() {
         return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
     }
 
 
@@ -107,8 +88,22 @@ public class Basketball {
         return order;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+
+    @Column(name = "nowPerssure", length = 10)
+    public double getNowPerssure() {
+        return nowPerssure;
+    }
+
+
+    @ManyToOne(targetEntity = Rent.class)
+    @JoinColumn(name = "rent")
+    public Rent getRent() {
+        return rent;
+    }
+
+
+    public void setBasketballID(int basketballID) {
+        this.basketballID = basketballID;
     }
 
     public void setIsBad(int isBad) {
@@ -119,24 +114,27 @@ public class Basketball {
         this.isRent = isRent;
     }
 
-    @Column(name = "nowPerssure", length = 10)
-    public double getNowPerssure() {
-        return nowPerssure;
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public void setPressure(double pressure) {
+        this.pressure = pressure;
     }
 
     public void setNowPerssure(double nowPerssure) {
         this.nowPerssure = nowPerssure;
     }
 
-    @ManyToOne(targetEntity = Rent.class)
-    @JoinColumn(name = "rent")
-    public Rent getRent() {
-        return rent;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public void setRent(Rent rent) {
         this.rent = rent;
     }
 
-
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

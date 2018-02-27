@@ -38,23 +38,14 @@ public class BasketballControl {
     Map<String, Object> rentList() {
         Map<String, Object> map = new HashMap<>();
         try {
-            String sql = "select * from basketball where isBad=? and isRent=?";
+            String sql = "select * from basketball where isBad=? and isRent=? and basketball.nowPerssure>=basketball.pressure";
             List<Basketball> basketballs = basketballDao.findBySql(sql, 0, 0);
             if (basketballs.size() != 0) {
-                //删除压力值不合格的篮球
-                for (Basketball basketball : basketballs) {
-                    if (basketball.getNowPerssure() < basketball.getPressure()) {
-                        basketballs.remove(basketball);
-                    }
-                }
-                if (basketballs.size() != 0) {
-                    map.put("basketballs", basketballs);
-                    map.put("data", "0");
-                    logger.info("申请获取能够使用的篮球列表成功 数量为： " + basketballs);
-                } else {
-                    map.put("data", "1");
-                    logger.info("申请获取能够使用的篮球列表失败，没有可出租的篮球了 ");
-                }
+
+                map.put("basketballs", basketballs);
+                map.put("data", "0");
+                logger.info("申请获取能够使用的篮球列表成功： " + basketballs);
+
             } else {
                 map.put("data", "1");
                 logger.info("申请获取能够使用的篮球列表失败，没有可出租的篮球了 ");

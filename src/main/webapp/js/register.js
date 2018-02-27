@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var userUrl = "http://localhost:8080/schoolCard.do";
+    var userUrl = "http://localhost:8080/isSchoolCard.do";
     var registerUrl = "http://localhost:8080/register.do";
 
     $("#login").click(function () {
@@ -14,12 +14,23 @@ $(document).ready(function () {
             alert("输入不能为空");
             return;
         }
+        if(pass.length<6){
+            alert("密码至少6位数");
+            return;
+        }
+        if(pass.length>18){
+            alert("密码之多18位数");
+            return;
+        }
+
         if(pass!=pass1){
             alert("两次输入的密码不一致！");
             $("#password1").val("");
+            return;
         }
         else{
             pass= hex_md5(pass);
+            alert("in");
             $.ajax({
                 type: 'POST',
                 url: userUrl,

@@ -1,6 +1,7 @@
 $(document).ready(function () {
     var userUrl = "http://localhost:8080/isSchoolCard.do";
     var registerUrl = "http://localhost:8080/register.do";
+    var codeUrl = "http://localhost:8080/sendSMSCode.do";
 
     $("#login").click(function () {
         $(location).attr('href', 'login.html');
@@ -28,11 +29,7 @@ $(document).ready(function () {
             return;
         }
         else{
-            alert("in");
-            console.info(name);
             pass= hex_md5(pass);
-            console.info(pass);
-            alert("url " + userUrl + " name " + name + " password " + pass)
             $.ajax({
                 type: 'GET',
                 url: userUrl,
@@ -41,49 +38,63 @@ $(document).ready(function () {
                     password:pass
                 },
                 success: function (data) {
-                    console.info(data);
-                    $("#getCode").removeAttr("disabled");
-                    $("#register").removeAttr("disabled");
+                    if(data.data=="0"){
+                        $("#getCode").removeAttr("disabled");
+                        $("#user").attr("disabled","true");
+                        $("#password").attr("disabled","true");
+                        $("#password1").attr("disabled","true");
+                    }
+                    else if(data.data=="1")
+                        alert("校园卡不存在或密码错误！");
+                    else if(data.data=="2")
+                        alert("error!");
                 },
                 dataType: "json"
             });
         }
     });
 
-
     $("#register").click(function () {
-
         var name = $("#user").val();
         var pass = $("#password").val();
-        var pass1 = $("#password1").val();
-        if (name == null || pass == null || pass1 == null || name == "" || pass == "" || pass1 == "" ) {
-            alert("输入不能为空");
-            return;
-        }
-        if(pass!=pass1){
-            alert("两次输入的密码不一致！");
-            $("#password1").val("");
-        }
-        else{
-            pass= hex_md5(pass);
-            $.ajax({
-                type: 'POST',
-                url: registerUrl,
-                data: {
-                    card:name,
-                    password:pass
-                },
-                success: function (data) {
-                    console.info(data);
-                    alert("登陆成功！");
-                },
-                dataType: "json"
-            });
-        }
+        var phone = $("#telphone").val();
+        var code = $("#code").val();
+        pass= hex_md5(pass);
+
+        $.ajax({
+            type: 'POST',
+            url: registerUrl,
+            data: {
+                card:name,
+                password:pass,
+                phone:phone,
+                code:code
+            },
+            success: function (data) {
+                console.info(data);
+                alert("注册成功！");
+            },
+            dataType: "json"
+        });
     });
 
     $("#getCode").click(function () {
-        alert("已发送验证码");
+
+        var phone = $("#telphone").val();
+
+        //验证码
+        $.ajax({
+            type: 'GET',
+            url: codeUrl,
+            data: {
+                phone:phone
+            },
+            success: function (data) {
+                console.info(data);
+            },
+            dataType: "json"
+        });
+        $("#register").removeAttr("disabled");
         $("#getCode").attr("disabled","true");
         var s=59;
         var start = setInterval(function(){

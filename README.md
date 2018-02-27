@@ -26,20 +26,20 @@
 
 2. 用户注册
 * 描述：用户注册接口，使用md5加密方法
-* URL：http://localhost:8080/register.do?user=用户名字&password=用户加密后的密码&phone=手机号码
+* URL：http://localhost:8080/register.do?
 * HTTP请求方式： POST
 * 请求参数：
     {
         user:xxx,
         password:xxx,
-        phone:用户手机号码，
-        role:用户注册的角色名字
+        phone:用户手机号码,
+        code:验证码
     }
 * 参数说明：
     user:用户名
     password：密码
     phone:用户手机号码
-    role:用户注册的角色名字
+    code:验证码
 * 返回参数：
 {
     data:0
@@ -74,30 +74,23 @@
 4. 验证码接口（这个就是申请验证码的接口）
 
 * 描述：用户找回密码验证接口
-* 已经注册了的用户的 URL：http://localhost:8080/sendSMSCode.do?user=用户名
-* 注册的时候通过手机号码申请的 URL： http://localhost:8080/sendSMSCode.do?phone=手机号码
+* 找回密码 URL：http://localhost:8080/sendSMSCode.do?user=用户名
+* 注册 URL： http://localhost:8080/sendSMSCode.do?phone=手机号码
 * HTTP请求方式： GET
 * 请求参数：
     {
-        user：xxx,
+        phone：xxx(user:xxx)
     }
 * 参数说明：
-    user:用户id
+    user:用户id，
+    phone：手机号
     
-* 返回参数：发送成功有的参数
+* 返回参数：
 {
     data:0
-    code：加密后的验证码
-    result：发送成功后的返回结果
-}
-*发送失败的返回参数：
-{
-   data:1
 }
 * 参数说明：
-    data：0为发送找回成功，1为发送找回失败 , 2未找到这个用户
-    
-    
+    data：0为发送验证码失败，1为发送成功
     
 5. 修改密码
 * 描述：用户找回密码验证接口

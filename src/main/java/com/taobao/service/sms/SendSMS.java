@@ -70,7 +70,7 @@ public class SendSMS {
      * @throws IOException IO异常
      */
     private String sendVerificationCode(String smsMod, String VerificationCode) throws IOException {
-        String Code = "欢迎你使用青山学院的共享篮球系统，你这次的验证码为Code,请你尽快到指定的页面进行验证。";
+        String Code = "你的随机密码是Code.安全提示：切勿向他人泄露，以防止上当受骗，如有疑问，请咨询管理人员";
         Code = Code.replace("Code", VerificationCode);
         return send(smsMod, Code);
     }

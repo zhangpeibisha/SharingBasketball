@@ -2,11 +2,9 @@ package com.taobao.web.control;
 
 import com.taobao.dao.databasesDaoImpl.BasketballDaoImpl;
 import com.taobao.dao.entity.Basketball;
-import com.taobao.utils.format.ChangeFormat;
 import com.taobao.utils.format.Validator;
-import com.taobao.web.control.untils.ControlError;
+import com.taobao.web.control.untils.ControlResult;
 import org.apache.log4j.Logger;
-import org.hibernate.ScrollableResults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,7 +31,7 @@ public class BasketballControl {
     private BasketballDaoImpl basketballDao;
 
     @Autowired
-    private ControlError controlError;
+    private ControlResult controlResult;
     /**
      * 返回可以租借、并且完好的篮球列表
      *
@@ -49,9 +46,8 @@ public class BasketballControl {
             String currentPage = req.getParameter("currentPage");
             String limit = req.getParameter("limit");
 
-            if (controlError.isNull(currentPage,limit)){
-                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                return controlError.nullParameter(map);
+            if (controlResult.isNull(currentPage,limit)){
+                return controlResult.nullParameter(map,logger);
             }
 
             if (!Validator.isNumber(currentPage)&&!Validator.isNumber(limit)){
@@ -78,9 +74,7 @@ public class BasketballControl {
                 logger.info("申请获取能够使用的篮球列表失败，没有可出租的篮球了 ");
             }
         } catch (Exception e) {
-            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
-            e.printStackTrace();
-            return controlError.requestError(map);
+            return controlResult.requestError(map,logger,e);
         }
 
         return map;

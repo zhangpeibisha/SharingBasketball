@@ -1,14 +1,14 @@
 package com.taobao.web.control;
 
-import com.taobao.dao.databasesDaoImpl.RoleDaoImpl;
-import com.taobao.dao.databasesDaoImpl.SchoolCardDaoImpl;
-import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
+import com.taobao.dao.databasesDaoImpl.*;
+import com.taobao.dao.entity.Basketball;
+import com.taobao.dao.entity.Order;
 import com.taobao.dao.entity.SchoolCard;
 import com.taobao.dao.entity.User;
 import com.taobao.service.sms.SendSMS;
 import com.taobao.utils.format.Validator;
 import com.taobao.utils.sign.MD5;
-import com.taobao.web.control.untils.ControlError;
+import com.taobao.web.control.untils.ControlResult;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,7 +46,13 @@ public class UserControl {
     private MD5 md5;
 
     @Autowired
-    private ControlError controlError;
+    private ControlResult controlResult;
+
+    @Autowired
+    private BasketballDaoImpl basketballDao;
+
+    @Autowired
+    private OrderDaoImpl orderDao;
 
     /**
      * 登陆采用Get方法
@@ -62,9 +68,8 @@ public class UserControl {
             String user = req.getParameter("user");
             String password = req.getParameter("password");
 
-            if (controlError.isNull(user, password)) {
-                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                return controlError.nullParameter(map);
+            if (controlResult.isNull(user, password)) {
+                return controlResult.nullParameter(map, logger);
             }
 
             Map<String, Object> result = userDao.findUserBySchoolIDOrPhone(user, password);
@@ -72,14 +77,13 @@ public class UserControl {
             map.put("data", result.get("result"));
             //登陆成功时，session记录用户信息
             if (result.get("result").equals("0")) {
-                logger.info("用户 " + user + " 登陆成功");
+                map = controlResult.successfulContrl(map, user + "用户登陆成功", logger);
                 session.setAttribute("user", result.get("user"));
             }
 
         } catch (Exception e) {
-            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            return controlError.requestError(map);
+            return controlResult.requestError(map, logger, e);
         }
         return map;
     }
@@ -104,25 +108,23 @@ public class UserControl {
             String schoolID = req.getParameter("card");
             String code = req.getParameter("code");
 
-            if (controlError.isNull(phone, password, schoolID, code)) {
-                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                return controlError.nullParameter(map);
+            if (controlResult.isNull(phone, password, schoolID, code)) {
+                return controlResult.nullParameter(map, logger);
+            }
+
+            if (!Validator.isNumber(schoolID) || !Validator.isNumber(code)) {
+                return controlResult.parameterFormatError(map, schoolID + "或者" + code + "不是指定数据格式", logger);
+            }
+
+            if (!Validator.isMobile(phone)) {
+                return controlResult.parameterFormatError(map, phone + " 不是一个手机号码", logger);
             }
 
 
             if (schoolID.length() != 12) {
-                map.put("data", "-21");
-                map.put("message", schoolID + " 不是校园卡号");
-                logger.error(schoolID + "请求参数不是校园卡号 ");
-                return map;
+                return controlResult.parameterFormatError(map, schoolID + " 这个不是校园卡", logger);
             }
 
-            if (!Validator.isMobile(phone)) {
-                map.put("data", "-2");
-                map.put("message", "请求参数不是手机号码");
-                logger.error(phone + "请求参数不是手机号码 ");
-                return map;
-            }
 
             if (session.getAttribute(phone).equals(code)) {
                 //移除验证码
@@ -131,28 +133,22 @@ public class UserControl {
                 User user = new User();
                 //使用加密码
                 user.setPassword(password);
-                user.setRole(roleDao.findRoleByName("ceshi001"));
                 user.setCreateTime(new Date());
                 user.setPhone(phone);
                 user.setSchoolID(schoolID);
                 user.setSchooleCard((SchoolCard) session.getAttribute("card"));
                 user.setRole(roleDao.findRoleByName("普通用户"));
                 userDao.save(user);
-                logger.info("用户 " + schoolID + " 注册成功");
-                map.put("data", "0");
-                map.put("message", "用户 " + user.getSchoolID() + " 注册成功");
-                logger.info("用户 " + user.getSchoolID() + " 注册成功");
+
+                map = controlResult.successfulContrl(map, schoolID + "用户注册成功", logger);
                 //移除之前使用的用户的校园卡信息
                 session.removeAttribute("card");
             } else {
-                logger.error("用户验证码输入错误 " + schoolID);
-                map.put("data", "2");
-                map.put("message", "验证码输入错误");
+                return controlResult.verificationFail(map, "用户验证码输入错误", logger);
             }
         } catch (Exception e) {
-            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            return controlError.requestError(map);
+            return controlResult.requestError(map, logger, e);
         }
         return map;
     }
@@ -172,28 +168,26 @@ public class UserControl {
             String card = req.getParameter("user");
             String password = req.getParameter("password");
 
-            if (controlError.isNull(card, password)) {
-                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                return controlError.nullParameter(map);
+            if (controlResult.isNull(card, password)) {
+                return controlResult.nullParameter(map, logger);
+            }
+
+            if (card.length() != 12 || Validator.isNumber(card)) {
+                return controlResult.parameterFormatError(map, card + " 这个不是校园卡", logger);
             }
 
             SchoolCard card1 = schooleCardDao.findCardByIDAndPassword(card, password);
             if (card1 != null) {
-                map.put("data", "0");
-                map.put("message", "校园卡验证成功");
+                map = controlResult.successfulContrl(map, card + "校园卡验证成功", logger);
+                //添加校园卡到session中，为了注册验证使用
                 session.setAttribute("card", card1);
-                logger.info("校园卡号用户 " + card1 + " 验证校园卡成功");
                 return map;
             }
-            map.put("data", "1");
-            map.put("message", "找不到这个校园卡号");
-            logger.info("校园卡号用户验证校园卡失败");
+            return controlResult.inquireFail(map, "校园卡不存在", logger);
         } catch (Exception e) {
-            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            return controlError.requestError(map);
+            return controlResult.requestError(map, logger, e);
         }
-        return map;
     }
 
 
@@ -216,18 +210,12 @@ public class UserControl {
             if (regsterPhone != null) {
 
                 if (!Validator.isMobile(regsterPhone)) {
-                    map.put("data", "-2");
-                    map.put("message", "请求参数不是手机号码");
-                    logger.error("请求参数不是手机号码 ");
-                    return map;
+                    return controlResult.parameterFormatError(map, regsterPhone + " 这个不是手机卡号", logger);
                 }
 
                 result = sendSMS.sendVerificationCode(regsterPhone);
-                map.put("data", "0");
-                map.put("message", "发送信息成功");
+                map = controlResult.successfulContrl(map, "手机号码为 " + regsterPhone + " 的用户申请的验证码为 " + result.get("code"), logger);
                 map.put("smsResult", result);
-                logger.info("手机号码为 " + regsterPhone + " 的用户申请的验证码为 " + result.get("code"));
-
                 //将验证码放入session中
                 session.setAttribute(regsterPhone, result.get("code"));
                 return map;
@@ -235,35 +223,32 @@ public class UserControl {
                 //为了注册后使用验证码
                 String user = req.getParameter("user");
 
-                if (controlError.isNull(user)) {
-                    logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                    return controlError.nullParameter(map);
+                if (controlResult.isNull(user)) {
+                    return controlResult.nullParameter(map, logger);
+                }
+
+                if (user.length() != 12) {
+                    return controlResult.parameterFormatError(map, user + " 这个不是校园卡", logger);
                 }
 
                 //查找这个用户得到手机号码
                 User haveUser = userDao.findUserBySchoolID(user);
-                if (controlError.isNull(haveUser)) {
-                    map.put("data", "2");
-                    map.put("message", "用户不存在");
-                    logger.error("用户 " + user + "不存在，发送信息失败");
-                    return map;
+                if (controlResult.isNull(haveUser)) {
+                    return controlResult.inquireFail(map, "用户不存在，不能申请验证码", logger);
                 }
                 String phone = haveUser.getPhone();
                 //发送手机号码
                 result = sendSMS.sendVerificationCode(phone);
-                map.put("data", "0");
-                map.put("message", "申请验证码成功");
+                map = controlResult.successfulContrl(map, phone + "申请验证码成功", logger);
                 map.put("smsResult", result);
 
                 //将验证码存入session中
                 session.setAttribute(phone, result.get("code"));
 
-                logger.info("用户 " + user + " 申请验证码 " + result.get("code") + " 成功");
             }
         } catch (Exception e) {
-            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            return controlError.requestError(map);
+            return controlResult.requestError(map, logger, e);
         }
         return map;
     }
@@ -282,37 +267,29 @@ public class UserControl {
         try {
             String phone = req.getParameter("phone");
 
-            if (controlError.isNull(phone)) {
-                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                return controlError.nullParameter(map);
+            if (controlResult.isNull(phone)) {
+                return controlResult.nullParameter(map, logger);
             }
 
             if (!Validator.isMobile(phone)) {
-                map.put("data", "-2");
-                map.put("message", "这个数据不是手机号码");
-                logger.error("这个数据不是手机号码 " + phone);
-                return map;
+                return controlResult.parameterFormatError(map, phone + " 这个不是手机卡号", logger);
             }
             User user = userDao.findUserByPhone(phone);
-            if (controlError.isNull(user)) {
-                logger.error("这个手机号未注册 " + req.getPathInfo());
-                map.put("data", "1");
-                return map;
+            if (controlResult.isNull(user)) {
+                return controlResult.inquireFail(map, "这个手机号未注册，不能找回密码", logger);
             }
 
             //获取发送信息过后的反馈信息,遍历map传入返回map中
             Map<String, String> resutl = sendSMS.sendVerificationCode(phone);
-            map.put("data", "0");
-            map.put("message", "发送信息成功");
+            map = controlResult.successfulContrl(map, phone + "发送修改密码验证码成功", logger);
             map.put("smsResult", resutl);
             //将验证码存入session中
             session.setAttribute(phone, resutl.get("code"));
             logger.info("发送给用户 " + user.getSchoolID() + " 信息成功");
 
         } catch (Exception e) {
-            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            return controlError.requestError(map);
+            return controlResult.requestError(map, logger, e);
         }
         return map;
     }
@@ -322,7 +299,7 @@ public class UserControl {
      *
      * @return
      */
-    @RequestMapping(value = "/submitVerification", method = RequestMethod.GET)
+    @RequestMapping(value = "/submitVerification", method = RequestMethod.POST)
     public @ResponseBody
     Map<String, Object> submitVerification(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
@@ -331,26 +308,30 @@ public class UserControl {
             String phone = req.getParameter("phone");
             String code = req.getParameter("code");
 
-            if (controlError.isNull(phone, code)) {
-                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                return controlError.nullParameter(map);
+            if (controlResult.isNull(phone, code)) {
+                return controlResult.nullParameter(map, logger);
             }
+
+            if (!Validator.isMobile(phone)) {
+                return controlResult.parameterFormatError(map, phone + " 这个不是手机卡号", logger);
+            }
+
+            if (!Validator.isNumber(code) || code.length() != 6) {
+                return controlResult.parameterFormatError(map, code + " 这个不是验证码", logger);
+            }
+
             if (session.getAttribute(phone).equals(md5.encryption(code))) {
-                map.put("data", "0");
-                map.put("message", "验证码验证成功");
+                map = controlResult.successfulContrl(map, phone + "验证码验证成功", logger);
 
                 //通过验证key=手机号 value=手机号 来控制用户是否能够访问更新密码
                 session.setAttribute(phone, phone);
-                logger.info("手机号为 " + phone + " 的用户修改密码的验证码验证成功");
+
             } else {
-                map.put("data", "1");
-                map.put("message", "验证码验证失败");
-                logger.info("手机号为 " + phone + " 的用户修改密码的验证码验证失败，输入与验证码不同");
+                return controlResult.verificationFail(map, "用户验证码输入错误", logger);
             }
         } catch (Exception e) {
-            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            return controlError.requestError(map);
+            return controlResult.requestError(map, logger, e);
         }
 
         return map;
@@ -364,7 +345,7 @@ public class UserControl {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/updatePasswordRun", method = RequestMethod.GET)
+    @RequestMapping(value = "/updatePasswordRun", method = RequestMethod.POST)
     public @ResponseBody
     Map<String, Object> updatePasswordRun(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
@@ -373,9 +354,8 @@ public class UserControl {
             String phone = req.getParameter("phone");
             String newPassword = req.getParameter("password");
 
-            if (controlError.isNull(phone, newPassword)) {
-                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                return controlError.nullParameter(map);
+            if (controlResult.isNull(phone, newPassword)) {
+                return controlResult.nullParameter(map, logger);
             }
 
             //如果session中的键和值相同，并且和传过来的数据相同则认为是通过正常路径进入的
@@ -384,26 +364,89 @@ public class UserControl {
                 user.setPassword(newPassword);
                 userDao.update(user);
 
-                map.put("data", "0");
-                map.put("messaget", user.getSchoolID() + "修改密码成功");
-                logger.info(user.getSchoolID() + "修改密码成功");
+                map = controlResult.successfulContrl(map, phone + "修改密码成功", logger);
             } else {
-                map.put("data", "1");
-                map.put("messaget", "用户操作异常，请按正规路径修改密码");
-                logger.info(phone + " 用户操作异常，请按正规路径修改密码");
+                return controlResult.violationControl(map, "用户" + phone + "更新密码时违规操作", logger);
             }
 
         } catch (Exception e) {
-            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            return controlError.requestError(map);
+            return controlResult.requestError(map, logger, e);
         }
 
         return map;
     }
 
+
     /**
-     * 缴费模块
+     * 租用接口
+     *
+     * @param req
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/rent", method = RequestMethod.POST)
+    public @ResponseBody
+    Map<String, Object> rent(HttpServletRequest req, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            //校园卡号
+            String user = req.getParameter("user");
+            //篮球id
+            String basketballId = req.getParameter("basketballId");
+
+            if (controlResult.isNull(user, basketballId)) {
+                return controlResult.nullParameter(map, logger);
+            }
+
+            //判断参数格式
+            if (!Validator.isNumber(user) || !Validator.isNumber(basketballId)) {
+                controlResult.parameterFormatError(map, "请输入的参数不是指定数据格式", logger);
+            }
+
+            //如果session过期，那么就是身份过期，请重新登陆
+            User user1 = (User) session.getAttribute("user");
+            if (controlResult.isNull(user1)) {
+                return controlResult.identityOutTime(map, logger, user);
+            }
+
+            //判断用户是否是通过登陆后页面进入申请租借的
+            if (!user1.getSchoolID().equals(user)) {
+                return controlResult.violationControl(map, "用户" + user + "申请租借篮球时违规操作", logger);
+            }
+
+            Basketball basketball = basketballDao.findById(basketballId);
+
+            if (controlResult.isNull(basketball)) {
+                return controlResult.inquireFail(map, "这个篮球不存在", logger);
+            }
+
+            if (basketball.getIsBad() == 1 || basketball.getIsRent() == 1
+                    || basketball.getNowPerssure() < basketball.getPressure()) {
+                return controlResult.dataIsNotAvailable(map, basketballId + "该篮球不允许出租", logger);
+            }
+
+            //订单生成
+            Order order = new Order();
+            order.setBasketball(basketball);
+            order.setUser(user1);
+            order.setLendTime(new Date());
+            orderDao.save(order);
+
+            return controlResult.successfulContrl(map, user + "租用" + basketballId + "的订单生成成功", logger);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return controlResult.requestError(map, logger, e);
+        }
+
+    }
+
+
+    /**
+     * 缴费模块 , 订单结束时使用的接口
+     *
      * @param req
      * @param session
      * @return
@@ -412,6 +455,19 @@ public class UserControl {
     public @ResponseBody
     Map<String, Object> payment(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
+
+        try {
+
+            //校园卡号
+            String user = req.getParameter("user");
+            //订单号
+            String orderNumber = req.getParameter("orderNumber");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return controlResult.requestError(map, logger, e);
+        }
+
 
         return map;
     }

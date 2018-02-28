@@ -57,7 +57,7 @@ public class Order {
         this.lendTime = lendTime;
     }
 
-    @Column(name = "returnTime", length = 19, nullable = false)
+    @Column(name = "returnTime", length = 19)
     @Temporal(TemporalType.TIMESTAMP)
     public Date getReturnTime() {
         return returnTime;
@@ -67,7 +67,7 @@ public class Order {
         this.returnTime = returnTime;
     }
 
-    @Column(name = "castMoney", nullable = false, length = 10)
+    @Column(name = "castMoney", length = 10)
     public double getCastMoney() {
         return castMoney;
     }

@@ -27,28 +27,54 @@ public class BasketballDaoImpl extends SupperBaseDAOImp<Basketball> {
 
     /**
      * 起始页从1开始 当页码小于等于一时 为非法页码 返回空值
+     *
      * @param pageNo
      * @param pageSize
      * @return
      */
-    public List<Basketball> findRentList(int pageNo,int pageSize) {
+    public List<Basketball> findRentList(int pageNo, int pageSize) {
 
-        if (pageNo<=0){
+        if (pageNo <= 0) {
             return null;
         }
 
-        pageNo = (pageNo-1)*pageSize;
+        pageNo = (pageNo - 1) * pageSize;
 
         String sql = "select * from basketball \n" +
                 "               where isBad=0 and isRent=0\n" +
                 "               and basketball.nowPerssure>=basketball.pressure \n" +
-                "               LIMIT "+ pageNo + "," + (pageNo+pageSize);
-        List<Basketball> basketballs = findEntityBySQL(sql,Basketball.class);
+                "               LIMIT " + pageNo + "," + (pageNo + pageSize);
+        List<Basketball> basketballs = findEntityBySQL(sql, Basketball.class);
 
-        for (Basketball basketball: basketballs) {
+        for (Basketball basketball : basketballs) {
             basketball.getRent().setBasketballs(null);
         }
-        return  basketballs;
+        return basketballs;
+
+    }
+
+    /**
+     * 返回所有篮球
+     *
+     * @param pageNo   开始页
+     * @param pageSize 每页多少数据
+     * @return
+     */
+    public List<Basketball> findBastketballList(int pageNo, int pageSize) {
+
+        if (pageNo <= 0) {
+            return null;
+        }
+
+        pageNo = (pageNo - 1) * pageSize;
+
+        String sql = "select * from basketball LIMIT " + pageNo + "," + (pageNo + pageSize);
+        List<Basketball> basketballs = findEntityBySQL(sql, Basketball.class);
+
+        for (Basketball basketball : basketballs) {
+            basketball.getRent().setBasketballs(null);
+        }
+        return basketballs;
 
     }
 }

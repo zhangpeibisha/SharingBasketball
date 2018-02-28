@@ -170,7 +170,7 @@ public class UserControl {
             String card = req.getParameter("user");
             String password = req.getParameter("password");
 
-            if (card.isEmpty() || password.isEmpty()) {
+            if (card == null || password == null || card.isEmpty() || password.isEmpty()) {
                 map.put("data", "-1");
                 map.put("message", "请求失败，参数为空");
                 return map;
@@ -233,6 +233,14 @@ public class UserControl {
             } else {
                 //为了注册后使用验证码
                 String user = req.getParameter("user");
+
+                if (user == null || user.isEmpty()){
+                    map.put("data", "-1");
+                    map.put("message", "请求失败，参数为空");
+                    return map;
+                }
+
+
                 //查找这个用户得到手机号码
                 User haveUser = userDao.findUserBySchoolID(user);
                 if (haveUser == null) {
@@ -245,11 +253,11 @@ public class UserControl {
                 //发送手机号码
                 result = sendSMS.sendVerificationCode(phone);
                 map.put("data", "0");
-                map.put("message","申请验证码成功");
+                map.put("message", "申请验证码成功");
                 map.put("smsResult", result);
 
                 //将验证码存入session中
-                session.setAttribute(phone,result.get("code"));
+                session.setAttribute(phone, result.get("code"));
 
                 logger.info("用户 " + user + " 申请验证码 " + result.get("code") + " 成功");
             }
@@ -262,7 +270,6 @@ public class UserControl {
         }
         return map;
     }
-
 
 
     /**
@@ -305,7 +312,7 @@ public class UserControl {
             map.put("message", "发送信息成功");
             map.put("smsResult", resutl);
             //将验证码存入session中
-            session.setAttribute(phone,resutl.get("code"));
+            session.setAttribute(phone, resutl.get("code"));
             logger.info("发送给用户 " + user.getSchoolID() + " 信息成功");
 
         } catch (Exception e) {
@@ -316,6 +323,7 @@ public class UserControl {
 
     /**
      * 验证验证码是否正确
+     *
      * @return
      */
     @RequestMapping(value = "/submitVerification", method = RequestMethod.POST)
@@ -325,7 +333,6 @@ public class UserControl {
 
         return map;
     }
-
 
 
 }

@@ -85,6 +85,7 @@ public class SendSMS {
     public Map<String, String> sendVerificationCode(String smsMod) throws IOException {
         Map<String, String> map = new HashMap<>();
         String code = getSix();
+        logger.info("测试使用，查看验证码 " + code);
         try {
             String result = sendVerificationCode(smsMod, code);
             map.put("code", md5.encryption(code));

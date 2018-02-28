@@ -364,7 +364,7 @@ public class UserControl {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/updatePasswordRun", method = RequestMethod.POST)
+    @RequestMapping(value = "/updatePasswordRun", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, Object> updatePasswordRun(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
@@ -402,5 +402,18 @@ public class UserControl {
         return map;
     }
 
+    /**
+     * 缴费模块
+     * @param req
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/payment", method = RequestMethod.POST)
+    public @ResponseBody
+    Map<String, Object> payment(HttpServletRequest req, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
+
+        return map;
+    }
 
 }

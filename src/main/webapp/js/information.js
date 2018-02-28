@@ -1,12 +1,12 @@
 $(document).ready(function () {
-    var basketListUrl = "";
+    var orderListUrl = "";
     var pageLimit = 10;
     var currentPage = 1;
 
     function init() {
         $.ajax({
             type: 'GET',
-            url: basketListUrl,
+            url: orderListUrl,
             data: {
                 limit: pageLimit,
                 currentPage: currentPage
@@ -72,20 +72,15 @@ $(document).ready(function () {
         var temp = [], showNum = listData.length;
 
         temp.push('<table class="table table-hover">');
-        temp.push('<thead><tr><th>篮球编号</th><th>篮球型号</th><th>压力标准值</th>' +
-            '<th>当前压力值</th><th>是否损坏</th><th>是否可借</th>'+
-            '<th>租借押金</th><th>小时租金</th></tr><tbody>');
+        temp.push('<thead><tr><th>订单编号</th><th>篮球编号</th><th>篮球型号</th>' +
+            '<th>租借押金</th><th>小时租金</th><th>租借时间</th><th>归还时间</th><th>总计时</th>' +
+            '<th>消费金额</th></tr><tbody>');
         for (var i = 0; i < showNum; i++) {
-            if(listData[i].isRent=="0")
-                listData[i].isRent ="可借";
-            else listData[i].isRent ="不可借";
-            if(listData[i].isBad=="0")
-                listData[i].isBad ="正常";
-            else listData[i].isBad ="损坏";
-            temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].model + "</td><td>"
-                + listData[i].pressure+ "</td><td>" + listData[i].nowPressure + "</td><td>"
-                + listData[i].isBad + "</td><td>" + listData[i].isRent + "</td><td>"
-                + listData[i].rent.deposit + "</td><td>" + listData[i].rent.billing + "</td><td>");
+            temp.push("<tr><td>" + listData[i].id + "</td><td>" + listData[i].basketballID + "</td><td>"
+                + listData[i].model+ "</td><td>" + listData[i].rent.deposit + "</td><td>"
+                + listData[i].rent.billing + "</td><td>" + listData[i].lendTime + "</td><td>"
+                + listData[i].returnTime + "</td><td>"+ listData[i].totalTime + "</td><td>"
+                + listData[i].castMoney + "</td><td>");
         }
         temp.push('</tbody></table>');
 
@@ -95,10 +90,10 @@ $(document).ready(function () {
     function noData() {
         var temp = [];
         temp.push('<table class="table table-hover">');
-        temp.push('<thead><tr><th>篮球编号</th><th>篮球型号</th><th>压力标准值</th>' +
-        '<th>当前压力值</th><th>是否损坏</th><th>是否可借</th>'+
-        '<th>租借押金</th><th>小时租金</th></tr><tbody>');
-        temp.push("<tr><td colspan='8' style='text-align: center'>暂无数据</td></tr>");
+        temp.push('<thead><tr><th>订单编号</th><th>篮球编号</th><th>篮球型号</th>' +
+            '<th>租借押金</th><th>小时租金</th><th>租借时间</th><th>租借时间</th><th>归还时间</th>' +
+            '<th>消费金额</th></tr><tbody>');
+        temp.push("<tr><td colspan='9' style='text-align: center'>暂无数据</td></tr>");
         temp.push('</tbody></table>');
 
         $('#list').html(temp.join(''));
@@ -106,3 +101,5 @@ $(document).ready(function () {
 
     init();
 });
+
+

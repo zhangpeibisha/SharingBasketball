@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var updateUrl = "http://localhost:8080/updatePassword.do";
+    var updateUrl = "http://localhost:8080/updatePasswordRun.do";
 
     var loc = location.href;
     var n1 = loc.length;//地址的总长度
@@ -43,8 +43,8 @@ $(document).ready(function () {
                         alert("密码修改成功！");
                         $(location).attr('href', 'welcome.html');
                     }
-                    else if(data.data=="1"){
-                        alert("密码修改失败！");
+                    else{
+                        alert(data.message);
                     }
                 },
                 dataType: "json"

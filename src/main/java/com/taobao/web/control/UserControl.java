@@ -7,6 +7,8 @@ import com.taobao.dao.entity.SchoolCard;
 import com.taobao.dao.entity.User;
 import com.taobao.service.sms.SendSMS;
 import com.taobao.utils.format.Validator;
+import com.taobao.utils.sign.MD5;
+import com.taobao.web.control.untils.ControlError;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -40,6 +42,12 @@ public class UserControl {
     @Autowired
     private SchoolCardDaoImpl schooleCardDao;
 
+    @Autowired
+    private MD5 md5;
+
+    @Autowired
+    private ControlError controlError;
+
     /**
      * 登陆采用Get方法
      *
@@ -47,24 +55,21 @@ public class UserControl {
      */
     @RequestMapping(value = "/login", method = {RequestMethod.GET})
     public @ResponseBody
-    Map<String, String> login(HttpServletRequest req, HttpSession session) {
-        Map<String, String> map = new HashMap<>();
+    Map<String, Object> login(HttpServletRequest req, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
 
         try {
             String user = req.getParameter("user");
             String password = req.getParameter("password");
 
-            if (user == null || password == null || user.isEmpty() || password.isEmpty()) {
-                map.put("data", "-1");
-                map.put("message", "请求异常，参数为空");
-                logger.error("请求参数为空，请求失败");
-                return map;
+            if (controlError.isNull(user,password)) {
+                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                return controlError.nullParameter(map);
             }
 
             Map<String, Object> result = userDao.findUserBySchoolIDOrPhone(user, password);
 
-            map.put("data", (String) result.get("result"));
-
+            map.put("data",result.get("result"));
             //登陆成功时，session记录用户信息
             if (result.get("result").equals("0")) {
                 logger.info("用户 " + user + " 登陆成功");
@@ -72,9 +77,9 @@ public class UserControl {
             }
 
         } catch (Exception e) {
+            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            logger.error("url格式错误 " + req.getRequestURL() + " " + e);
-            map.put("data", "3");
+            return controlError.requestError(map);
         }
         return map;
     }
@@ -89,8 +94,8 @@ public class UserControl {
      */
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public @ResponseBody
-    Map<String, String> register(HttpServletRequest req, HttpSession session) {
-        Map<String, String> map = new HashMap<>();
+    Map<String, Object> register(HttpServletRequest req, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
 
         try {
 
@@ -99,12 +104,9 @@ public class UserControl {
             String schoolID = req.getParameter("card");
             String code = req.getParameter("code");
 
-            if (password == null || phone == null || schoolID == null || code == null
-                    || password.isEmpty() || phone.isEmpty() || schoolID.isEmpty() || code.isEmpty()) {
-                map.put("data", "-1");
-                map.put("message", "请求异常，参数为空");
-                logger.error("请求参数为空，请求失败");
-                return map;
+            if (controlError.isNull(phone,password,schoolID,code)) {
+                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                return controlError.nullParameter(map);
             }
 
 
@@ -148,9 +150,9 @@ public class UserControl {
                 map.put("message", "验证码输入错误");
             }
         } catch (Exception e) {
-            logger.error("用户注册异常 " + e);
-            map.put("data", "1");
-            map.put("message", "服务器发生了异常");
+            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
+            e.printStackTrace();
+            return controlError.requestError(map);
         }
         return map;
     }
@@ -163,17 +165,16 @@ public class UserControl {
      */
     @RequestMapping(value = "/isSchoolCard", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> isSchoolCard(HttpServletRequest req, HttpSession session) {
-        Map<String, String> map = new HashMap<>();
+    Map<String, Object> isSchoolCard(HttpServletRequest req, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
 
         try {
             String card = req.getParameter("user");
             String password = req.getParameter("password");
 
-            if (card == null || password == null || card.isEmpty() || password.isEmpty()) {
-                map.put("data", "-1");
-                map.put("message", "请求失败，参数为空");
-                return map;
+            if (controlError.isNull(card,password)) {
+                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                return controlError.nullParameter(map);
             }
 
             SchoolCard card1 = schooleCardDao.findCardByIDAndPassword(card, password);
@@ -188,9 +189,9 @@ public class UserControl {
             map.put("message", "找不到这个校园卡号");
             logger.info("校园卡号用户验证校园卡失败");
         } catch (Exception e) {
-            map.put("data", "2");
-            map.put("message", "服务器请求发生了异常");
-            logger.info("校园卡号用户验证校园卡异常 " + e);
+            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
+            e.printStackTrace();
+            return controlError.requestError(map);
         }
         return map;
     }
@@ -234,15 +235,14 @@ public class UserControl {
                 //为了注册后使用验证码
                 String user = req.getParameter("user");
 
-                if (user == null || user.isEmpty()){
-                    map.put("data", "-1");
-                    map.put("message", "请求失败，参数为空");
-                    return map;
+                if (controlError.isNull(user)){
+                    logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                    return controlError.nullParameter(map);
                 }
 
                 //查找这个用户得到手机号码
                 User haveUser = userDao.findUserBySchoolID(user);
-                if (haveUser == null) {
+                if (controlError.isNull(haveUser)) {
                     map.put("data", "2");
                     map.put("message", "用户不存在");
                     logger.error("用户 " + user + "不存在，发送信息失败");
@@ -261,11 +261,9 @@ public class UserControl {
                 logger.info("用户 " + user + " 申请验证码 " + result.get("code") + " 成功");
             }
         } catch (Exception e) {
-            logger.error("请求异常 " + req.getRequestURL() + " " + e);
+            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
-            map.put("data", "2");
-            map.put("message", "服务器发生异常");
-            return map;
+            return controlError.requestError(map);
         }
         return map;
     }
@@ -284,11 +282,9 @@ public class UserControl {
         try {
             String phone = req.getParameter("phone");
 
-            if (phone == null || phone.isEmpty()) {
-                map.put("data", "-1");
-                map.put("message", "接收参数失败，请检测url是否输入正确");
-                logger.error("接收参数失败，请检测url是否输入正确 " + req.getPathInfo());
-                return map;
+            if (controlError.isNull(phone)) {
+                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                return controlError.nullParameter(map);
             }
 
             if (!Validator.isMobile(phone)) {
@@ -298,11 +294,9 @@ public class UserControl {
                 return map;
             }
             User user = userDao.findUserByPhone(phone);
-            if (user == null) {
-                map.put("data", "1");
-                map.put("message", "这个手机号未注册，申请验证码失败");
-                logger.info("这个手机号未注册，申请验证码失败 " + phone);
-                return map;
+            if (controlError.isNull(user)) {
+                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                return controlError.nullParameter(map);
             }
 
             //获取发送信息过后的反馈信息,遍历map传入返回map中
@@ -315,7 +309,9 @@ public class UserControl {
             logger.info("发送给用户 " + user.getSchoolID() + " 信息成功");
 
         } catch (Exception e) {
-
+            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
+            e.printStackTrace();
+            return controlError.requestError(map);
         }
         return map;
     }
@@ -325,7 +321,7 @@ public class UserControl {
      *
      * @return
      */
-    @RequestMapping(value = "/submitVerification", method = RequestMethod.POST)
+    @RequestMapping(value = "/submitVerification", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, Object> submitVerification(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
@@ -334,11 +330,71 @@ public class UserControl {
             String phone = req.getParameter("phone");
             String code = req.getParameter("code");
 
-            if (phone == null || code == null || phone.isEmpty() || code.isEmpty()){
+            if (controlError.isNull(phone,code)){
+                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                return controlError.nullParameter(map);
+            }
+            if (session.getAttribute(phone).equals(md5.encryption(code))){
+                map.put("data","0");
+                map.put("message","验证码验证成功");
 
+                //通过验证key=手机号 value=手机号 来控制用户是否能够访问更新密码
+                session.setAttribute(phone,phone);
+                logger.info("手机号为 " + phone + " 的用户修改密码的验证码验证成功");
+            }else {
+                map.put("data","1");
+                map.put("message","验证码验证失败");
+                logger.info("手机号为 " + phone + " 的用户修改密码的验证码验证失败，输入与验证码不同");
             }
         }catch (Exception e){
+            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
+            e.printStackTrace();
+            return controlError.requestError(map);
+        }
 
+        return map;
+    }
+
+
+    /**
+     * 实际运行更新密码操作
+     * @param req
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/updatePasswordRun", method = RequestMethod.POST)
+    public @ResponseBody
+    Map<String, Object> updatePasswordRun(HttpServletRequest req, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            String phone = req.getParameter("phone");
+            String newPassword = req.getParameter("password");
+
+            if (controlError.isNull(phone,newPassword)){
+                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                return controlError.nullParameter(map);
+            }
+
+            //如果session中的键和值相同，并且和传过来的数据相同则认为是通过正常路径进入的
+            if (session.getAttribute(phone).equals(phone)){
+                User user = userDao.findUserByPhone(phone);
+                user.setPassword(newPassword);
+                userDao.update(user);
+
+                map.put("data","0");
+                map.put("messaget",user.getSchoolID() + "修改密码成功" );
+                logger.info(user.getSchoolID() + "修改密码成功");
+            }else {
+                map.put("data","1");
+                map.put("messaget","用户操作异常，请按正规路径修改密码" );
+                logger.info(phone + " 用户操作异常，请按正规路径修改密码");
+            }
+
+        }catch (Exception e){
+            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
+            e.printStackTrace();
+            return controlError.requestError(map);
         }
 
         return map;

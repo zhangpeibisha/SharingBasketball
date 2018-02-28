@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -165,7 +167,7 @@ public class TestControl {
 
     @RequestMapping(value = "", method = RequestMethod.POST)
     public @ResponseBody
-    Map<String, Object> recharge() {
+    Map<String, Object> recharge(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
 
         return map;

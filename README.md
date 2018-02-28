@@ -274,24 +274,3 @@ URL:http://localhost:8080/phoneVerification.do?phone=用户手机号码
     billing:小时租金
 }
 
-
-* 显示所有篮球的列表
-*URL：http://localhost:8080/basketList.do?
-    * // * HTTP请求方式： POST
-*请求数据：
-{
-    limit：每页最大显示行数,
-    currentPage：当前页数
-
-}
-*返回参数
-{
-    basketballID:篮球编号,
-    model:篮球型号,
-    pressure:压力标准值,
-    nowPressure:当前压力值,
-    isBad:是否损坏,
-    isRent:是否可借
-    deposit:租借押金,
-    billing:小时租金
-}

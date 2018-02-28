@@ -98,39 +98,57 @@
     
 5. 修改密码
 * 描述：用户找回密码验证接口
-* URL：http://localhost:8080/updatePassword.do
-*HTTP请求方式： POST
-* 请求参数：
-    {
-        phone:xxx,
-        password:xxx
-    }
-* 参数说明：
-    phone:手机号
-    password:新密码
-* 返回参数：
+
+* 1.发送手机验证码接口
+URL:http://localhost:8080/phoneVerification.do?phone=用户手机号码
+*参数
 {
-    data:0
+   phone：用户手机号码
 }
-* 参数说明：
-    data：0为修改成功，1为修改失败
-    
-* 两个接口
-第一个：
-请求参数：
+*返回参数
 {
-   phone:手机号码
+   data:返回参数代码
+   message:执行结果
+   smsResult：{
+      code：验证码信息
+      result：发送信息返回结果（sms）
+   }（发送成功后sms的返回结果（sms返回代码官网有））
 }
 
-返回参数：
+参数代码说明： -1 参数为空 -2输入不是手机号码 1手机号未注册 0发送成功 2服务器异常
+
+*2.提交手机号和验证码
+*URL：http://localhost:8080/submitVerification.do?phone=用户手机&code=用户输入的验证码
+*参数
 {
-  data:返回参数
+   phone:用户手机号码
+   code:用户输入的验证码
+}
+*返回参数
+{
+   data:返回参数代码
+   message:执行结果
 }
 
-说明： 0请求成功 1请求失败，这个手机号未注册
-    
-    
-    
+参数代码说明： -1 参数为空 0 验证成功 1验证码不匹配  2服务器异常
+
+*3.更新密码操作
+*URL：http://localhost:8080/updatePasswordRun.do?phone=用户手机号码&password=新密码
+*参数
+{
+   phone:返回参数代码
+   password:加密后的新密码
+}
+*返回参数
+{
+  data:返回代码
+  message:执行结果
+}
+
+参数代码说明： -1 参数为空 0更新成功 1用户的操作异常 2服务器异常
+
+
+
     
 *权限存入到了session中 通过  httpSessionBindingEvent.getSession().setAttribute("permissions",permissions); 设置的
 通过 httpSession.getAtribute("permissions");获取
@@ -206,3 +224,74 @@
 * 参数说明：
     data：0为租借成功，1为租借失败
     
+10. 用户信息模块
+* 显示用户个人信息已经订单列表
+*URL：http://localhost:8080/orderList.do?
+    * HTTP请求方式： POST
+*请求数据：
+{
+    limit：每页最大显示行数,
+    currentPage：当前页数
+
+}
+*返回参数
+{
+    user:账号名,
+    phone:手机号,
+    deposit:用户存款,
+    orderList:{
+    orderId:订单编号,
+    basketballID:篮球编号, 
+    model:篮球型号,
+    deposit:租借押金,
+    billing:小时租金,
+    lendTime:租借时间,
+    returnTime:归还时间,
+    totalTime:总计时,
+    castMoney消费金额:
+}
+
+
+11. 篮球列表模块
+* 显示所有篮球的列表
+*URL：http://localhost:8080/basketList.do?
+    * // * HTTP请求方式： POST
+*请求数据：
+{
+    limit：每页最大显示行数,
+    currentPage：当前页数
+
+}
+*返回参数
+{
+    basketballID:篮球编号,
+    model:篮球型号,
+    pressure:压力标准值,
+    nowPressure:当前压力值,
+    isBad:是否损坏,
+    isRent:是否可借
+    deposit:租借押金,
+    billing:小时租金
+}
+
+
+* 显示所有篮球的列表
+*URL：http://localhost:8080/basketList.do?
+    * // * HTTP请求方式： POST
+*请求数据：
+{
+    limit：每页最大显示行数,
+    currentPage：当前页数
+
+}
+*返回参数
+{
+    basketballID:篮球编号,
+    model:篮球型号,
+    pressure:压力标准值,
+    nowPressure:当前压力值,
+    isBad:是否损坏,
+    isRent:是否可借
+    deposit:租借押金,
+    billing:小时租金
+}

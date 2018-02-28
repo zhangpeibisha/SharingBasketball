@@ -62,14 +62,14 @@ public class UserControl {
             String user = req.getParameter("user");
             String password = req.getParameter("password");
 
-            if (controlError.isNull(user,password)) {
+            if (controlError.isNull(user, password)) {
                 logger.error("请求参数为空，请求失败 " + req.getPathInfo());
                 return controlError.nullParameter(map);
             }
 
             Map<String, Object> result = userDao.findUserBySchoolIDOrPhone(user, password);
 
-            map.put("data",result.get("result"));
+            map.put("data", result.get("result"));
             //登陆成功时，session记录用户信息
             if (result.get("result").equals("0")) {
                 logger.info("用户 " + user + " 登陆成功");
@@ -104,7 +104,7 @@ public class UserControl {
             String schoolID = req.getParameter("card");
             String code = req.getParameter("code");
 
-            if (controlError.isNull(phone,password,schoolID,code)) {
+            if (controlError.isNull(phone, password, schoolID, code)) {
                 logger.error("请求参数为空，请求失败 " + req.getPathInfo());
                 return controlError.nullParameter(map);
             }
@@ -172,7 +172,7 @@ public class UserControl {
             String card = req.getParameter("user");
             String password = req.getParameter("password");
 
-            if (controlError.isNull(card,password)) {
+            if (controlError.isNull(card, password)) {
                 logger.error("请求参数为空，请求失败 " + req.getPathInfo());
                 return controlError.nullParameter(map);
             }
@@ -235,7 +235,7 @@ public class UserControl {
                 //为了注册后使用验证码
                 String user = req.getParameter("user");
 
-                if (controlError.isNull(user)){
+                if (controlError.isNull(user)) {
                     logger.error("请求参数为空，请求失败 " + req.getPathInfo());
                     return controlError.nullParameter(map);
                 }
@@ -295,8 +295,9 @@ public class UserControl {
             }
             User user = userDao.findUserByPhone(phone);
             if (controlError.isNull(user)) {
-                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
-                return controlError.nullParameter(map);
+                logger.error("这个手机号未注册 " + req.getPathInfo());
+                map.put("data", "1");
+                return map;
             }
 
             //获取发送信息过后的反馈信息,遍历map传入返回map中
@@ -330,23 +331,23 @@ public class UserControl {
             String phone = req.getParameter("phone");
             String code = req.getParameter("code");
 
-            if (controlError.isNull(phone,code)){
+            if (controlError.isNull(phone, code)) {
                 logger.error("请求参数为空，请求失败 " + req.getPathInfo());
                 return controlError.nullParameter(map);
             }
-            if (session.getAttribute(phone).equals(md5.encryption(code))){
-                map.put("data","0");
-                map.put("message","验证码验证成功");
+            if (session.getAttribute(phone).equals(md5.encryption(code))) {
+                map.put("data", "0");
+                map.put("message", "验证码验证成功");
 
                 //通过验证key=手机号 value=手机号 来控制用户是否能够访问更新密码
-                session.setAttribute(phone,phone);
+                session.setAttribute(phone, phone);
                 logger.info("手机号为 " + phone + " 的用户修改密码的验证码验证成功");
-            }else {
-                map.put("data","1");
-                map.put("message","验证码验证失败");
+            } else {
+                map.put("data", "1");
+                map.put("message", "验证码验证失败");
                 logger.info("手机号为 " + phone + " 的用户修改密码的验证码验证失败，输入与验证码不同");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
             return controlError.requestError(map);
@@ -358,6 +359,7 @@ public class UserControl {
 
     /**
      * 实际运行更新密码操作
+     *
      * @param req
      * @param session
      * @return
@@ -371,27 +373,27 @@ public class UserControl {
             String phone = req.getParameter("phone");
             String newPassword = req.getParameter("password");
 
-            if (controlError.isNull(phone,newPassword)){
+            if (controlError.isNull(phone, newPassword)) {
                 logger.error("请求参数为空，请求失败 " + req.getPathInfo());
                 return controlError.nullParameter(map);
             }
 
             //如果session中的键和值相同，并且和传过来的数据相同则认为是通过正常路径进入的
-            if (session.getAttribute(phone).equals(phone)){
+            if (session.getAttribute(phone).equals(phone)) {
                 User user = userDao.findUserByPhone(phone);
                 user.setPassword(newPassword);
                 userDao.update(user);
 
-                map.put("data","0");
-                map.put("messaget",user.getSchoolID() + "修改密码成功" );
+                map.put("data", "0");
+                map.put("messaget", user.getSchoolID() + "修改密码成功");
                 logger.info(user.getSchoolID() + "修改密码成功");
-            }else {
-                map.put("data","1");
-                map.put("messaget","用户操作异常，请按正规路径修改密码" );
+            } else {
+                map.put("data", "1");
+                map.put("messaget", "用户操作异常，请按正规路径修改密码");
                 logger.info(phone + " 用户操作异常，请按正规路径修改密码");
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
             e.printStackTrace();
             return controlError.requestError(map);

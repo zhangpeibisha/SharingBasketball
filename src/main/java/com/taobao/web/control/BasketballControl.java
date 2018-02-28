@@ -3,6 +3,8 @@ package com.taobao.web.control;
 import com.taobao.dao.databasesDaoImpl.BasketballDaoImpl;
 import com.taobao.dao.entity.Basketball;
 import com.taobao.utils.format.ChangeFormat;
+import com.taobao.utils.format.Validator;
+import com.taobao.web.control.untils.ControlError;
 import org.apache.log4j.Logger;
 import org.hibernate.ScrollableResults;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,8 @@ public class BasketballControl {
     @Autowired
     private BasketballDaoImpl basketballDao;
 
+    @Autowired
+    private ControlError controlError;
     /**
      * 返回可以租借、并且完好的篮球列表
      *
@@ -41,8 +45,24 @@ public class BasketballControl {
     Map<String, Object> rentList(HttpServletRequest req) {
         Map<String, Object> map = new HashMap<>();
         try {
-            int start = Integer.parseInt(req.getParameter("currentPage"));
-            int pageSize = Integer.parseInt(req.getParameter("limit"));
+
+            String currentPage = req.getParameter("currentPage");
+            String limit = req.getParameter("limit");
+
+            if (controlError.isNull(currentPage,limit)){
+                logger.error("请求参数为空，请求失败 " + req.getPathInfo());
+                return controlError.nullParameter(map);
+            }
+
+            if (!Validator.isNumber(currentPage)&&!Validator.isNumber(limit)){
+                map.put("data","-4");
+                map.put("message","数据格式不是数字");
+                logger.error("数据格式不是数字");
+                return map;
+            }
+
+            int start = Integer.parseInt(currentPage);
+            int pageSize = Integer.parseInt(limit);
 
             List<Basketball> basketballs = basketballDao.findRentList(start,pageSize);
             String sql = "select count(*) from basketball where isBad=0 and isRent=0\n" +
@@ -51,15 +71,16 @@ public class BasketballControl {
             if (basketballs.size() != 0) {
                 map.put("basketballs", basketballs);
                 map.put("data", "0");
-                map.put("length",count);
+                map.put("total",count);
                 logger.info("申请获取能够使用的篮球列表成功： " + basketballs.size());
             } else {
                 map.put("data", "1");
                 logger.info("申请获取能够使用的篮球列表失败，没有可出租的篮球了 ");
             }
         } catch (Exception e) {
-            map.put("data", "2");
-            logger.error("申请获取能够使用的篮球列表异常 " + e);
+            logger.error(" 请求异常 " + req.getRequestURL() + " " + e);
+            e.printStackTrace();
+            return controlError.requestError(map);
         }
 
         return map;

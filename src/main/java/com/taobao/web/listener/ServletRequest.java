@@ -14,11 +14,11 @@ public class ServletRequest implements ServletRequestListener {
 
     @Override
     public void requestDestroyed(ServletRequestEvent servletRequestEvent) {
-        logger.info("有人请求路径 " + servletRequestEvent.getServletContext().getContextPath());
+        logger.info("有人请求路径 " + servletRequestEvent.getServletRequest().getLocalAddr());
     }
 
     @Override
     public void requestInitialized(ServletRequestEvent servletRequestEvent) {
-        logger.info("有人退出 " + servletRequestEvent.getServletContext().getContextPath());
+        logger.info("有人退出 " + servletRequestEvent.getServletRequest().getLocalAddr());
     }
 }

@@ -1,0 +1,10 @@
+.rent-bac{
+     background: url("../img/welcome.jpg") no-repeat;
+     background-size: cover;
+ }
+.container{
+    background-color: #ffffff;
+}
+.rent-a{
+    cursor: pointer;
+}

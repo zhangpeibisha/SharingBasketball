@@ -1,12 +1,6 @@
-.welcome-bac{
+.revert-bac{
     background: url("../img/welcome.jpg") no-repeat;
     background-size: cover;
-}
-.welcome-mid{
-
-}
-.welcome-fright{
-    float: right;
 }
 .container{
     background-color: #ffffff;

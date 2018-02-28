@@ -115,6 +115,22 @@
 * 参数说明：
     data：0为修改成功，1为修改失败
     
+* 两个接口
+第一个：
+请求参数：
+{
+   phone:手机号码
+}
+
+返回参数：
+{
+  data:返回参数
+}
+
+说明： 0请求成功 1请求失败，这个手机号未注册
+    
+    
+    
     
 *权限存入到了session中 通过  httpSessionBindingEvent.getSession().setAttribute("permissions",permissions); 设置的
 通过 httpSession.getAtribute("permissions");获取

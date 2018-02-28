@@ -70,4 +70,14 @@ public class UserDaoImpl extends SupperBaseDAOImp<User> {
     public User findUserBySchoolID(String user){
         return findByProperty("schoolID", user);
     }
+
+    /**
+     * 通过手机号码直接获取到用户的所有信息
+     * @param phone 用户的手机号码
+     * @return 用户信息
+     */
+    public User findUserByPhone(String phone){
+        return findByProperty("phone", phone);
+    }
+
 }

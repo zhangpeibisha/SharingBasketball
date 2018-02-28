@@ -159,4 +159,14 @@ public class TestControl {
         map.put("data", "添加成功");
         return map;
     }
+
+
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public @ResponseBody
+    Map<String, Object> recharge() {
+        Map<String, Object> map = new HashMap<>();
+
+        return map;
+    }
 }

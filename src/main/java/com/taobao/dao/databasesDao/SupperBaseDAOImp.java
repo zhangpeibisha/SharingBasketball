@@ -336,7 +336,6 @@ public abstract class SupperBaseDAOImp<T> implements SupperBaseDAO<T> {
                 BigInteger bg = (BigInteger) sessionFactory.getCurrentSession().createSQLQuery(SQL).uniqueResult();
                 return bg.longValue();
             }
-
         } else {
             return 0l;
         }

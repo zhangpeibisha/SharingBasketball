@@ -77,7 +77,7 @@ public class User implements HttpSessionBindingListener {
         this.schoolID = schoolID;
     }
 
-    @Column(name = "password", nullable = false, length = 32, unique = true)
+    @Column(name = "password", nullable = false, length = 32)
     public String getPassword() {
         return password;
     }

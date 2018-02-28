@@ -240,7 +240,6 @@ public class UserControl {
                     return map;
                 }
 
-
                 //查找这个用户得到手机号码
                 User haveUser = userDao.findUserBySchoolID(user);
                 if (haveUser == null) {
@@ -328,8 +327,19 @@ public class UserControl {
      */
     @RequestMapping(value = "/submitVerification", method = RequestMethod.POST)
     public @ResponseBody
-    Map<String, Object> submitVerification() {
+    Map<String, Object> submitVerification(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
+
+        try {
+            String phone = req.getParameter("phone");
+            String code = req.getParameter("code");
+
+            if (phone == null || code == null || phone.isEmpty() || code.isEmpty()){
+
+            }
+        }catch (Exception e){
+
+        }
 
         return map;
     }

@@ -42,7 +42,8 @@ public class TestControl {
 
     /**
      * 添加校园卡
-     *
+     * 53 123456789111  123456
+     * 56 201410610113  123456
      * @return
      */
     @RequestMapping(value = "/testAddSchool", method = RequestMethod.GET)
@@ -51,9 +52,9 @@ public class TestControl {
 
         Map<String, String> map = new HashMap<>();
         SchoolCard schoolCard = new SchoolCard();
-        schoolCard.setMoney(10);
+        schoolCard.setMoney(100);
         schoolCard.setPassword(md5.encryption("123456"));
-        schoolCard.setSchoolID("123456789111");
+        schoolCard.setSchoolID("201410610113");
         schoolCardDao.save(schoolCard);
 
         map.put("data", "添加成功");

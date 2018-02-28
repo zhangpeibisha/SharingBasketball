@@ -45,10 +45,13 @@ public class BasketballControl {
             int pageSize = Integer.parseInt(req.getParameter("limit"));
 
             List<Basketball> basketballs = basketballDao.findRentList(start,pageSize);
-
+            String sql = "select count(*) from basketball where isBad=0 and isRent=0\n" +
+                    "                    and basketball.nowPerssure>=basketball.pressure";
+            long count = basketballDao.findCountBySQL(sql);
             if (basketballs.size() != 0) {
                 map.put("basketballs", basketballs);
                 map.put("data", "0");
+                map.put("length",count);
                 logger.info("申请获取能够使用的篮球列表成功： " + basketballs.size());
             } else {
                 map.put("data", "1");

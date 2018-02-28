@@ -13,21 +13,63 @@ $(document).ready(function () {
                 currentPage: currentPage
             },
             success: function (data) {
-                console.info(data);
                 if(data.data==0){
                     var listData = data.basketballs;
-                    showData(data.total,listData);
+                    var total = data.total;
+                    showData(listData);
+
+                    var num = (total+pageLimit -1)/pageLimit;//向上取整
+                    $('#page').bootstrapPaginator({
+                        bootstrapMajorVersion: 3,
+                        currentPage: 1,//当前页码
+                        totalPages: num,
+                        numberOfPages: 5,
+                        shouldShowPage:true,//是否显示该按钮
+                        itemTexts: function (type, page, current) {
+                            switch (type) {
+                                case "first": return "首页";
+                                case "prev": return "上一页";
+                                case "next": return "下一页";
+                                case "last": return "末页";
+                                case "page": return page;
+                            }
+                        },
+                        onPageClicked: function (event, originalEvent, type, page) {
+                            $.ajax({
+                                url: listUrl,
+                                type: 'GET',
+                                data: {
+                                    limit: pageLimit,
+                                    currentPage: page
+                                },
+                                dataType: 'json',
+                                success: function (data) {
+                                    console.info(data);
+                                    if(data.data==0){
+                                        var listData = data.basketballs;
+                                        showData(listData);
+                                    }
+                                    else if(data.data==1){
+                                        noData();
+                                    }
+                                    else if(data.data==2)
+                                        alert("error！");
+                                }
+                            });
+                        }
+                    });
                 }
-                else if(data.data==1)
-                    alert("查询成功但没有篮球！");
+                else if(data.data==1){
+                    noData();
+                }
                 else if(data.data==2)
                     alert("error！");
             },
             dataType: "json"
         });
     }
-
-    function showData(total,listData) {
+    
+    function showData(listData) {
         var temp = [], showNum = listData.length;
 
         temp.push('<table class="table table-hover">');
@@ -45,45 +87,17 @@ $(document).ready(function () {
         temp.push('</tbody></table>');
 
         $('#list').html(temp.join(''));
+    }
 
-        $('#page').bootstrapPaginator({
-            bootstrapMajorVersion: 3,
-            currentPage: 1,//当前页码
-            totalPages: total,
-            numberOfPages: pageLimit,//一页显示几个按钮
-            itemTexts: function (type, page, current) {
-                switch (type) {
-                    case "first": return "首页";
-                    case "prev": return "上一页";
-                    case "next": return "下一页";
-                    case "last": return "末页";
-                    case "page": return page;
-                }
-            },//改写分页按钮字样
-            onPageClicked: function (event, originalEvent, type, page) {
-                $.ajax({
-                    url: listUrl,
-                    type: 'GET',
-                    data: {
-                        limit: pageLimit,
-                        currentPage: page
-                    },
-                    dataType: 'json',
-                    success: function (data) {
-                        console.info(data);
-                        if(data.data==0){
-                            var listData = data.basketballs;
-                            showData(data.total,listData);
-                        }
-                        else if(data.data==1)
-                            alert("查询成功但没有篮球！");
-                        else if(data.data==2)
-                            alert("error！");
-                    }
-                });
+    function noData() {
+        var temp = [];
+        temp.push('<table class="table table-hover">');
+        temp.push('<thead><tr><th>篮球编号</th><th>篮球型号</th><th>是否可借</th>' +
+            '<th>租借押金</th><th>小时租金</th><th>操作</th></tr><tbody>');
+        temp.push("<tr><td colspan='6' style='text-align: center'>暂无数据</td></tr>");
+        temp.push('</tbody></table>');
 
-            }
-        });
+        $('#list').html(temp.join(''));
     }
 
     init();

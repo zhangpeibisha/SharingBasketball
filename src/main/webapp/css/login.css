@@ -13,9 +13,6 @@
 .login-title{
     line-height: 60px;
 }
-.login-input{
-    width:500px;
-}
 #forget{
     cursor: pointer;
 }

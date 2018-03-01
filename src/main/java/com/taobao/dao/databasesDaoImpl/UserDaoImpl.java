@@ -2,7 +2,10 @@ package com.taobao.dao.databasesDaoImpl;
 
 import com.taobao.dao.databasesDao.SupperBaseDAOImp;
 import com.taobao.dao.entity.User;
+import com.taobao.web.control.untils.ControlResult;
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +21,11 @@ import java.util.Map;
 @Transactional
 @Service
 public class UserDaoImpl extends SupperBaseDAOImp<User> {
+
+    @Autowired
+    private ControlResult controlResult;
+
+    private static Logger logger = Logger.getLogger(UserDaoImpl.class);
 
     @Override
     public <T> List<T> findByCriteria(T object, Integer startRow, Integer pageSize) {
@@ -47,19 +55,19 @@ public class UserDaoImpl extends SupperBaseDAOImp<User> {
         }else if (length == 12){
             haveUser = findByProperty("schoolID", user);
         }else{
-            map.put("result" , "2");
+            controlResult.parameterFormatError(map,"账号输入格式错误",logger);
             return map;
         }
 
         if (haveUser == null) {
-            map.put("result" , "1");
+            return controlResult.inquireFail(map,"没有这个用户，请先注册",logger);
         } else if (haveUser.getPassword().equals(password)) {
-            map.put("result" , "0");
-            map.put("user" , haveUser);
+           map = controlResult.successfulContrl(map,"用户登陆成功",logger);
+           map.put("user",haveUser);
+           return map;
         } else {
-            map.put("result" , "2");
+            return controlResult.verificationFail(map,"账户密码错误",logger);
         }
-        return map;
     }
 
     /**

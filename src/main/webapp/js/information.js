@@ -51,6 +51,7 @@ $(document).ready(function () {
                                         info(data.user,data.phone,data.deposit);
                                     }
                                     else if(data.data==0&&data.total==0){
+                                        info(data.user,data.phone,data.deposit);
                                         noData();
                                     }
                                     else{
@@ -62,6 +63,7 @@ $(document).ready(function () {
                     });
                 }
                 else if(data.data==0&&data.total==0){
+                    info(data.user,data.phone,data.deposit);
                     noData();
                 }
                 else{
@@ -71,7 +73,6 @@ $(document).ready(function () {
             dataType: "json"
         });
     }
-
 
     function showData(listData) {
         var temp = [], showNum = listData.length;
@@ -106,12 +107,12 @@ $(document).ready(function () {
 
     function info(user,phone,deposit) {
         var temp = [];
-        temp.push(' <p>账号:'+user +'</p>');
-        temp.push('<p>手机号:'+ phone +'</p>');
-        temp.push('<p>存款:'+ deposit +'</p>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">账号:</p><span>'+user +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">手机号:</p><span>'+ phone +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">存款:</p><span>'+ deposit +'</span></div>');
+        console.info(temp);
         $('#pinfo').html(temp.join(''));
     }
-
     init();
 });
 

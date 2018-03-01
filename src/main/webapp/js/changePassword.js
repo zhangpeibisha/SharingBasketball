@@ -38,7 +38,7 @@ $(document).ready(function () {
                     console.info(data);
                     if(data.data=="0"){
                         alert("密码修改成功！");
-                        $(location).attr('href', 'welcome.html');
+                        $(location).attr('href', 'login.html');
                     }
                     else{
                         alert(data.message);

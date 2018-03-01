@@ -258,7 +258,7 @@ public class UserControl {
      *
      * @return
      */
-    @RequestMapping(value = "/phoneVerification", method = RequestMethod.GET)
+    @RequestMapping(value = "/phoneVerification", method = RequestMethod.POST)
     public @ResponseBody
     Map<String, Object> updatePasswordVerification(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
@@ -325,6 +325,8 @@ public class UserControl {
                 //通过验证key=手机号 value=手机号 来控制用户是否能够访问更新密码
                 session.setAttribute(phone, phone);
 
+                logger.info("存入电话号码进入session " + session.getAttribute(phone));
+
             } else {
                 return controlResult.verificationFail(map, "用户验证码输入错误", logger);
             }
@@ -358,11 +360,13 @@ public class UserControl {
             }
 
             //如果session中的键和值相同，并且和传过来的数据相同则认为是通过正常路径进入的
+
+            logger.info("取出电话号码 session " + session.getAttribute(phone) + " phone " + phone);
+
             if (session.getAttribute(phone).equals(phone)) {
                 User user = userDao.findUserByPhone(phone);
                 user.setPassword(newPassword);
                 userDao.update(user);
-
                 map = controlResult.successfulContrl(map, phone + "修改密码成功", logger);
             } else {
                 return controlResult.violationControl(map, "用户" + phone + "更新密码时违规操作", logger);

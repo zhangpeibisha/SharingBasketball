@@ -462,7 +462,6 @@ public class UserControl {
         Map<String, Object> map = new HashMap<>();
 
         try {
-
             //校园卡号
             String user = req.getParameter("user");
             //订单号
@@ -472,9 +471,9 @@ public class UserControl {
             e.printStackTrace();
             return controlResult.requestError(map, logger, e);
         }
-
-
         return map;
     }
+
+
 
 }

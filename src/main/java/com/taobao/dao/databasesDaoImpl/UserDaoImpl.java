@@ -80,4 +80,9 @@ public class UserDaoImpl extends SupperBaseDAOImp<User> {
         return findByProperty("phone", phone);
     }
 
+    public User findUserInfoByID(int userID){
+
+        return findById(userID);
+    }
+
 }

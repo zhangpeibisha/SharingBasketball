@@ -107,7 +107,7 @@ public class ControlResult {
     public Map<String, Object> successfulContrl(Map<String, Object> map, String description, Logger logger) {
         map.put("data", "0");
         map.put("message", "请求操作成功 " + description);
-        logger.error("请求操作成功 " + description);
+        logger.info("请求操作成功 " + description);
         return map;
     }
 

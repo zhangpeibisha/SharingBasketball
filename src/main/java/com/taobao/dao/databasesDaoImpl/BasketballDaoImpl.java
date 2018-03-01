@@ -2,6 +2,7 @@ package com.taobao.dao.databasesDaoImpl;
 
 import com.taobao.dao.databasesDao.SupperBaseDAOImp;
 import com.taobao.dao.entity.Basketball;
+import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.query.Query;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,9 @@ import java.util.Map;
  */
 @Service
 public class BasketballDaoImpl extends SupperBaseDAOImp<Basketball> {
+
+    private static Logger logger = Logger.getLogger(BasketballDaoImpl.class);
+
     @Override
     public <T> List<T> findByCriteria(T object, Integer startRow, Integer pageSize) {
         return null;
@@ -34,16 +38,18 @@ public class BasketballDaoImpl extends SupperBaseDAOImp<Basketball> {
      */
     public List<Basketball> findRentList(int pageNo, int pageSize) {
 
-        if (pageNo <= 0) {
+        if (pageNo <= 0 || pageSize <= 0 ) {
             return null;
         }
 
         pageNo = (pageNo - 1) * pageSize;
 
+        logger.info("页码信息 star " + pageNo + " size " + pageSize);
+
         String sql = "select * from basketball \n" +
                 "               where isBad=0 and isRent=0\n" +
                 "               and basketball.nowPerssure>=basketball.pressure \n" +
-                "               LIMIT " + pageNo + "," + (pageNo + pageSize);
+                "               LIMIT " + pageNo + "," + pageSize;
         List<Basketball> basketballs = findEntityBySQL(sql, Basketball.class);
 
         for (Basketball basketball : basketballs) {
@@ -62,13 +68,15 @@ public class BasketballDaoImpl extends SupperBaseDAOImp<Basketball> {
      */
     public List<Basketball> findBastketballList(int pageNo, int pageSize) {
 
-        if (pageNo <= 0) {
+        if (pageNo <= 0 || pageSize <= 0 ) {
             return null;
         }
 
         pageNo = (pageNo - 1) * pageSize;
 
-        String sql = "select * from basketball LIMIT " + pageNo + "," + (pageNo + pageSize);
+        logger.info("页码信息 star " + pageNo + " size " +pageSize);
+
+        String sql = "select * from basketball LIMIT " + pageNo + "," +  pageSize;
         List<Basketball> basketballs = findEntityBySQL(sql, Basketball.class);
 
         for (Basketball basketball : basketballs) {

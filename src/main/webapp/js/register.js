@@ -61,6 +61,18 @@ $(document).ready(function () {
         var pass = $("#password").val();
         var phone = $("#telphone").val();
         var code = $("#code").val();
+
+        if(code.length==0)
+        {
+            alert('请输入验证码！');
+            return;
+        }
+        if(phone.length!=6)
+        {
+            alert('验证码为6位!');
+            return;
+        }
+
         pass= hex_md5(pass);
         code= hex_md5(code);
         $.ajax({
@@ -90,8 +102,25 @@ $(document).ready(function () {
     });
 
     $("#getCode").click(function () {
-
         var phone = $("#telphone").val();
+
+        if(phone.length==0)
+        {
+            alert('请输入手机号码！');
+            return;
+        }
+        if(phone.length!=11)
+        {
+            alert('请输入有效的手机号码！');
+            return;
+        }
+
+        var myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+        if(!myreg.test(phone))
+        {
+            alert('请输入有效的手机号码！');
+            return;
+        }
 
         //验证码
         $.ajax({
@@ -101,22 +130,27 @@ $(document).ready(function () {
                 phone:phone
             },
             success: function (data) {
-                console.info(data);
+                if(data.data=="0"){
+                    $("#register").removeAttr("disabled");
+                    $("#getCode").attr("disabled","true");
+                    var s=59;
+                    var start = setInterval(function(){
+                        $("#getCode").text(s+"s");
+                        s--;
+                        if(s<0){
+                            clearInterval(start);
+                            $("#getCode").text("获取验证码");
+                            $("#getCode").removeAttr("disabled");
+                        }
+                    },1000)
+                }
+                else{
+                    alert(data.message);
+                }
             },
             dataType: "json"
         });
-        $("#register").removeAttr("disabled");
-        $("#getCode").attr("disabled","true");
-        var s=59;
-        var start = setInterval(function(){
-            $("#getCode").text(s+"s");
-            s--;
-            if(s<0){
-                clearInterval(start);
-                $("#getCode").text("获取验证码");
-                $("#getCode").removeAttr("disabled");
-            }
-        },1000)
+
     });
 
 });

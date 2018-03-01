@@ -78,12 +78,11 @@ public class UserControl {
 
                 session.setAttribute("user", result.get("user"));
             }
-
+            return  result;
         } catch (Exception e) {
             e.printStackTrace();
             return controlResult.requestError(map, logger, e);
         }
-        return map;
     }
 
     /**

@@ -14,10 +14,10 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 if(data.data==0&&data.total!=0){
-                    var listData = data.basketballs;
+                    var listData = data.orderList;
                     var total = data.total;
                     showData(listData);
-
+                    info(data.user,data.phone,data.deposit);
                     var num = (total+pageLimit -1)/pageLimit;//向上取整
                     $('#page').bootstrapPaginator({
                         bootstrapMajorVersion: 3,
@@ -46,14 +46,16 @@ $(document).ready(function () {
                                 success: function (data) {
                                     console.info(data);
                                     if(data.data==0){
-                                        var listData = data.basketballs;
+                                        var listData = data.orderList;
                                         showData(listData);
+                                        info(data.user,data.phone,data.deposit);
                                     }
-                                    else if(data.data==1){
+                                    else if(data.data==0&&data.total==0){
                                         noData();
                                     }
-                                    else if(data.data==2)
-                                        alert("error！");
+                                    else{
+                                        alert(data.message);
+                                    }
                                 }
                             });
                         }
@@ -108,9 +110,7 @@ $(document).ready(function () {
         temp.push('<p>手机号:'+ phone +'</p>');
         temp.push('<p>存款:'+ deposit +'</p>');
         $('#pinfo').html(temp.join(''));
-
     }
-
 
     init();
 });

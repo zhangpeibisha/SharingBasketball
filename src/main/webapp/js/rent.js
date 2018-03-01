@@ -49,11 +49,12 @@ $(document).ready(function () {
                                         var listData = data.basketballs;
                                         showData(listData);
                                     }
-                                    else if(data.data==1){
+                                    else if(data.data==0&&data.total==0){
                                         noData();
                                     }
-                                    else if(data.data==2)
-                                        alert("error！");
+                                    else{
+                                        alert(data.message);
+                                    }
                                 }
                             });
                         }

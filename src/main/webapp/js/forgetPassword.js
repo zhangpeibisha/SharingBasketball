@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var forgetCodeUrl = "http://localhost:8080/phoneVerification.do";
-    var forgetUrl = "http://localhost:8080/phoneVerification.do";
+    var forgetUrl = "http://localhost:8080/submitVerification.do";
 
     $("#back").click(function () {
         $(location).attr('href','login.html');

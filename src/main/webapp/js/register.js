@@ -122,7 +122,6 @@ $(document).ready(function () {
             return;
         }
 
-        //验证码
         $.ajax({
             type: 'GET',
             url: codeUrl,

@@ -13,7 +13,7 @@ $(document).ready(function () {
                 currentPage: currentPage
             },
             success: function (data) {
-                if(data.data==0){
+                if(data.data==0&&data.total!=0){
                     var listData = data.basketballs;
                     var total = data.total;
                     showData(listData);
@@ -59,11 +59,12 @@ $(document).ready(function () {
                         }
                     });
                 }
-                else if(data.data==1){
+                else if(data.data==0&&data.total==0){
                     noData();
                 }
-                else if(data.data==2)
-                    alert("error！");
+                else{
+                    alert(data.message);
+                }
             },
             dataType: "json"
         });
@@ -79,10 +80,11 @@ $(document).ready(function () {
             if(listData[i].isRent=="0")
                 listData[i].isRent ="可借";
             else listData[i].isRent ="不可借";
+            var tempHref = "../html/eneratingOrder.html?id=" +listData[i].basketballID;
             temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].model + "</td><td>"
                 + listData[i].isRent + "</td><td>"+ listData[i].rent.deposit + "</td><td>"
                 + listData[i].rent.billing + "</td><td>"
-                + "<a class='rent-a'>租借</a>" + "</td></tr>");
+                + "<a class='rent-a' href="+ tempHref +">租借</a>" + "</td></tr>");
         }
         temp.push('</tbody></table>');
 

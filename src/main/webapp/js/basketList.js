@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var basketListUrl = "";
+    var basketListUrl = "http://localhost:8080/basketList.do";
     var pageLimit = 10;
     var currentPage = 1;
 
@@ -12,7 +12,8 @@ $(document).ready(function () {
                 currentPage: currentPage
             },
             success: function (data) {
-                if(data.data==0){
+                console.log(data);
+                if(data.data==0&&data.total!=0){
                     var listData = data.basketballs;
                     var total = data.total;
                     showData(listData);
@@ -35,7 +36,7 @@ $(document).ready(function () {
                         },
                         onPageClicked: function (event, originalEvent, type, page) {
                             $.ajax({
-                                url: listUrl,
+                                url: basketListUrl,
                                 type: 'GET',
                                 data: {
                                     limit: pageLimit,
@@ -58,15 +59,18 @@ $(document).ready(function () {
                         }
                     });
                 }
-                else if(data.data==1){
+                else if(data.data==0&&data.total==0){
                     noData();
                 }
-                else if(data.data==2)
-                    alert("error！");
+                else{
+                    alert(data.message);
+                }
             },
             dataType: "json"
         });
     }
+
+
 
     function showData(listData) {
         var temp = [], showNum = listData.length;
@@ -83,7 +87,7 @@ $(document).ready(function () {
                 listData[i].isBad ="正常";
             else listData[i].isBad ="损坏";
             temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].model + "</td><td>"
-                + listData[i].pressure+ "</td><td>" + listData[i].nowPressure + "</td><td>"
+                + listData[i].pressure+ "</td><td>" + listData[i].nowPerssure + "</td><td>"
                 + listData[i].isBad + "</td><td>" + listData[i].isRent + "</td><td>"
                 + listData[i].rent.deposit + "</td><td>" + listData[i].rent.billing + "</td><td>");
         }

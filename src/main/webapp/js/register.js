@@ -76,7 +76,7 @@ $(document).ready(function () {
                 console.info(data);
                 if(data.data=="0"){
                     alert("注册成功");
-                    $(location).attr('href', 'welcome.html');
+                    $(location).attr('href', 'login.html');
                 }
                 else if(data.data=="1"){
                     alert("error！");

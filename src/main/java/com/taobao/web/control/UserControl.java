@@ -76,7 +76,7 @@ public class UserControl {
             if (result.get("data").equals("0")) {
                 session.setAttribute("user", result.get("user"));
             }
-            return  result;
+            return result;
         } catch (Exception e) {
             e.printStackTrace();
             return controlResult.requestError(map, logger, e);
@@ -128,12 +128,12 @@ public class UserControl {
                 SchoolCard card = (SchoolCard) session.getAttribute("card");
                 Role role = roleDao.findRoleByName("普通用户");
 
-                if (controlResult.isNull(card)){
-                    return controlResult.violationControl(map,"注册违规操作",logger);
+                if (controlResult.isNull(card)) {
+                    return controlResult.violationControl(map, "注册违规操作", logger);
                 }
 
-                if (controlResult.isNull(role)){
-                   return controlResult.inquireFail(map,"找不到要查询的角色，注册失败",logger);
+                if (controlResult.isNull(role)) {
+                    return controlResult.inquireFail(map, "找不到要查询的角色，注册失败", logger);
                 }
 
 
@@ -439,18 +439,38 @@ public class UserControl {
                 return controlResult.dataIsNotAvailable(map, basketballId + "该篮球不允许出租", logger);
             }
 
-            //设置篮球不可以借
-            basketball.setIsRent(1);
-            basketballDao.update(basketball);
 
-            //订单生成
-            Order order = new Order();
-            order.setBasketball(basketball);
-            order.setUser(user1);
-            order.setLendTime(new Date());
-            orderDao.save(order);
 
-            return controlResult.successfulContrl(map, user + "租用" + basketballId + "的订单生成成功", logger);
+            //篮球租金
+            double rentMoney = basketball.getRent().getDeposit();
+            double userMoney = user1.getMoney();
+
+            //需要金额
+            double needMoney = rentMoney+10;
+
+            //可以借球
+            if (userMoney>=needMoney){
+
+                //更新用户钱
+                user1.setMoney(userMoney-rentMoney);
+                userDao.update(user1);
+
+                //设置篮球不可以借
+                basketball.setIsRent(1);
+                basketballDao.update(basketball);
+
+                //订单生成
+                Order order = new Order();
+                order.setBasketball(basketball);
+                order.setUser(user1);
+                order.setLendTime(new Date());
+                orderDao.save(order);
+
+                return controlResult.successfulContrl(map, user + "租用" + basketballId + "的订单生成成功", logger);
+
+            }else {
+                return controlResult.dataIsNotAvailable(map,"用户金额不足，请保证余额大于等于60元",logger);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -478,15 +498,62 @@ public class UserControl {
             //订单号
             String orderNumber = req.getParameter("orderNumber");
 
+            if (controlResult.isNull(user, orderNumber)) {
+                return controlResult.nullParameter(map, logger);
+            }
 
+            if (!Validator.isNumber(user) || user.length() != 12) {
+                return controlResult.parameterFormatError(map, user + "这个参数不是校园卡", logger);
+            }
 
+            if (!Validator.isNumber(orderNumber)) {
+                return controlResult.parameterFormatError(map, orderNumber + "这个参数不是订单号", logger);
+            }
+            int orderID = Integer.parseInt(orderNumber);
+
+            if (orderID < 0) {
+                return controlResult.parameterFormatError(map, orderNumber + "这个参数不是订单号", logger);
+            }
+
+            Order order = orderDao.findById(orderID);
+            //计算时间
+            long createTime = order.getLendTime().getTime();
+            Date nowDateTime = new Date();
+            long nowTime = nowDateTime.getTime();
+            long useTime = (long) ((nowTime - createTime) / 1000 / 60.0);
+            //得到计算费用金额
+            double billing = order.getBasketball().getRent().getBilling();
+            //计算金额
+            double money = (long) (useTime * billing);
+            //得到这个订单的用户
+            User user1 = order.getUser();
+
+            //剩余的钱，押金一起算钱
+            long remaining = (long) (user1.getMoney() - money) + 50;
+            if (remaining >= 0) {
+
+                //更新用户金额
+                user1.setMoney(remaining);
+                userDao.update(user1);
+
+                //更新订单
+                order.setReturnTime(nowDateTime);
+                order.setCastMoney(money);
+                orderDao.update(order);
+
+                map = controlResult
+                        .successfulContrl(map, user1.getSchoolID() + "的" + orderNumber + "订单缴费成功", logger);
+                map.put("remaining", remaining);
+                map.put("order", order);
+                return map;
+            } else {
+                return controlResult.dataIsNotAvailable(map, "余额不足",logger);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return controlResult.requestError(map, logger, e);
         }
-        return map;
     }
-
 
 
 }

@@ -2,6 +2,7 @@ package com.taobao.web.control;
 
 import com.taobao.dao.databasesDaoImpl.BasketballDaoImpl;
 import com.taobao.dao.entity.Basketball;
+import com.taobao.dao.entity.User;
 import com.taobao.utils.format.Validator;
 import com.taobao.web.control.untils.ControlResult;
 import org.apache.log4j.Logger;
@@ -118,6 +119,56 @@ public class BasketballControl {
         }
 
         return map;
+    }
+
+    /**
+     * 查看篮球详情
+     * @param req
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/basketballDetail", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, Object> basketballDetail(HttpServletRequest req, HttpSession session) {
+
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+
+            String basketballID = req.getParameter("basketballID");
+
+            if (controlResult.isNull(basketballID)){
+                return controlResult.nullParameter(map,logger);
+            }
+
+            if (!Validator.isNumber(basketballID)){
+                return controlResult.parameterFormatError(map,basketballID+"不是篮球id",logger);
+            }
+
+            Integer id = Integer.parseInt(basketballID);
+
+            if (id<0){
+                return controlResult.parameterFormatError(map,basketballID+"不是篮球id",logger);
+            }
+
+            User user = (User) session.getAttribute("user");
+            if (controlResult.isNull(user)) {
+                return controlResult.identityOutTime(map, logger, "");
+            }
+
+            Basketball basketball = basketballDao.findById(id);
+            if (controlResult.isNull(basketball)){
+                return controlResult.inquireFail(map,"没有查找到这个篮球",logger);
+            }
+
+            map.put("user",user);
+            map.put("basketball",basketball);
+            map = controlResult.successfulContrl(map,user.getSchoolID()+"获取"+id+"篮球的详细信息成功",logger);
+            return map;
+        }catch (Exception e){
+            e.printStackTrace();
+            return controlResult.requestError(map,logger,e);
+        }
     }
 
 }

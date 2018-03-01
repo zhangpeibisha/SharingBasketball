@@ -74,6 +74,7 @@ public class OrderControl {
             map.put("user",user.getSchoolID());
             map.put("phone",user.getPhone());
             map.put("deposit",user.getMoney());
+            map.put("total",user.getOrders().size());
             map.put("orderList",orders);
             return map;
         } catch (Exception e) {

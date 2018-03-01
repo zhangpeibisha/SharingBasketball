@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +49,7 @@ public class TestControl {
      * 添加校园卡
      * 53 123456789111  123456
      * 56 201410610113  123456
+     *
      * @return
      */
     @RequestMapping(value = "/testAddSchool", method = RequestMethod.GET)
@@ -79,7 +83,7 @@ public class TestControl {
         user.setPhone("18203085236");
         user.setCreateTime(new Date());
         user.setRole(roleDao.findRoleByName("普通用户"));
-        user.setSchooleCard(schoolCardDao.findByProperty("schoolID","123456789111"));
+        user.setSchooleCard(schoolCardDao.findByProperty("schoolID", "123456789111"));
         user.setPassword(md5.encryption("123456"));
         userDao.save(user);
 
@@ -105,7 +109,7 @@ public class TestControl {
             basketball.setIsRent(i % 2);
             basketball.setPressure(0.06);
             basketball.setNowPerssure((Math.random() * 10) * 0.01);
-            basketball.setRent(rentDao.findByProperty("id",2));
+            basketball.setRent(rentDao.findByProperty("id", 2));
             basketballDao.save(basketball);
         }
 
@@ -129,7 +133,7 @@ public class TestControl {
 
         map.put("data", "添加成功");
 
-        map.put("daa","sss");
+        map.put("daa", "sss");
 
         return map;
     }
@@ -165,11 +169,16 @@ public class TestControl {
     }
 
 
-
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, Object> recharge(HttpServletRequest req, HttpSession session) {
+    Map<String, Object> test(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
+
+        User user = userDao.findById(505);
+
+        long create = user.getCreateTime().getTime();
+        long now = System.currentTimeMillis();
+        System.out.println("创建了 " + ((now - create)/100/60.0));
 
         return map;
     }

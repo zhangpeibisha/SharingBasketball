@@ -1,5 +1,6 @@
 package com.taobao.service.sms;
 
+import com.taobao.utils.data.ManagementData;
 import com.taobao.utils.properties.PropertiesUtil;
 import com.taobao.utils.sign.MD5;
 import org.apache.commons.httpclient.Header;
@@ -36,8 +37,8 @@ public class SendSMS {
      */
     public String send(String smsMod, String smsText) throws IOException {
 
-        String Uid = "李尚84393031";
-        String Key = "54523c8063c3a90b5a53";
+        String Uid = ManagementData.SMS_ACCOUNT_NUMBER;
+        String Key = ManagementData.SMS_PASSWORD;
 
         HttpClient client = new HttpClient();
         PostMethod post = new PostMethod("http://sms.webchinese.cn/web_api/");
@@ -70,7 +71,7 @@ public class SendSMS {
      * @throws IOException IO异常
      */
     private String sendVerificationCode(String smsMod, String VerificationCode) throws IOException {
-        String Code = "你的随机密码是Code.安全提示：切勿向他人泄露，以防止上当受骗，如有疑问，请咨询管理人员";
+        String Code = ManagementData.VerificationCodeText;
         Code = Code.replace("Code", VerificationCode);
         return send(smsMod, Code);
     }
@@ -113,11 +114,5 @@ public class SendSMS {
         return result;
     }
 
-    private String getResultCode(String code) {
-        System.out.println("code " + code);
-        return code.substring(code.lastIndexOf("GMT"));
-    }
-
-    //暂时不做管理员批量发送信息的功能
 
 }

@@ -73,7 +73,7 @@ public class OrderControl {
             map = controlResult.successfulContrl(map,"获取用户订单成功",logger);
             map.put("user",user.getSchoolID());
             map.put("phone",user.getPhone());
-            map.put("deposit",user.getMoney());
+            map.put("money",user.getMoney());
             map.put("total",user.getOrders().size());
             map.put("orderList",orders);
             return map;

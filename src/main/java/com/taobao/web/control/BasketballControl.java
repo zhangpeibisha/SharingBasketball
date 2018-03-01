@@ -161,6 +161,9 @@ public class BasketballControl {
                 return controlResult.inquireFail(map,"没有查找到这个篮球",logger);
             }
 
+            user.setPassword(null);
+            user.setOrders(null);
+            user.setCreateTime(null);
             map.put("user",user);
             map.put("basketball",basketball);
             map = controlResult.successfulContrl(map,user.getSchoolID()+"获取"+id+"篮球的详细信息成功",logger);

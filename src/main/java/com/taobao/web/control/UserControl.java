@@ -3,6 +3,7 @@ package com.taobao.web.control;
 import com.taobao.dao.databasesDaoImpl.*;
 import com.taobao.dao.entity.*;
 import com.taobao.service.sms.SendSMS;
+import com.taobao.utils.data.ManagementData;
 import com.taobao.utils.format.Validator;
 import com.taobao.utils.sign.MD5;
 import com.taobao.web.control.untils.ControlResult;
@@ -497,8 +498,12 @@ public class UserControl {
             String user = req.getParameter("user");
             //订单号
             String orderNumber = req.getParameter("orderNumber");
+            //现在的压力值
+            String nowperssure = req.getParameter("nowperssure");
+            //是否损坏
+            String isbad = req.getParameter("isbad");
 
-            if (controlResult.isNull(user, orderNumber)) {
+            if (controlResult.isNull(user, orderNumber,nowperssure,isbad)) {
                 return controlResult.nullParameter(map, logger);
             }
 
@@ -514,6 +519,13 @@ public class UserControl {
             if (orderID < 0) {
                 return controlResult.parameterFormatError(map, orderNumber + "这个参数不是订单号", logger);
             }
+
+            if (!Validator.isNumber(nowperssure) || !Validator.isNumber(isbad)){
+                return controlResult.parameterFormatError(map, orderNumber + "这个参数不是压力值或者表示是否损坏", logger);
+            }
+
+            double perssure = Double.parseDouble(nowperssure);
+            int bad = Integer.parseInt(isbad);
 
             Order order = orderDao.findById(orderID);
             //计算时间
@@ -541,8 +553,21 @@ public class UserControl {
                 order.setCastMoney(money);
                 orderDao.update(order);
 
+                //更新篮球
+                String info = "";
+                Basketball basketball = order.getBasketball();
+                if (perssure<basketball.getPressure() || bad == 1){
+                    basketball.setIsRent(1);
+                    sendSMS.send(ManagementData.MANAGE_PHONE,basketball.getBasketballID()+"号篮球已经损坏，请及时处理");
+                    info = basketball.getBasketballID() + "篮球损坏了";
+                }else {
+                    basketball.setIsRent(0);
+                }
+                basketball.setIsBad(bad);
+                basketballDao.update(basketball);
+
                 map = controlResult
-                        .successfulContrl(map, user1.getSchoolID() + "的" + orderNumber + "订单缴费成功", logger);
+                        .successfulContrl(map, user1.getSchoolID() + "的" + orderNumber + "订单缴费成功 " + info, logger);
                 map.put("remaining", remaining);
                 map.put("order", order);
                 return map;

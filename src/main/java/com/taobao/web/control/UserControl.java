@@ -112,8 +112,8 @@ public class UserControl {
                 return controlResult.nullParameter(map, logger);
             }
 
-            if (!Validator.isNumber(schoolID) || !Validator.isNumber(code)) {
-                return controlResult.parameterFormatError(map, schoolID + "或者" + code + "不是指定数据格式", logger);
+            if (!Validator.isNumber(schoolID)) {
+                return controlResult.parameterFormatError(map, schoolID + "不是指定数据格式", logger);
             }
 
             if (!Validator.isMobile(phone)) {
@@ -172,7 +172,8 @@ public class UserControl {
                 return controlResult.nullParameter(map, logger);
             }
 
-            if (card.length() != 12 || Validator.isNumber(card)) {
+
+            if (card.length() != 12 || !Validator.isNumber(card)) {
                 return controlResult.parameterFormatError(map, card + " 这个不是校园卡", logger);
             }
 
@@ -426,6 +427,10 @@ public class UserControl {
                     || basketball.getNowPerssure() < basketball.getPressure()) {
                 return controlResult.dataIsNotAvailable(map, basketballId + "该篮球不允许出租", logger);
             }
+
+            //设置篮球不可以借
+            basketball.setIsRent(1);
+            basketballDao.update(basketball);
 
             //订单生成
             Order order = new Order();

@@ -12,7 +12,8 @@ $(document).ready(function () {
                 currentPage: currentPage
             },
             success: function (data) {
-                if(data.data==0){
+                console.log(data);
+                if(data.data==0&&data.total!=0){
                     var listData = data.basketballs;
                     var total = data.total;
                     showData(listData);
@@ -35,8 +36,8 @@ $(document).ready(function () {
                         },
                         onPageClicked: function (event, originalEvent, type, page) {
                             $.ajax({
-                                url: listUrl,
-                                type: 'GET',
+                                url: orderListUrl,
+                                type: 'POST',
                                 data: {
                                     limit: pageLimit,
                                     currentPage: page
@@ -58,15 +59,17 @@ $(document).ready(function () {
                         }
                     });
                 }
-                else if(data.data==1){
+                else if(data.data==0&&data.total==0){
                     noData();
                 }
-                else if(data.data==2)
-                    alert("error！");
+                else{
+                    alert(data.message);
+                }
             },
             dataType: "json"
         });
     }
+
 
     function showData(listData) {
         var temp = [], showNum = listData.length;
@@ -98,6 +101,16 @@ $(document).ready(function () {
 
         $('#list').html(temp.join(''));
     }
+
+    function info(user,phone,deposit) {
+        var temp = [];
+        temp.push(' <p>账号:'+user +'</p>');
+        temp.push('<p>手机号:'+ phone +'</p>');
+        temp.push('<p>存款:'+ deposit +'</p>');
+        $('#pinfo').html(temp.join(''));
+
+    }
+
 
     init();
 });

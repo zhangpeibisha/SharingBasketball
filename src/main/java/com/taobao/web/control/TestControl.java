@@ -129,6 +129,8 @@ public class TestControl {
 
         map.put("data", "添加成功");
 
+        map.put("daa","sss");
+
         return map;
     }
 

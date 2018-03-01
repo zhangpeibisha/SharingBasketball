@@ -2,6 +2,7 @@ package com.taobao.dao.entity;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -16,6 +17,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "role")
+@JsonIgnoreProperties(value={"handler","hibernateLazyInitializer","users","permissions"})
 public class Role {
 
     private int roleID;

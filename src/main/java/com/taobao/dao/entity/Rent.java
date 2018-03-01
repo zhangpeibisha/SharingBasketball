@@ -1,8 +1,7 @@
 package com.taobao.dao.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -17,8 +16,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "rent")
+@JsonIgnoreProperties(value={"handler","hibernateLazyInitializer","basketballs"})
 public class Rent {
-
 
     private int rentID;
 
@@ -31,11 +30,8 @@ public class Rent {
     //创建时间
     private Date createTime;
 
-
     //一个出租规则对应多个篮球 一个篮球只有一个出租规则 被维护端
     private Set<Basketball> basketballs = new HashSet<>();
-
-
     //set and get
 
     @Id

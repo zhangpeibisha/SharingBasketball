@@ -1,6 +1,7 @@
 package com.taobao.dao.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -10,13 +11,13 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "SchooleCard")
+@JsonIgnoreProperties(value={"handler","hibernateLazyInitializer","user"})
 public class SchoolCard {
 
     private int id;
     private String schoolID;
     private String password;
     private int money;
-
 
     //校园卡与用户一对一
     private User user;

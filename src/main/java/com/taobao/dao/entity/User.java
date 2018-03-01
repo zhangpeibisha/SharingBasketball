@@ -1,5 +1,6 @@
 package com.taobao.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
 import org.apache.log4j.Logger;
 import org.hibernate.annotations.GenericGenerator;
@@ -20,6 +21,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "user")
+@JsonIgnoreProperties(value={"handler","hibernateLazyInitializer"})
 public class User implements HttpSessionBindingListener {
 
 

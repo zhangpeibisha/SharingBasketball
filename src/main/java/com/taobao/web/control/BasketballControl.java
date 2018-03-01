@@ -106,6 +106,9 @@ public class BasketballControl {
             int pageSize = Integer.parseInt(limit);
 
             List<Basketball> basketballs = basketballDao.findBastketballList(start, pageSize);
+
+            logger.info("有订单 " + basketballs.get(0).getRent().getBilling());
+
             String sql = "select count(*) from basketball";
             long count = basketballDao.findCountBySQL(sql);
             map = controlResult.successfulContrl(map, "获取全部篮球列表成功", logger);

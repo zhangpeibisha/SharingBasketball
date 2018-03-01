@@ -1,6 +1,7 @@
 package com.taobao.dao.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.taobao.dto.OrderDto;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -14,8 +15,8 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "order_basketball_user")
+@JsonIgnoreProperties(value={"handler","hibernateLazyInitializer","user"})
 public class Order {
-
 
     private int orderID;
 

@@ -10,7 +10,6 @@ $(document).ready(function(){
             alert("输入不能为空");
             return;
         }
-
         password= hex_md5(password);
         console.info(name);
         console.info(password);

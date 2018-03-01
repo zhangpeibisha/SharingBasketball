@@ -424,7 +424,7 @@ public class UserControl {
                 return controlResult.identityOutTime(map, logger, "");
             }
 
-            Basketball basketball = basketballDao.findById(basketballId);
+            Basketball basketball = basketballDao.findById(Integer.parseInt(basketballId));
 
             if (controlResult.isNull(basketball)) {
                 return controlResult.inquireFail(map, "这个篮球不存在", logger);
@@ -446,8 +446,9 @@ public class UserControl {
             if (userMoney>=needMoney){
 
                 //更新用户钱
-                user1.setMoney(userMoney-rentMoney);
-                userDao.update(user1);
+                User saveUser = userDao.findById(user1.getUserID());
+                saveUser.setMoney(userMoney-rentMoney);
+                userDao.update(saveUser);
 
                 //设置篮球不可以借
                 basketball.setIsRent(1);

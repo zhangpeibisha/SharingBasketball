@@ -2,6 +2,7 @@ package com.taobao.web.control;
 
 import com.taobao.dao.databasesDaoImpl.OrderDaoImpl;
 import com.taobao.dao.databasesDaoImpl.RentDaoImpl;
+import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
 import com.taobao.dao.entity.Order;
 import com.taobao.dao.entity.User;
 import com.taobao.utils.format.Validator;
@@ -34,6 +35,8 @@ public class OrderControl {
     private ControlResult controlResult;
 
 
+    @Autowired
+    private UserDaoImpl userDao;
     /**
      * 用户订单信息和个人信息
      *
@@ -68,14 +71,22 @@ public class OrderControl {
             int start = Integer.parseInt(currentPage);
             int pageSize = Integer.parseInt(limit);
 
-            List<Order> orders = orderDao.findUserOrderList(user, pageSize, start);
+            User dataUser = userDao.findById(user.getUserID());
+            List<Order> orders = orderDao.findUserOrderList(dataUser, pageSize, start);
 
             map = controlResult.successfulContrl(map,"获取用户订单成功",logger);
-            map.put("user",user.getSchoolID());
-            map.put("phone",user.getPhone());
-            map.put("money",user.getMoney());
-            map.put("total",user.getOrders().size());
-            map.put("orderList",orders);
+            map.put("user",dataUser.getSchoolID());
+            map.put("phone",dataUser.getPhone());
+            map.put("money",dataUser.getMoney());
+
+            if (orders != null){
+                map.put("total",dataUser.getOrders().size());
+                map.put("orderList",orders);
+            }else {
+                map.put("total",0);
+                map.put("orderList",null);
+            }
+
             return map;
         } catch (Exception e) {
             e.printStackTrace();

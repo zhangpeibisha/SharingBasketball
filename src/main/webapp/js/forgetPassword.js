@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var forgetCodeUrl = "http://localhost:8080/phoneVerification.do";
+    var forgetUrl = "http://localhost:8080/submitVerification.do";
 
     $("#back").click(function () {
         $(location).attr('href','login.html');
@@ -57,19 +58,37 @@ $(document).ready(function () {
     });
 
     $("#sub").click(function () {
+        var code = $("#code").val();
+        var phone = $("#phone").val();
         if(code.length==0)
         {
             alert('请输入验证码！');
             return;
         }
-        if(phone.length!=6)
+        if(code.length!=6)
         {
             alert('验证码为6位!');
             return;
         }
-        alert("验证成功！");
-        var user = $("#user").val();
-        $(location).attr('href','changePassword.html?user='+user);
+
+        $.ajax({
+            type: 'POST',
+            url: forgetUrl,
+            data: {
+                phone:phone,
+                code:code
+            },
+            success: function (data) {
+                console.info(data);
+                if(data.data=="0"){
+                    $(location).attr('href','changePassword.html?user='+phone);
+                }
+                else{
+                    alert(data.message);
+                }
+            },
+            dataType: "json"
+        });
     });
 
 });

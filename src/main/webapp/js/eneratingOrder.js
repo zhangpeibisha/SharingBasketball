@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var detailUrl = "";
+    var detailUrl = "http://localhost:8080/rent.do";
     var creatOrderUrl = "";
 
     var loc = location.href;
@@ -9,15 +9,15 @@ $(document).ready(function () {
 
     function init() {
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: detailUrl,
             data: {
+                user:"13752818831",
                 basketballId:basketID
             },
             success: function (data) {
                 console.info(data);
                 if(data.data=="0"){
-                    alert("获取成功");
                     $("#sub").removeAttr("disabled");
                 }
                 else{
@@ -29,8 +29,6 @@ $(document).ready(function () {
     }
 
     $("#sub").click(function () {
-
-
         $.ajax({
             type: 'GET',
             url: creatOrderUrl,

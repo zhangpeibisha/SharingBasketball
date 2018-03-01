@@ -1,11 +1,11 @@
 $(document).ready(function () {
-    var orderListUrl = "";
+    var orderListUrl = "http://localhost:8080/orderList.do";
     var pageLimit = 10;
     var currentPage = 1;
 
     function init() {
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: orderListUrl,
             data: {
                 limit: pageLimit,

@@ -6,9 +6,6 @@ $(document).ready(function () {
     var n2 = loc.indexOf("=");//取得=号的位置
     var name = decodeURI(loc.substr(n2+1, n1-n2));//从=号后面的内容
 
-    console.info(name);
-
-
     $("#sub").click(function () {
         var pass = $("#password").val();
         var pass1 = $("#password1").val();

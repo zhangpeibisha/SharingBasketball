@@ -26,11 +26,8 @@ $(document).ready(function(){
                 if(data.data=="0"){
                      $(location).attr('href', 'welcome.html');
                 }
-                else if(data.data=="1"){
-                    alert("当前用户不存在！");
-                }
-                else if(data.data=="2"){
-                    alert("用户名或密码不正确！");
+                else{
+                    alert(data.message);
                 }
             },
             dataType: "json"

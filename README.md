@@ -117,7 +117,7 @@ URL:http://localhost:8080/phoneVerification.do?phone=用户手机号码
 
 参数代码说明： -1 参数为空 -2输入不是手机号码 1手机号未注册 0发送成功 2服务器异常
 
-*2.提交手机号和验证码
+* 2.提交手机号和验证码
 *URL：http://localhost:8080/submitVerification.do?phone=用户手机&code=用户输入的验证码
 *参数
 {

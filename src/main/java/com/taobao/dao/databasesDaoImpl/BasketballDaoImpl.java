@@ -52,9 +52,6 @@ public class BasketballDaoImpl extends SupperBaseDAOImp<Basketball> {
                 "               LIMIT " + pageNo + "," + pageSize;
         List<Basketball> basketballs = findEntityBySQL(sql, Basketball.class);
 
-        for (Basketball basketball : basketballs) {
-            basketball.getRent().setBasketballs(null);
-        }
         return basketballs;
 
     }
@@ -79,9 +76,6 @@ public class BasketballDaoImpl extends SupperBaseDAOImp<Basketball> {
         String sql = "select * from basketball LIMIT " + pageNo + "," +  pageSize;
         List<Basketball> basketballs = findEntityBySQL(sql, Basketball.class);
 
-        for (Basketball basketball : basketballs) {
-            basketball.getRent().setBasketballs(null);
-        }
         return basketballs;
 
     }

@@ -1,6 +1,7 @@
 package com.taobao.dao.databasesDaoImpl;
 
 import com.taobao.dao.databasesDao.SupperBaseDAOImp;
+import com.taobao.dao.entity.Order;
 import com.taobao.dao.entity.User;
 import com.taobao.web.control.untils.ControlResult;
 import org.apache.log4j.Logger;
@@ -9,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/24.
@@ -63,7 +62,8 @@ public class UserDaoImpl extends SupperBaseDAOImp<User> {
             return controlResult.inquireFail(map,"当前用户不存在",logger);
         } else if (haveUser.getPassword().equals(password)) {
            map = controlResult.successfulContrl(map,"用户登陆成功",logger);
-           haveUser.setOrders(null);
+           haveUser.setSchooleCard(null);
+           haveUser.setRole(null);
            map.put("user",haveUser);
            return map;
         } else {

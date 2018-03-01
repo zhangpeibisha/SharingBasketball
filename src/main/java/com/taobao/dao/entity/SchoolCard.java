@@ -1,5 +1,6 @@
 package com.taobao.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -60,7 +61,7 @@ public class SchoolCard {
         this.money = money;
     }
 
-    @OneToOne(mappedBy = "schooleCard", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "schooleCard", cascade = CascadeType.ALL , fetch = FetchType.LAZY)
     public User getUser() {
         return user;
     }

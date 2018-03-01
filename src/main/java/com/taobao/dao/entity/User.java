@@ -114,7 +114,7 @@ public class User implements HttpSessionBindingListener {
         this.money = money;
     }
 
-    @ManyToOne(targetEntity = Role.class)
+    @ManyToOne(targetEntity = Role.class , fetch = FetchType.LAZY)
     @JoinColumn(name = "role")
     public Role getRole() {
         return role;
@@ -134,7 +134,7 @@ public class User implements HttpSessionBindingListener {
         this.orders = orders;
     }
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "schooleCard")
     public SchoolCard getSchooleCard() {
         return schooleCard;

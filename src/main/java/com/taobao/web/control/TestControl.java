@@ -134,7 +134,6 @@ public class TestControl {
         return map;
     }
 
-
     @RequestMapping(value = "/testAddRent", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, String> testAddRent() {

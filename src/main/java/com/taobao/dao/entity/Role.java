@@ -1,6 +1,7 @@
 package com.taobao.dao.entity;
 
 
+
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -76,7 +77,7 @@ public class Role {
     }
 
 
-    @ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.EAGER)
+    @ManyToMany(cascade=CascadeType.ALL,fetch=FetchType.LAZY)
     @JoinTable(name="permission_role",joinColumns = {@JoinColumn(name="role")},
             inverseJoinColumns =@JoinColumn(name = "permission"))
     public Set<Permissions> getPermissions() {

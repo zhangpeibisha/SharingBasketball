@@ -348,7 +348,6 @@ public class UserControl {
     public @ResponseBody
     Map<String, Object> updatePasswordRun(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();
-
         try {
             String phone = req.getParameter("phone");
             String newPassword = req.getParameter("password");

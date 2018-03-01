@@ -1,5 +1,6 @@
 package com.taobao.dao.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -83,11 +84,10 @@ public class Basketball {
     }
 
 
-    @OneToOne(mappedBy = "basketball", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "basketball", cascade = CascadeType.ALL , fetch = FetchType.LAZY)
     public Order getOrder() {
         return order;
     }
-
 
     @Column(name = "nowPerssure", length = 10)
     public double getNowPerssure() {
@@ -95,7 +95,7 @@ public class Basketball {
     }
 
 
-    @ManyToOne(targetEntity = Rent.class)
+    @ManyToOne(targetEntity = Rent.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "rent")
     public Rent getRent() {
         return rent;

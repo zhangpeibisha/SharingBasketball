@@ -1,5 +1,7 @@
 package com.taobao.dao.entity;
 
+
+import com.taobao.dto.OrderDto;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -76,7 +78,7 @@ public class Order {
         this.castMoney = castMoney;
     }
 
-    @ManyToOne(targetEntity = User.class)
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
     @JoinColumn(name="user")
     public User getUser() {
         return user;
@@ -86,7 +88,7 @@ public class Order {
         this.user = user;
     }
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "basketball")
     public Basketball getBasketball() {
         return basketball;
@@ -94,5 +96,15 @@ public class Order {
 
     public void setBasketball(Basketball basketball) {
         this.basketball = basketball;
+    }
+
+    public OrderDto toDto() {
+        OrderDto dto = new OrderDto();
+        dto.setBasketball(getBasketball());
+        dto.setCastMoney(getCastMoney());
+        dto.setLendTime(getLendTime());
+        dto.setOrderID(getOrderID());
+        dto.setReturnTime(getReturnTime());
+        return dto;
     }
 }

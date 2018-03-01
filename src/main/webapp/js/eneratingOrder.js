@@ -1,6 +1,6 @@
 $(document).ready(function () {
-    var detailUrl = "http://localhost:8080/rent.do";
-    var creatOrderUrl = "";
+    var detailUrl = "http://localhost:8080/basketballDetail.do";
+    var creatOrderUrl = "http://localhost:8080/rent.do";
 
     var loc = location.href;
     var n1 = loc.length;//地址的总长度
@@ -9,15 +9,15 @@ $(document).ready(function () {
 
     function init() {
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: detailUrl,
             data: {
-                user:"13752818831",
-                basketballId:basketID
+                basketballID:basketID
             },
             success: function (data) {
                 console.info(data);
                 if(data.data=="0"){
+                    info(data.basketball,data.user);
                     $("#sub").removeAttr("disabled");
                 }
                 else{
@@ -30,7 +30,7 @@ $(document).ready(function () {
 
     $("#sub").click(function () {
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: creatOrderUrl,
             data: {
                 basketballId:basketID
@@ -48,6 +48,21 @@ $(document).ready(function () {
             dataType: "json"
         });
     });
+
+    function info(bas,user) {
+        var temp = [];
+        temp.push('<div class="col-md-12"><p class="col-md-3">篮球编号:</p><span>'+ bas.basketballID +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">篮球型号:</p><span>'+ bas.model +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">是否可借:</p><span>'+ bas.isRent +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">租借押金:</p><span>'+ bas.rent.deposit +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">小时租金:</p><span>'+ bas.rent.billing +'</span></div>');
+        $('#binfo').html(temp.join(''));
+
+        var tempp = [];
+        tempp.push('<div class="col-md-12"><p class="col-md-3">当前用户:</p><span>'+user.schoolID +'</span></div>');
+        tempp.push('<div class="col-md-12"><p class="col-md-3">存款:</p><span>'+ user.money +'</span></div>');
+        $('#pinfo').html(tempp.join(''));
+    }
 
     init();
 

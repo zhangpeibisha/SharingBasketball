@@ -110,9 +110,9 @@ $(document).ready(function () {
         temp.push('<div class="col-md-12"><p class="col-md-3">账号:</p><span>'+user +'</span></div>');
         temp.push('<div class="col-md-12"><p class="col-md-3">手机号:</p><span>'+ phone +'</span></div>');
         temp.push('<div class="col-md-12"><p class="col-md-3">存款:</p><span>'+ deposit +'</span></div>');
-        console.info(temp);
         $('#pinfo').html(temp.join(''));
     }
+
     init();
 });
 

@@ -152,7 +152,6 @@
 * HTTP请求方式： POST
 *请求数据：
 {
-    user：校园卡号
     basketballId:篮球id
 }
 * 返回参数

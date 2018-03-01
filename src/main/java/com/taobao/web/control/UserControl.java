@@ -136,6 +136,7 @@ public class UserControl {
                    return controlResult.inquireFail(map,"找不到要查询的角色，注册失败",logger);
                 }
 
+
                 //生成用户信息
                 User user = new User();
                 //使用加密码
@@ -458,34 +459,6 @@ public class UserControl {
 
     }
 
-    /**
-     * 用户订单信息和个人信息
-     * @param req
-     * @param session
-     * @return
-     */
-    @RequestMapping(value = "/orderList", method = RequestMethod.GET)
-    public @ResponseBody
-    Map<String, Object> orderList(HttpServletRequest req, HttpSession session) {
-        Map<String, Object> map = new HashMap<>();
-
-        try {
-            //每页行数
-            String limit = req.getParameter("limit");
-            //当前页数
-            String currentPage = req.getParameter("currentPage");
-
-            List<User> users = userDao.findAll();
-            map.put("user",users);
-        }catch (Exception e){
-
-        }
-
-
-        return map;
-    }
-
-
 
     /**
      * 缴费模块 , 订单结束时使用的接口
@@ -504,6 +477,8 @@ public class UserControl {
             String user = req.getParameter("user");
             //订单号
             String orderNumber = req.getParameter("orderNumber");
+
+
 
         } catch (Exception e) {
             e.printStackTrace();

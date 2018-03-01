@@ -121,7 +121,7 @@ public class ControlResult {
      */
     public Map<String, Object> inquireFail(Map<String, Object> map, String description, Logger logger) {
         map.put("data", "-5");
-        map.put("message", "查询失败 " + description);
+        map.put("message", description);
         logger.error("查询失败 " + description);
         return map;
     }

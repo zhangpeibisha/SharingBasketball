@@ -20,4 +20,8 @@ public class RentDaoImpl extends SupperBaseDAOImp<Rent> {
     public <T> Long findByCriteriaCount(T object) {
         return null;
     }
+
+
+
+
 }

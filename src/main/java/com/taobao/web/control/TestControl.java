@@ -105,7 +105,7 @@ public class TestControl {
             basketball.setIsRent(i % 2);
             basketball.setPressure(0.06);
             basketball.setNowPerssure((Math.random() * 10) * 0.01);
-            basketball.setRent(rentDao.findByProperty("id",1));
+            basketball.setRent(rentDao.findByProperty("id",2));
             basketballDao.save(basketball);
         }
 

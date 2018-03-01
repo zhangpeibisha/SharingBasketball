@@ -1,10 +1,7 @@
 package com.taobao.web.control;
 
 import com.taobao.dao.databasesDaoImpl.*;
-import com.taobao.dao.entity.Basketball;
-import com.taobao.dao.entity.Order;
-import com.taobao.dao.entity.SchoolCard;
-import com.taobao.dao.entity.User;
+import com.taobao.dao.entity.*;
 import com.taobao.service.sms.SendSMS;
 import com.taobao.utils.format.Validator;
 import com.taobao.utils.sign.MD5;
@@ -20,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -53,6 +51,7 @@ public class UserControl {
 
     @Autowired
     private OrderDaoImpl orderDao;
+
 
     /**
      * 登陆采用Get方法
@@ -125,6 +124,18 @@ public class UserControl {
             if (session.getAttribute(phone).equals(code)) {
                 //移除验证码
                 session.removeAttribute(phone);
+                //获取一些用户基础信息
+                SchoolCard card = (SchoolCard) session.getAttribute("card");
+                Role role = roleDao.findRoleByName("普通用户");
+
+                if (controlResult.isNull(card)){
+                    return controlResult.violationControl(map,"注册违规操作",logger);
+                }
+
+                if (controlResult.isNull(role)){
+                   return controlResult.inquireFail(map,"找不到要查询的角色，注册失败",logger);
+                }
+
                 //生成用户信息
                 User user = new User();
                 //使用加密码
@@ -132,8 +143,8 @@ public class UserControl {
                 user.setCreateTime(new Date());
                 user.setPhone(phone);
                 user.setSchoolID(schoolID);
-                user.setSchooleCard((SchoolCard) session.getAttribute("card"));
-                user.setRole(roleDao.findRoleByName("普通用户"));
+                user.setSchooleCard(card);
+                user.setRole(role);
                 userDao.save(user);
 
                 map = controlResult.successfulContrl(map, schoolID + "用户注册成功", logger);
@@ -446,6 +457,34 @@ public class UserControl {
         }
 
     }
+
+    /**
+     * 用户订单信息和个人信息
+     * @param req
+     * @param session
+     * @return
+     */
+    @RequestMapping(value = "/orderList", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, Object> orderList(HttpServletRequest req, HttpSession session) {
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            //每页行数
+            String limit = req.getParameter("limit");
+            //当前页数
+            String currentPage = req.getParameter("currentPage");
+
+            List<User> users = userDao.findAll();
+            map.put("user",users);
+        }catch (Exception e){
+
+        }
+
+
+        return map;
+    }
+
 
 
     /**

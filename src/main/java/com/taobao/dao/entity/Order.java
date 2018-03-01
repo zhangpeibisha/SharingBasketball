@@ -2,7 +2,6 @@ package com.taobao.dao.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.taobao.dto.OrderDto;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -99,13 +98,4 @@ public class Order {
         this.basketball = basketball;
     }
 
-    public OrderDto toDto() {
-        OrderDto dto = new OrderDto();
-        dto.setBasketball(getBasketball());
-        dto.setCastMoney(getCastMoney());
-        dto.setLendTime(getLendTime());
-        dto.setOrderID(getOrderID());
-        dto.setReturnTime(getReturnTime());
-        return dto;
-    }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Date;
@@ -404,29 +405,23 @@ public class UserControl {
         Map<String, Object> map = new HashMap<>();
 
         try {
-            //校园卡号
-            String user = req.getParameter("user");
+
             //篮球id
             String basketballId = req.getParameter("basketballId");
 
-            if (controlResult.isNull(user, basketballId)) {
+            if (controlResult.isNull( basketballId)) {
                 return controlResult.nullParameter(map, logger);
             }
 
             //判断参数格式
-            if (!Validator.isNumber(user) || !Validator.isNumber(basketballId)) {
+            if (!Validator.isNumber(basketballId)) {
                 controlResult.parameterFormatError(map, "请输入的参数不是指定数据格式", logger);
             }
 
             //如果session过期，那么就是身份过期，请重新登陆
             User user1 = (User) session.getAttribute("user");
             if (controlResult.isNull(user1)) {
-                return controlResult.identityOutTime(map, logger, user);
-            }
-
-            //判断用户是否是通过登陆后页面进入申请租借的
-            if (!user1.getSchoolID().equals(user)) {
-                return controlResult.violationControl(map, "用户" + user + "申请租借篮球时违规操作", logger);
+                return controlResult.identityOutTime(map, logger, "");
             }
 
             Basketball basketball = basketballDao.findById(basketballId);
@@ -439,8 +434,6 @@ public class UserControl {
                     || basketball.getNowPerssure() < basketball.getPressure()) {
                 return controlResult.dataIsNotAvailable(map, basketballId + "该篮球不允许出租", logger);
             }
-
-
 
             //篮球租金
             double rentMoney = basketball.getRent().getDeposit();
@@ -467,7 +460,7 @@ public class UserControl {
                 order.setLendTime(new Date());
                 orderDao.save(order);
 
-                return controlResult.successfulContrl(map, user + "租用" + basketballId + "的订单生成成功", logger);
+                return controlResult.successfulContrl(map, user1.getSchoolID() + "租用" + basketballId + "的订单生成成功", logger);
 
             }else {
                 return controlResult.dataIsNotAvailable(map,"用户金额不足，请保证余额大于等于60元",logger);
@@ -580,5 +573,26 @@ public class UserControl {
         }
     }
 
+
+
+    @RequestMapping(value = "/recharge", method = RequestMethod.GET)
+    public @ResponseBody
+    Map<String, Object> recharge(HttpServletRequest req, HttpSession session) {
+
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            String money = req.getParameter("money");
+            double addMoney = Double.parseDouble(money);
+            User user = (User) session.getAttribute("user");
+            addMoney = user.getMoney()+addMoney;
+            user.setMoney(addMoney);
+            userDao.update(user);
+        }catch (Exception e){
+         e.printStackTrace();
+        }
+        map.put("data", "添加成功");
+        return map;
+    }
 
 }

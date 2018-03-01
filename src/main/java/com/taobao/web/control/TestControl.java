@@ -79,12 +79,13 @@ public class TestControl {
         Map<String, String> map = new HashMap<>();
 
         User user = new User();
-        user.setSchoolID("123456789111");
+        user.setSchoolID("20");
         user.setPhone("18203085236");
         user.setCreateTime(new Date());
         user.setRole(roleDao.findRoleByName("普通用户"));
         user.setSchooleCard(schoolCardDao.findByProperty("schoolID", "123456789111"));
         user.setPassword(md5.encryption("123456"));
+
         userDao.save(user);
 
         map.put("data", "添加成功");
@@ -133,7 +134,6 @@ public class TestControl {
 
         map.put("data", "添加成功");
 
-        map.put("daa", "sss");
 
         return map;
     }
@@ -161,9 +161,9 @@ public class TestControl {
      */
     @RequestMapping(value = "/testModel", method = RequestMethod.GET)
     public @ResponseBody
-    Map<String, String> testModel() {
+    Map<String, Object> testModel() {
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("data", "添加成功");
         return map;
     }

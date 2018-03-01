@@ -75,7 +75,6 @@ public class UserControl {
             Map<String, Object> result = userDao.findUserBySchoolIDOrPhone(user, password);
             //登陆成功时，session记录用户信息
             if (result.get("data").equals("0")) {
-
                 session.setAttribute("user", result.get("user"));
             }
             return  result;

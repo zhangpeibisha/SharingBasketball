@@ -60,9 +60,10 @@ public class UserDaoImpl extends SupperBaseDAOImp<User> {
         }
 
         if (haveUser == null) {
-            return controlResult.inquireFail(map,"没有这个用户，请先注册",logger);
+            return controlResult.inquireFail(map,"当前用户不存在",logger);
         } else if (haveUser.getPassword().equals(password)) {
            map = controlResult.successfulContrl(map,"用户登陆成功",logger);
+           haveUser.setOrders(null);
            map.put("user",haveUser);
            return map;
         } else {

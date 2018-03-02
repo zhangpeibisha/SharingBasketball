@@ -10,7 +10,8 @@ $(document).ready(function () {
             url: revertListUrl,
             data: {
                 limit: pageLimit,
-                currentPage: currentPage
+                currentPage: currentPage,
+                all: 1
             },
             success: function (data) {
                 console.log(data);
@@ -40,7 +41,8 @@ $(document).ready(function () {
                                 type: 'POST',
                                 data: {
                                     limit: pageLimit,
-                                    currentPage: page
+                                    currentPage: page,
+                                    all: 1
                                 },
                                 dataType: 'json',
                                 success: function (data) {
@@ -61,7 +63,6 @@ $(document).ready(function () {
                     });
                 }
                 else if(data.data==0&&data.total==0){
-                    info(data.user,data.phone,data.deposit);
                     noData();
                 }
                 else{

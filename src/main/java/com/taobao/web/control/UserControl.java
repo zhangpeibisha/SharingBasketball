@@ -541,7 +541,7 @@ public class UserControl {
             User user1 = order.getUser();
 
             //剩余的钱，押金一起算钱
-            long remaining = (long) (user1.getMoney() - money) + 50;
+            double remaining = (user1.getMoney() - money) + 50;
             if (remaining >= 0) {
 
                 //更新用户金额

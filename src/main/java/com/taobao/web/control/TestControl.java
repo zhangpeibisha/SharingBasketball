@@ -124,7 +124,7 @@ public class TestControl {
                 basketball.setIsRent(1);
                 basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer - random)));
             }
-            basketball.setRent(rentDao.findByProperty("id", 2));
+            basketball.setRent(rentDao.findByProperty("id", 1));
             basketballDao.save(basketball);
         }
 
@@ -161,7 +161,7 @@ public class TestControl {
         Rent rent = new Rent();
         rent.setCreateTime(new Date());
         rent.setDeposit(50);
-        rent.setBilling(0.5);
+        rent.setBilling(5);
         rentDao.save(rent);
         map.put("data", "添加成功");
         return map;

@@ -188,7 +188,8 @@
     lendTime:租借时间,
     returnTime:归还时间,
     totalTime:总计时,
-    castMoney消费金额:
+    castMoney:消费金额
+    }
 }
 
 
@@ -230,5 +231,31 @@
     model:篮球型号,
     isRent: 是否可借，
     deposit:租借押金,
+    billing:小时租金
+}
+
+13. 订单详细信息
+* 点击租借后显示的篮球详细信息
+* URL：http://localhost:8080/orderDetail.do
+* HTTP请求方式： POST
+*请求数据：
+{
+    orderId:订单编号
+}
+*返回参数
+{
+    user:账号名,
+    phone:手机号,
+    deposit:用户存款,
+    orderDetail:{
+    orderId:订单编号,
+    basketballID:篮球编号, 
+    model:篮球型号,
+    deposit:租借押金,
     billing:小时租金,
+    lendTime:租借时间,
+    currentTime:当前时间(获取当前时间，不写入数据库),
+    time:当前计时（获取当前时间计算，不写入数据库）,
+    nowCastMoney:欲消费金额（实时计算，不写入数据库）
+    }
 }

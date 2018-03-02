@@ -6,7 +6,7 @@ $(document).ready(function () {
 
     function init() {
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: revertListUrl,
             data: {
                 limit: pageLimit,
@@ -15,10 +15,9 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 if(data.data==0&&data.total!=0){
-                    var listData = data.basketballs;
+                    var listData = data.orderList;
                     var total = data.total;
                     showData(listData);
-
                     var num = (total+pageLimit -1)/pageLimit;//向上取整
                     $('#page').bootstrapPaginator({
                         bootstrapMajorVersion: 3,
@@ -38,7 +37,7 @@ $(document).ready(function () {
                         onPageClicked: function (event, originalEvent, type, page) {
                             $.ajax({
                                 url: revertListUrl,
-                                type: 'GET',
+                                type: 'POST',
                                 data: {
                                     limit: pageLimit,
                                     currentPage: page
@@ -47,20 +46,22 @@ $(document).ready(function () {
                                 success: function (data) {
                                     console.info(data);
                                     if(data.data==0){
-                                        var listData = data.basketballs;
+                                        var listData = data.orderList;
                                         showData(listData);
                                     }
-                                    else if(data.data==1){
+                                    else if(data.data==0&&data.total==0){
                                         noData();
                                     }
-                                    else if(data.data==2)
-                                        alert("error！");
+                                    else{
+                                        alert(data.message);
+                                    }
                                 }
                             });
                         }
                     });
                 }
                 else if(data.data==0&&data.total==0){
+                    info(data.user,data.phone,data.deposit);
                     noData();
                 }
                 else{
@@ -72,25 +73,21 @@ $(document).ready(function () {
     }
 
 
-
     function showData(listData) {
         var temp = [], showNum = listData.length;
 
         temp.push('<table class="table table-hover">');
-        temp.push('<thead><tr><th>篮球编号</th><th>篮球型号</th><th>压力标准值</th>' +
-            '<th>当前压力值</th><th>是否损坏</th><th>是否可借</th>'+
-            '<th>租借押金</th><th>小时租金</th></tr><tbody>');
+        temp.push('<thead><tr><th>订单编号</th><th>篮球编号</th><th>篮球型号</th>' +
+            '<th>租借押金</th><th>小时租金</th><th>租借时间</th><th>操作</th></tr><tbody>');
         for (var i = 0; i < showNum; i++) {
-            if(listData[i].isRent=="0")
-                listData[i].isRent ="可借";
-            else listData[i].isRent ="不可借";
-            if(listData[i].isBad=="0")
-                listData[i].isBad ="正常";
-            else listData[i].isBad ="损坏";
-            temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].model + "</td><td>"
-                + listData[i].pressure+ "</td><td>" + listData[i].nowPerssure + "</td><td>"
-                + listData[i].isBad + "</td><td>" + listData[i].isRent + "</td><td>"
-                + listData[i].rent.deposit + "</td><td>" + listData[i].rent.billing + "</td><td>");
+            listData[i].lendTime = new Date(listData[i].lendTime).toLocaleString();
+
+            var tempHref = "../html/completeOrder.html?id=" +listData[i].orderID;
+
+            temp.push("<tr><td>" + listData[i].orderID + "</td><td>" + listData[i].basketball.basketballID + "</td><td>"
+                + listData[i].basketball.model+ "</td><td>" + listData[i].basketball.rent.deposit + "</td><td>"
+                + listData[i].basketball.rent.billing + "</td><td>" + listData[i].lendTime + "</td><td>"
+                + "<a class='revert-a' href="+ tempHref +">归还</a></td></tr>");
         }
         temp.push('</tbody></table>');
 

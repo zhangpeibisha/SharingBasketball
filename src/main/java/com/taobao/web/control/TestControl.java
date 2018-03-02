@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -98,18 +99,31 @@ public class TestControl {
 
         Map<String, String> map = new HashMap<>();
 
-        for (int i = 0; i < 50; i++) {
+        //球类型
+        String[] basketClass = {"#7 标准男子", "#6 标准女子", "#5 青少年", "#3 儿童"};
+
+        //设置压力保存三位小数
+        DecimalFormat df = new DecimalFormat("######0.000");
+
+        for (int i = 0; i < 200; i++) {
             Basketball basketball = new Basketball();
-            basketball.setIsBad(i % 2);
             basketball.setCreateTime(new Date());
-            if (i % 2 == 0) {
-                basketball.setModel("A型");
+            basketball.setPressure(0.06);//标准压力 0.06
+            //设置型号
+            int tempClass = (int) Math.random() * 3;
+            basketball.setModel(basketClass[tempClass]);
+            //设置是否损坏
+            int tempBad = Math.random() > 0.5 ? 1 : 0;
+            basketball.setIsBad(tempBad);
+            double random = (Math.random() * 0.02);
+            double nowPerssuer =  0.06;
+            if (tempBad == 0 && random>=0) {
+                basketball.setIsRent(0);
+                basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer + random)));
             } else {
-                basketball.setModel("B型");
+                basketball.setIsRent(1);
+                basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer - random)));
             }
-            basketball.setIsRent(i % 2);
-            basketball.setPressure(0.06);
-            basketball.setNowPerssure((Math.random() * 10) * 0.01);
             basketball.setRent(rentDao.findByProperty("id", 2));
             basketballDao.save(basketball);
         }
@@ -178,8 +192,8 @@ public class TestControl {
 
         long create = user.getCreateTime().getTime();
         long now = System.currentTimeMillis();
-        System.out.println("创建了 " + ((now - create)/100/60.0));
-
+        System.out.println("创建了 " + ((now - create) / 1000 / 60.0 / 60.0));
+        map.put("time", ((now - create) / 100 / 60.0));
         return map;
     }
 }

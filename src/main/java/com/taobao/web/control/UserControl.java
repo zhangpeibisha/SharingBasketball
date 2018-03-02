@@ -527,7 +527,7 @@ public class UserControl {
             long createTime = order.getLendTime().getTime();
             Date nowDateTime = new Date();
             long nowTime = nowDateTime.getTime();
-            long useTime = (long) ((nowTime - createTime) / 1000 / 60.0);
+            long useTime = (long) ((nowTime - createTime) / 1000 / 60.0 / 60.0);
             //得到计算费用金额
             double billing = order.getBasketball().getRent().getBilling();
             //计算金额
@@ -564,7 +564,7 @@ public class UserControl {
                 map = controlResult
                         .successfulContrl(map, user1.getSchoolID() + "的" + orderNumber + "订单缴费成功 " + info, logger);
 
-                map.put("money","money");
+                map.put("money",money);
                 //剩余的钱
                 map.put("deposit", remaining);
                 //订单信息

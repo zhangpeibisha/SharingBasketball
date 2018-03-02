@@ -68,4 +68,55 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
 
         return temp;
     }
+
+    /**
+     * 查找用户未完成的列表
+     *
+     * @param user
+     * @param limit
+     * @param currentPage
+     * @return
+     */
+    public List<Order> findUserUndoneOrderList(User user, int limit, int currentPage , boolean isUndone) {
+        List<Order> temp = new ArrayList<>();
+
+        if (user == null) {
+            return temp;
+        }
+
+        if (user.getOrders().isEmpty()) {
+            return temp;
+        }
+
+        if (limit <= 0 || currentPage <= 0) {
+            return temp;
+        }
+
+        Set<Order> orders = user.getOrders();
+        currentPage = (currentPage - 1) * limit;
+        Iterator<Order> iterator = orders.iterator();
+
+        while (iterator.hasNext()) {
+            Order order = iterator.next();
+            //没有完成的订单
+            if (order.getReturnTime() == null && isUndone ) {
+                temp.add(order);
+            }
+            //完成了的订单
+            if (order.getReturnTime() != null && !isUndone ) {
+                temp.add(order);
+            }
+        }
+
+        //移除不符合要求的订单
+        for (int i = 0; i < temp.size(); i++) {
+            if (i < currentPage || i >= (currentPage + limit)) {
+                temp.remove(temp.get(i));
+            }
+        }
+
+
+        return temp;
+    }
+
 }

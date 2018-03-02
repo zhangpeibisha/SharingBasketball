@@ -53,13 +53,15 @@ public class OrderControl {
             String limit = req.getParameter("limit");
             //当前页数
             String currentPage = req.getParameter("currentPage");
+            //表示请求什么列表
+            String all = req.getParameter("all");
 
-            if (controlResult.isNull(limit, currentPage)) {
+            if (controlResult.isNull(limit, currentPage,all)) {
                 return controlResult.nullParameter(map, logger);
             }
 
-            if (!Validator.isNumber(limit) || !Validator.isNumber(currentPage)) {
-                return controlResult.parameterFormatError(map, "页码数据格式不对", logger);
+            if (!Validator.isNumber(limit) || !Validator.isNumber(currentPage) || !Validator.isNumber(all)) {
+                return controlResult.parameterFormatError(map, "数据格式不对", logger);
             }
 
             User user = (User) session.getAttribute("user");
@@ -69,10 +71,17 @@ public class OrderControl {
 
             int start = Integer.parseInt(currentPage);
             int pageSize = Integer.parseInt(limit);
-
             User dataUser = userDao.findById(user.getUserID());
-            List<Order> orders = orderDao.findUserOrderList(dataUser, pageSize, start);
-
+            List<Order> orders;
+            if (all.equals("0")){
+                orders = orderDao.findUserOrderList(dataUser, pageSize, start);
+            }else if (all.equals("1")){
+                orders = orderDao.findUserUndoneOrderList(dataUser,pageSize,start,true);
+            }else  if (all.equals("2")){
+                orders = orderDao.findUserUndoneOrderList(dataUser,pageSize,start,false);
+            }else {
+                return controlResult.parameterFormatError(map,"参数错误",logger);
+            }
             map = controlResult.successfulContrl(map, "获取用户订单成功", logger);
             map.put("user", dataUser.getSchoolID());
             map.put("phone", dataUser.getPhone());
@@ -140,18 +149,19 @@ public class OrderControl {
                 long createTime = order.getLendTime().getTime();
                 Date nowDateTime = new Date();
                 long nowTime = nowDateTime.getTime();
-                long useTime = (long) ((nowTime - createTime) / 1000 / 60.0 / 60.0);
+                long useTimeMS = nowTime - createTime;
+                long useTimeH = (long) (useTimeMS/ 1000 / 60.0 / 60.0);
                 //得到计算费用金额
                 double billing = order.getBasketball().getRent().getBilling();
                 //计算金额
-                double money = (long) (useTime * billing);
+                double money = (long) (useTimeH * billing);
 
                 //设定现在时间
                 order.setReturnTime(nowDateTime);
                 //设定现在花费
                 order.setCastMoney(money);
                 map.put("orderDetail",order);
-                map.put("time",useTime);
+                map.put("totalTime",useTimeMS);
                 return map;
             }else{
                return controlResult.dataIsNotAvailable(map,"用户没有这个订单,不能查看",logger);

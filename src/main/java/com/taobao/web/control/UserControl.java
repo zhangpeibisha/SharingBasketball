@@ -580,7 +580,12 @@ public class UserControl {
     }
 
 
-
+    /**
+     * 充值的简单接口
+     * @param req
+     * @param session
+     * @return
+     */
     @RequestMapping(value = "/recharge", method = RequestMethod.GET)
     public @ResponseBody
     Map<String, Object> recharge(HttpServletRequest req, HttpSession session) {

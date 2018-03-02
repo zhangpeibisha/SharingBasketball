@@ -67,7 +67,7 @@ $(document).ready(function () {
             alert('请输入验证码！');
             return;
         }
-        if(phone.length!=6)
+        if(code.length!=6)
         {
             alert('验证码为6位!');
             return;

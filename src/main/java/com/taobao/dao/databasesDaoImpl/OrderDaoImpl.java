@@ -71,11 +71,21 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
             point++;
         }
 
+        Collections.sort(temp,new SortByID());
         map.put("length",orders.size());
         map.put("listOrder",temp);
 
         return map;
     }
+
+    class SortByID implements Comparator {
+        public int compare(Object o1, Object o2) {
+            Order s1 = (Order) o1;
+            Order s2 = (Order) o2;
+            return (s1.getOrderID()+"").compareTo(s2.getOrderID()+"");
+        }
+    }
+
 
     /**
      * 查找用户指定的订单
@@ -131,6 +141,7 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
                 temp.remove(temp.get(i));
             }
         }
+        Collections.sort(temp,new SortByID());
         map.put("listOrder",temp);
         return map;
     }

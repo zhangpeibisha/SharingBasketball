@@ -140,6 +140,11 @@ public class UserControl {
                 }
 
 
+                User chkectUser = userDao.findUserByPhone(phone);
+                if (!controlResult.isNull(chkectUser)){
+                    return controlResult.dataIsNotAvailable(map,"这个账户已经存在，请登陆",logger);
+                }
+
                 //生成用户信息
                 User user = new User();
                 //使用加密码

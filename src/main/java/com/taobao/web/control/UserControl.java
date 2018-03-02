@@ -559,6 +559,7 @@ public class UserControl {
                     basketball.setIsRent(0);
                 }
                 basketball.setIsBad(bad);
+                basketball.setNowPerssure(perssure);
                 basketballDao.update(basketball);
 
                 map = controlResult

@@ -73,22 +73,24 @@ public class OrderControl {
             int pageSize = Integer.parseInt(limit);
             User dataUser = userDao.findById(user.getUserID());
             List<Order> orders;
+            Map<String,Object> result = new HashMap<>();
             if (all.equals("0")){
-                orders = orderDao.findUserOrderList(dataUser, pageSize, start);
+                result = orderDao.findUserOrderList(dataUser, pageSize, start);
             }else if (all.equals("1")){
-                orders = orderDao.findUserUndoneOrderList(dataUser,pageSize,start,true);
+                result = orderDao.findUserUndoneOrderList(dataUser, pageSize, start,true);
             }else  if (all.equals("2")){
-                orders = orderDao.findUserUndoneOrderList(dataUser,pageSize,start,false);
+                result = orderDao.findUserUndoneOrderList(dataUser, pageSize, start,false);
             }else {
                 return controlResult.parameterFormatError(map,"参数错误",logger);
             }
+            orders = (List<Order>) result.get("listOrder");
             map = controlResult.successfulContrl(map, "获取用户订单成功", logger);
             map.put("user", dataUser.getSchoolID());
             map.put("phone", dataUser.getPhone());
             map.put("money", dataUser.getMoney());
 
             if (orders != null) {
-                map.put("total", orders.size());
+                map.put("total", result.get("length"));
                 map.put("orderList", orders);
             } else {
                 map.put("total", 0);

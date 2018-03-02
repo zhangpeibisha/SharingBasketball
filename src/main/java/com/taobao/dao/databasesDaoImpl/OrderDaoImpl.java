@@ -6,10 +6,7 @@ import com.taobao.dao.entity.User;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/26.
@@ -35,19 +32,27 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
      * @param currentPage 开始页数
      * @return 指定的订单列表
      */
-    public List<Order> findUserOrderList(User user, int limit, int currentPage) {
+    public Map<String,Object> findUserOrderList(User user, int limit, int currentPage) {
+        Map<String,Object> map = new HashMap<>();
+
         List<Order> temp = new ArrayList<>();
 
         if (user == null) {
-            return temp;
+            map.put("length",0);
+            map.put("listOrder",null);
+            return map;
         }
 
         if (user.getOrders().isEmpty()) {
-            return temp;
+            map.put("length",0);
+            map.put("listOrder",null);
+            return map;
         }
 
         if (limit <= 0 || currentPage <= 0) {
-            return temp;
+            map.put("length",0);
+            map.put("listOrder",null);
+            return map;
         }
 
         Set<Order> orders = user.getOrders();
@@ -60,36 +65,46 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
             }
 
             if (point == (currentPage + limit)) {
-                return temp;
+                map.put("length",orders.size());
+                map.put("listOrder",temp);
+                return map;
             }
 
             point++;
         }
 
-        return temp;
+        return map;
     }
 
     /**
-     * 查找用户未完成的列表
+     * 查找用户指定的订单
      *
      * @param user
      * @param limit
      * @param currentPage
      * @return
      */
-    public List<Order> findUserUndoneOrderList(User user, int limit, int currentPage , boolean isUndone) {
+    public Map<String,Object> findUserUndoneOrderList(User user, int limit, int currentPage , boolean isUndone) {
+
+        Map<String,Object> map = new HashMap<>();
         List<Order> temp = new ArrayList<>();
 
         if (user == null) {
-            return temp;
+            map.put("length",0);
+            map.put("listOrder",null);
+            return map;
         }
 
         if (user.getOrders().isEmpty()) {
-            return temp;
+            map.put("length",0);
+            map.put("listOrder",null);
+            return map;
         }
 
         if (limit <= 0 || currentPage <= 0) {
-            return temp;
+            map.put("length",0);
+            map.put("listOrder",null);
+            return map;
         }
 
         Set<Order> orders = user.getOrders();
@@ -108,15 +123,15 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
             }
         }
 
+        map.put("length",temp.size());
         //移除不符合要求的订单
         for (int i = 0; i < temp.size(); i++) {
             if (i < currentPage || i >= (currentPage + limit)) {
                 temp.remove(temp.get(i));
             }
         }
-
-
-        return temp;
+        map.put("listOrder",temp);
+        return map;
     }
 
 }

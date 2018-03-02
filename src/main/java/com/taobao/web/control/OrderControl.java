@@ -108,7 +108,7 @@ public class OrderControl {
      * @param session
      * @return
      */
-    @RequestMapping(value = "/orderDetail", method = RequestMethod.GET)
+    @RequestMapping(value = "/orderDetail", method = RequestMethod.POST)
     public @ResponseBody
     Map<String, Object> orderDetail(HttpServletRequest req, HttpSession session) {
         Map<String, Object> map = new HashMap<>();

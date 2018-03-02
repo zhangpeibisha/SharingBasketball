@@ -542,6 +542,7 @@ public class UserControl {
 
             //剩余的钱，押金一起算钱
             double remaining = (user1.getMoney() - money) + 50;
+            remaining =  b.setScale(2,   BigDecimal.ROUND_HALF_UP).doubleValue();
             if (remaining >= 0) {
 
                 //更新用户金额

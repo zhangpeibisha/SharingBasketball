@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -56,11 +57,14 @@ public class OrderControl {
             //表示请求什么列表
             String all = req.getParameter("all");
 
-            if (controlResult.isNull(limit, currentPage,all)) {
+            if (controlResult.isNull(limit, currentPage, all)) {
                 return controlResult.nullParameter(map, logger);
             }
 
+
             if (!Validator.isNumber(limit) || !Validator.isNumber(currentPage) || !Validator.isNumber(all)) {
+                logger.error("参数： " + limit + " " + currentPage + " " + all);
+                logger.error("结果： " + !Validator.isNumber(limit) + " " + !Validator.isNumber(currentPage) + " " + !Validator.isNumber(all));
                 return controlResult.parameterFormatError(map, "数据格式不对", logger);
             }
 
@@ -73,15 +77,15 @@ public class OrderControl {
             int pageSize = Integer.parseInt(limit);
             User dataUser = userDao.findById(user.getUserID());
             List<Order> orders;
-            Map<String,Object> result = new HashMap<>();
-            if (all.equals("0")){
+            Map<String, Object> result = new HashMap<>();
+            if (all.equals("0")) {
                 result = orderDao.findUserOrderList(dataUser, pageSize, start);
-            }else if (all.equals("1")){
-                result = orderDao.findUserUndoneOrderList(dataUser, pageSize, start,true);
-            }else  if (all.equals("2")){
-                result = orderDao.findUserUndoneOrderList(dataUser, pageSize, start,false);
-            }else {
-                return controlResult.parameterFormatError(map,"参数错误",logger);
+            } else if (all.equals("1")) {
+                result = orderDao.findUserUndoneOrderList(dataUser, pageSize, start, true);
+            } else if (all.equals("2")) {
+                result = orderDao.findUserUndoneOrderList(dataUser, pageSize, start, false);
+            } else {
+                return controlResult.parameterFormatError(map, "参数错误", logger);
             }
             orders = (List<Order>) result.get("listOrder");
             map = controlResult.successfulContrl(map, "获取用户订单成功", logger);
@@ -106,6 +110,7 @@ public class OrderControl {
 
     /**
      * 订单详情列表
+     *
      * @param req
      * @param session
      * @return
@@ -121,30 +126,30 @@ public class OrderControl {
                 return controlResult.nullParameter(map, logger);
             }
 
-            if (!Validator.isNumber(orderId)){
-                return controlResult.parameterFormatError(map,orderId+"不是订单号",logger);
+            if (!Validator.isNumber(orderId)) {
+                return controlResult.parameterFormatError(map, orderId + "不是订单号", logger);
             }
 
             //查看用户是否登陆
             User user = (User) session.getAttribute("user");
-            if (controlResult.isNull(user)){
-                return controlResult.identityOutTime(map,logger,"");
+            if (controlResult.isNull(user)) {
+                return controlResult.identityOutTime(map, logger, "");
             }
 
             Order order = orderDao.findById(Integer.parseInt(orderId));
-            if (controlResult.isNull(order)){
-                return controlResult.identityOutTime(map,logger,"");
+            if (controlResult.isNull(order)) {
+                return controlResult.identityOutTime(map, logger, "");
             }
 
             user = userDao.findById(user.getUserID());
             Set<Order> orders = user.getOrders();
 
             //如果存在这个订单。则返回该有的信息
-            if (orders.contains(order)){
-                map = controlResult.successfulContrl(map,user.getSchoolID()+"查看订单"+orderId+"成功",logger);
-                map.put("user",user.getSchoolID());
-                map.put("phone",user.getPhone());
-                map.put("deposit",user.getMoney());
+            if (orders.contains(order)) {
+                map = controlResult.successfulContrl(map, user.getSchoolID() + "查看订单" + orderId + "成功", logger);
+                map.put("user", user.getSchoolID());
+                map.put("phone", user.getPhone());
+                map.put("deposit", user.getMoney());
 
                 order.setReturnTime(new Date());
                 //计算时间
@@ -152,21 +157,27 @@ public class OrderControl {
                 Date nowDateTime = new Date();
                 long nowTime = nowDateTime.getTime();
                 long useTimeMS = nowTime - createTime;
-                long useTimeH = (long) (useTimeMS/ 1000 / 60.0 / 60.0);
+                double useTimeH = useTimeMS / 1000 / 60.0 / 60.0;
                 //得到计算费用金额
                 double billing = order.getBasketball().getRent().getBilling();
                 //计算金额
-                double money = (long) (useTimeH * billing);
+                double money = useTimeH * billing;
+
+                logger.info("详情 时间H" + useTimeH);
+                logger.info("详情 时间MS" + useTimeMS);
+                logger.info("详情 金额 " + money);
 
                 //设定现在时间
                 order.setReturnTime(nowDateTime);
                 //设定现在花费
+                BigDecimal b = new BigDecimal(money);
+                money = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
                 order.setCastMoney(money);
-                map.put("orderDetail",order);
-                map.put("totalTime",useTimeMS);
+                map.put("orderDetail", order);
+                map.put("totalTime", useTimeMS);
                 return map;
-            }else{
-               return controlResult.dataIsNotAvailable(map,"用户没有这个订单,不能查看",logger);
+            } else {
+                return controlResult.dataIsNotAvailable(map, "用户没有这个订单,不能查看", logger);
             }
         } catch (Exception e) {
             e.printStackTrace();

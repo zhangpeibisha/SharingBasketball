@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -515,7 +516,7 @@ public class UserControl {
             }
 
             if (!Validator.isNumber(nowperssure) || !Validator.isNumber(isbad)){
-                return controlResult.parameterFormatError(map, orderNumber + "这个参数不是压力值或者表示是否损坏", logger);
+                return controlResult.parameterFormatError(map, nowperssure + "这个参数不是压力值或者表示是否损坏", logger);
             }
 
             double perssure = Double.parseDouble(nowperssure);
@@ -527,11 +528,15 @@ public class UserControl {
             long createTime = order.getLendTime().getTime();
             Date nowDateTime = new Date();
             long nowTime = nowDateTime.getTime();
-            long useTime = (long) ((nowTime - createTime) / 1000 / 60.0 / 60.0);
+            double useTime = ((nowTime - createTime) / 1000 / 60.0 / 60.0);
+            logger.info("panyemnt time = " + useTime);
             //得到计算费用金额
             double billing = order.getBasketball().getRent().getBilling();
             //计算金额
-            double money = (long) (useTime * billing);
+            double money =  (useTime * billing);
+            BigDecimal b   =   new   BigDecimal(money);
+            money =  b.setScale(2,   BigDecimal.ROUND_HALF_UP).doubleValue();
+            logger.info("panyemnt money = " + money);
             //得到这个订单的用户
             User user1 = order.getUser();
 

@@ -41,9 +41,9 @@ public class Validator {
     public static final String REGEX_ID_CARD = "(^\\d{18}$)|(^\\d{15}$)";
 
     /**
-     * 正则表达式：验证字符串是否为纯数字
+     * 正则表达式：验证字符串是否数字
      */
-    public static final String REGEX_NUMBER = "[0-9]{1,}";
+    public static final String REGEX_NUMBER = "-?[0-9]+.*[0-9]*";
 
     /**
      * 正则表达式：验证URL
@@ -150,9 +150,9 @@ public class Validator {
         System.out.println(Validator.isUsername(username));
         System.out.println(Validator.isChinese(username));
 
-        String phone = "18203085236";
+        String phone = "1";
         System.out.println(Validator.isMobile(phone));
-        System.out.println("number" + Validator.isNumber(phone));
+        System.out.println("number  " + Validator.isNumber(phone));
 
 
         String test = "";

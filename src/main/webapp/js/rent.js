@@ -85,7 +85,7 @@ $(document).ready(function () {
             temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].model + "</td><td>"
                 + listData[i].isRent + "</td><td>"+ listData[i].rent.deposit + "</td><td>"
                 + listData[i].rent.billing + "</td><td>"
-                + "<a class='rent-a' href="+ tempHref +">租借</a>" + "</td></tr>");
+                + "<a class='rent-a' href="+ tempHref +">租借</a></td></tr>");
         }
         temp.push('</tbody></table>');
 

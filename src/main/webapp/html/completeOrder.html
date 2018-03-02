@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>完成订单</title>
+    <link rel="stylesheet" href="../resource/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/completeOrder.css">
+    <script src="../resource/js/jquery.min.js"></script>
+    <script src="../resource/js/bootstrap-paginator.js"></script>
+    <script src="../js/completeOrder.js"></script>
+</head>
+<body class="compelete-bac">
+<div class="container">
+    <ul class="nav nav-pills">
+        <li role="presentation"><a href="welcome.html">主页</a></li>
+        <li role="presentation"><a href="rent.html">租借篮球</a></li>
+        <li role="presentation"><a href="revert.html">归还篮球</a></li>
+        <li role="presentation"><a href="basketList.html">篮球列表</a></li>
+        <li role="presentation"><a href="information.html">个人信息</a></li>
+        <li style="float:right"><a href="login.html">退出账号</a></li>
+    </ul>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2 class="panel-title">完成订单</h2>
+        </div>
+        <div class="panel-body">
+            <div class="col-md-6">
+                <div id="binfo"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="pinfo"></div>
+            </div>
+
+            <form class="form-horizontal col-md-12">
+                <div class="form-group">
+                    <label for="pressure" class="col-sm-2 control-label">当前篮球压力</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control forgetPassword-input" id="pressure" placeholder="当前篮球压力">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">篮球是否损坏</label>
+                    <div class="radio col-sm-10">
+                        <label><input type="radio" name="optionsRadios" id="no" value="option1" checked>否</label>
+                        <label><input type="radio" name="optionsRadios" id="yes" value="option2">是</label>
+                    </div>
+                </div>
+            </form>
+
+            <div class="col-md-12 text-center">
+                <button class="btn btn-info col-md-offset-5 col-md-2" id="sub" disabled>支付</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

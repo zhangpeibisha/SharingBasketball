@@ -76,7 +76,6 @@ $(document).ready(function () {
 
     function showData(listData) {
 
-
         var temp = [], showNum = listData.length;
         temp.push('<table class="table table-hover">');
         temp.push('<thead><tr><th>订单编号</th><th>篮球编号</th><th>篮球型号</th>' +

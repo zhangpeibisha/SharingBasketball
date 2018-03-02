@@ -188,16 +188,16 @@ public class UserControl {
                 return controlResult.nullParameter(map, logger);
             }
 
-
             if (card.length() != 12 || !Validator.isNumber(card)) {
                 return controlResult.parameterFormatError(map, card + " 这个不是校园卡", logger);
             }
 
+            if (!controlResult.isNull(userDao.findUserBySchoolID(card))){
+                return controlResult.dataIsNotAvailable(map,"这个校园卡已经注册，请登陆",logger);
+            }
+
             SchoolCard card1 = schooleCardDao.findCardByIDAndPassword(card, password);
             if (card1 != null) {
-                if (card1.getUser()!=null){
-                    return controlResult.dataIsNotAvailable(map,"这个校园卡已经注册，请登陆",logger);
-                }
                 map = controlResult.successfulContrl(map, card + "校园卡验证成功", logger);
                 //添加校园卡到session中，为了注册验证使用
                 session.setAttribute("card", card1);

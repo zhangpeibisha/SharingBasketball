@@ -141,7 +141,7 @@ $(document).ready(function () {
                             $("#getCode").text("获取验证码");
                             $("#getCode").removeAttr("disabled");
                         }
-                    },1000)
+                    },1000);
                 }
                 else{
                     alert(data.message);

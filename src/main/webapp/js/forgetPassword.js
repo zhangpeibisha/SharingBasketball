@@ -37,16 +37,18 @@ $(document).ready(function () {
                 if(data.data=="0"){
                     $("#sub").removeAttr("disabled");
                     $("#getCode").attr("disabled","true");
+
                     var s=59;
                     var start = setInterval(function(){
-                        $("#getCode").text(s+"s");
+                        console.info(s+"s");
+                        $("#getCode").val(s+"s");
                         s--;
                         if(s<0){
                             clearInterval(start);
-                            $("#getCode").text("获取验证码");
+                            $("#getCode").val("获取验证码");
                             $("#getCode").removeAttr("disabled");
                         }
-                    },1000)
+                    },1000);
                 }
                 else{
                     alert(data.message);

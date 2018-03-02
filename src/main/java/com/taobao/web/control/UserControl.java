@@ -421,6 +421,7 @@ public class UserControl {
 
             //如果session过期，那么就是身份过期，请重新登陆
             User user1 = (User) session.getAttribute("user");
+            user1 = userDao.findById(user1.getUserID());
             if (controlResult.isNull(user1)) {
                 return controlResult.identityOutTime(map, logger, "");
             }

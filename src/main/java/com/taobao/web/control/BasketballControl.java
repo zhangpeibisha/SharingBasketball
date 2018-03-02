@@ -1,6 +1,7 @@
 package com.taobao.web.control;
 
 import com.taobao.dao.databasesDaoImpl.BasketballDaoImpl;
+import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
 import com.taobao.dao.entity.Basketball;
 import com.taobao.dao.entity.User;
 import com.taobao.utils.format.Validator;
@@ -34,6 +35,9 @@ public class BasketballControl {
 
     @Autowired
     private ControlResult controlResult;
+
+    @Autowired
+    private UserDaoImpl userDao;
 
     /**
      * 返回可以租借、并且完好的篮球列表
@@ -152,6 +156,7 @@ public class BasketballControl {
             }
 
             User user = (User) session.getAttribute("user");
+            user = userDao.findById(user.getUserID());
             if (controlResult.isNull(user)) {
                 return controlResult.identityOutTime(map, logger, "");
             }

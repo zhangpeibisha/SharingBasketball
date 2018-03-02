@@ -110,7 +110,7 @@ public class TestControl {
             basketball.setCreateTime(new Date());
             basketball.setPressure(0.06);//标准压力 0.06
             //设置型号
-            int tempClass = (int) Math.random() * 3;
+            int tempClass = (int) (Math.random() * 3);
             basketball.setModel(basketClass[tempClass]);
             //设置是否损坏
             int tempBad = Math.random() > 0.5 ? 1 : 0;

@@ -88,7 +88,7 @@ public class OrderControl {
             map.put("money", dataUser.getMoney());
 
             if (orders != null) {
-                map.put("total", dataUser.getOrders().size());
+                map.put("total", orders.size());
                 map.put("orderList", orders);
             } else {
                 map.put("total", 0);

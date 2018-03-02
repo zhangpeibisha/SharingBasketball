@@ -519,6 +519,7 @@ public class UserControl {
             }
 
             double perssure = Double.parseDouble(nowperssure);
+
             int bad = Integer.parseInt(isbad);
 
             Order order = orderDao.findById(orderID);
@@ -562,7 +563,11 @@ public class UserControl {
 
                 map = controlResult
                         .successfulContrl(map, user1.getSchoolID() + "的" + orderNumber + "订单缴费成功 " + info, logger);
-                map.put("remaining", remaining);
+
+                map.put("money","money");
+                //剩余的钱
+                map.put("deposit", remaining);
+                //订单信息
                 map.put("order", order);
                 return map;
             } else {

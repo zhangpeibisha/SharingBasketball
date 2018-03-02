@@ -124,11 +124,15 @@
 {
    user：校园卡号
    orderNumber:订单号
+   nowperssure：现在压力
+   isbad：是否损坏
 }
 *返回参数
 {
    money:付款金额,
    deposit:存款
+   order:订单信息
+   
 }
 
 9. 租借列表

@@ -150,9 +150,6 @@ $(document).ready(function () {
         $('#pinfo').html(temp.join(''));
     }
 
-
-
-
     init();
 });
 

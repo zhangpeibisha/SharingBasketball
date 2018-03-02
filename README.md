@@ -163,14 +163,14 @@
     
 11. 用户信息
 * 显示用户个人信息已完成订单列表
-*URL：http://localhost:8080/orderList.do
+* URL：http://localhost:8080/orderList.do
 * HTTP请求方式： POST
-*请求数据：
+* 请求数据：
 {
     limit：每页最大显示行数,
     currentPage：当前页数
 }
-*返回参数
+* 返回参数
 {
     user:账号名,
     phone:手机号,

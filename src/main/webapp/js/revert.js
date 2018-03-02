@@ -1,12 +1,13 @@
 $(document).ready(function () {
-    var orderListUrl = "http://localhost:8080/orderList.do";
+
+    var revertListUrl = "http://localhost:8080/orderList.do";
     var pageLimit = 10;
     var currentPage = 1;
 
     function init() {
         $.ajax({
-            type: 'POST',
-            url: orderListUrl,
+            type: 'GET',
+            url: revertListUrl,
             data: {
                 limit: pageLimit,
                 currentPage: currentPage
@@ -14,10 +15,10 @@ $(document).ready(function () {
             success: function (data) {
                 console.log(data);
                 if(data.data==0&&data.total!=0){
-                    var listData = data.orderList;
+                    var listData = data.basketballs;
                     var total = data.total;
                     showData(listData);
-                    info(data.user,data.phone,data.money);
+
                     var num = (total+pageLimit -1)/pageLimit;//向上取整
                     $('#page').bootstrapPaginator({
                         bootstrapMajorVersion: 3,
@@ -36,8 +37,8 @@ $(document).ready(function () {
                         },
                         onPageClicked: function (event, originalEvent, type, page) {
                             $.ajax({
-                                url: orderListUrl,
-                                type: 'POST',
+                                url: revertListUrl,
+                                type: 'GET',
                                 data: {
                                     limit: pageLimit,
                                     currentPage: page
@@ -46,24 +47,20 @@ $(document).ready(function () {
                                 success: function (data) {
                                     console.info(data);
                                     if(data.data==0){
-                                        var listData = data.orderList;
+                                        var listData = data.basketballs;
                                         showData(listData);
-                                        info(data.user,data.phone,data.deposit);
                                     }
-                                    else if(data.data==0&&data.total==0){
-                                        info(data.user,data.phone,data.deposit);
+                                    else if(data.data==1){
                                         noData();
                                     }
-                                    else{
-                                        alert(data.message);
-                                    }
+                                    else if(data.data==2)
+                                        alert("error！");
                                 }
                             });
                         }
                     });
                 }
                 else if(data.data==0&&data.total==0){
-                    info(data.user,data.phone,data.deposit);
                     noData();
                 }
                 else{
@@ -74,27 +71,26 @@ $(document).ready(function () {
         });
     }
 
+
+
     function showData(listData) {
-
-
         var temp = [], showNum = listData.length;
-        temp.push('<table class="table table-hover">');
-        temp.push('<thead><tr><th>订单编号</th><th>篮球编号</th><th>篮球型号</th>' +
-            '<th>租借押金</th><th>小时租金</th><th>租借时间</th><th>归还时间</th><th>总计时</th>' +
-            '<th>消费金额</th></tr><tbody>');
-        for (var i = 0; i < showNum; i++) {
-            listData[i].lendTime = new Date(listData[i].lendTime).toLocaleString();
-            if(listData[i].returnTime==null)
-                listData[i].returnTime="暂无";
-            else listData[i].returnTime = new Date(listData[i].returnTime).toLocaleString();
-            if(listData[i].totalTime==null)
-                listData[i].totalTime="暂无";
 
-            temp.push("<tr><td>" + listData[i].orderID + "</td><td>" + listData[i].basketball.basketballID + "</td><td>"
-                + listData[i].basketball.model+ "</td><td>" + listData[i].basketball.rent.deposit + "</td><td>"
-                + listData[i].basketball.rent.billing + "</td><td>" + listData[i].lendTime + "</td><td>"
-                + listData[i].returnTime + "</td><td>"+ listData[i].totalTime + "</td><td>"
-                + listData[i].castMoney + "</td><td>");
+        temp.push('<table class="table table-hover">');
+        temp.push('<thead><tr><th>篮球编号</th><th>篮球型号</th><th>压力标准值</th>' +
+            '<th>当前压力值</th><th>是否损坏</th><th>是否可借</th>'+
+            '<th>租借押金</th><th>小时租金</th></tr><tbody>');
+        for (var i = 0; i < showNum; i++) {
+            if(listData[i].isRent=="0")
+                listData[i].isRent ="可借";
+            else listData[i].isRent ="不可借";
+            if(listData[i].isBad=="0")
+                listData[i].isBad ="正常";
+            else listData[i].isBad ="损坏";
+            temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].model + "</td><td>"
+                + listData[i].pressure+ "</td><td>" + listData[i].nowPerssure + "</td><td>"
+                + listData[i].isBad + "</td><td>" + listData[i].isRent + "</td><td>"
+                + listData[i].rent.deposit + "</td><td>" + listData[i].rent.billing + "</td><td>");
         }
         temp.push('</tbody></table>');
 
@@ -102,10 +98,11 @@ $(document).ready(function () {
     }
 
     function noData() {
+
         var temp = [];
         temp.push('<table class="table table-hover">');
         temp.push('<thead><tr><th>订单编号</th><th>篮球编号</th><th>篮球型号</th>' +
-            '<th>租借押金</th><th>小时租金</th><th>租借时间</th>' +
+            '<th>租借押金</th><th>小时租金</th><th>租借时间</th><th>归还时间</th>' +
             '<th>消费金额</th></tr><tbody>');
         temp.push("<tr><td colspan='9' style='text-align: center'>暂无数据</td></tr>");
         temp.push('</tbody></table>');
@@ -113,15 +110,8 @@ $(document).ready(function () {
         $('#list').html(temp.join(''));
     }
 
-    function info(user,phone,money) {
-        var temp = [];
-        temp.push('<div class="col-md-12"><p class="col-md-3">账号:</p><span>'+user +'</span></div>');
-        temp.push('<div class="col-md-12"><p class="col-md-3">手机号:</p><span>'+ phone +'</span></div>');
-        temp.push('<div class="col-md-12"><p class="col-md-3">存款:</p><span>'+ money +'</span></div>');
-        $('#pinfo').html(temp.join(''));
-    }
-
     init();
+
+
+
 });
-
-

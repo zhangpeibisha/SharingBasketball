@@ -65,13 +65,14 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
             }
 
             if (point == (currentPage + limit)) {
-                map.put("length",orders.size());
-                map.put("listOrder",temp);
-                return map;
+                break;
             }
 
             point++;
         }
+
+        map.put("length",orders.size());
+        map.put("listOrder",temp);
 
         return map;
     }

@@ -60,7 +60,7 @@ $(document).ready(function () {
 
         var tempp = [];
         tempp.push('<div class="col-md-12"><p class="col-md-3">当前用户:</p><span>'+user.schoolID +'</span></div>');
-        tempp.push('<div class="col-md-12"><p class="col-md-3">存款:</p><span>'+ user.money +'</span></div>');
+        tempp.push('<div class="col-md-12"><p class="col-md-3">存款:</p><span>'+ user.money +'元</span></div>');
         $('#pinfo').html(tempp.join(''));
     }
 

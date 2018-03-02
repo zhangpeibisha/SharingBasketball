@@ -2,12 +2,17 @@
     background: url("../img/welcome.jpg") no-repeat;
     background-size: cover;
 }
-.welcome-mid{
-
+.welcome-con{
+    padding-top: 20px;
 }
 .welcome-fright{
     float: right;
 }
 .container{
     background-color: #ffffff;
+    margin-top: 44px;
+    border-radius: 20px;
+}
+.welcome-mid{
+    height: 470px;
 }

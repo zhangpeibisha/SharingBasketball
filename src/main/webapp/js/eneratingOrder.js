@@ -50,6 +50,11 @@ $(document).ready(function () {
     });
 
     function info(bas,user) {
+
+        if(bas.isRent=="0")
+            bas.isRent ="可借";
+        else bas.isRent ="不可借";
+
         var temp = [];
         temp.push('<div class="col-md-12"><p class="col-md-3">篮球编号:</p><span>'+ bas.basketballID +'</span></div>');
         temp.push('<div class="col-md-12"><p class="col-md-3">篮球型号:</p><span>'+ bas.model +'</span></div>');

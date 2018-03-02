@@ -4,4 +4,7 @@
 }
 .container{
     background-color: #ffffff;
+    margin-top: 44px;
+    border-radius: 20px;
+    height: 560px;
 }

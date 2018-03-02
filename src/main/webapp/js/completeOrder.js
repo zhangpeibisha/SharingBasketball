@@ -11,7 +11,7 @@ $(document).ready(function () {
 
     function init() {
         $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: orderDetailUrl,
             data: {
                 orderId:orderId

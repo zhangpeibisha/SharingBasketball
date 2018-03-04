@@ -46,10 +46,9 @@ $(document).ready(function () {
                         $("#password1").attr("disabled","true");
                         $("#valid").attr("disabled","true");
                     }
-                    else if(data.data=="1")
-                        alert("校园卡不存在或密码错误！");
-                    else if(data.data=="2")
-                        alert("error!");
+                    else {
+                        alert(data.message);
+                    }
                 },
                 dataType: "json"
             });
@@ -90,11 +89,8 @@ $(document).ready(function () {
                     alert("注册成功");
                     $(location).attr('href', 'login.html');
                 }
-                else if(data.data=="1"){
-                    alert("error！");
-                }
-                else if(data.data=="2"){
-                    alert("验证码输入错误！");
+                else {
+                    alert(data.message);
                 }
             },
             dataType: "json"

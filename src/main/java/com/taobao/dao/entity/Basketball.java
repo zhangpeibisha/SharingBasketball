@@ -25,8 +25,8 @@ public class Basketball {
     //是否出租 0 为能够出租 1为不出租
     private int isRent;
 
-    //篮球型号
-    private String model;
+    //机柜状态
+    private int cabinet;
 
     //这个篮球正常使用的压力值  单位MPa
     private double pressure;
@@ -66,9 +66,9 @@ public class Basketball {
     }
 
 
-    @Column(name = "model", nullable = false, length = 10)
-    public String getModel() {
-        return model;
+    @Column(name = "cabinet", nullable = false, length = 10)
+    public int getCabinet() {
+        return cabinet;
     }
 
 
@@ -115,8 +115,8 @@ public class Basketball {
         this.isRent = isRent;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setCabinet(int cabinet) {
+        this.cabinet = cabinet;
     }
 
     public void setPressure(double pressure) {

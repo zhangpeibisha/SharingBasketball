@@ -99,8 +99,6 @@ public class TestControl {
 
         Map<String, String> map = new HashMap<>();
 
-        //球类型
-        String[] basketClass = {"#7 标准男子", "#6 标准女子", "#5 青少年", "#3 儿童"};
 
         //设置压力保存三位小数
         DecimalFormat df = new DecimalFormat("######0.000");
@@ -111,7 +109,7 @@ public class TestControl {
             basketball.setPressure(0.06);//标准压力 0.06
             //设置型号
             int tempClass = (int) (Math.random() * 3);
-            basketball.setModel(basketClass[tempClass]);
+            basketball.setCabinet(Math.random()>0.5?1:0);
             //设置是否损坏
             int tempBad = Math.random() > 0.5 ? 1 : 0;
             basketball.setIsBad(tempBad);

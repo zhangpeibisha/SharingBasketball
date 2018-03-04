@@ -569,7 +569,7 @@ public class UserControl {
                 Basketball basketball = order.getBasketball();
                 if (perssure<basketball.getPressure() || bad == 1){
                     basketball.setIsRent(1);
-                    sendSMS.send(ManagementData.MANAGE_PHONE,basketball.getBasketballID()+"号篮球已经损坏，请及时处理");
+                    String result =  sendSMS.send(ManagementData.MANAGE_PHONE,basketball.getBasketballID()+"号篮球已经损坏，请及时处理");
                     info = basketball.getBasketballID() + "篮球损坏了";
                 }else {
                     basketball.setIsRent(0);

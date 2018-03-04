@@ -116,7 +116,7 @@ public class BasketballControl {
             long count = basketballDao.findCountBySQL(sql);
             map = controlResult.successfulContrl(map, "获取全部篮球列表成功", logger);
             map.put("basketballs", basketballs);
-            map.put("total",count);
+            map.put("total", count);
 
         } catch (Exception e) {
             return controlResult.requestError(map, logger, e);
@@ -127,6 +127,7 @@ public class BasketballControl {
 
     /**
      * 查看篮球详情
+     *
      * @param req
      * @param session
      * @return
@@ -141,18 +142,18 @@ public class BasketballControl {
 
             String basketballID = req.getParameter("basketballID");
 
-            if (controlResult.isNull(basketballID)){
-                return controlResult.nullParameter(map,logger);
+            if (controlResult.isNull(basketballID)) {
+                return controlResult.nullParameter(map, logger);
             }
 
-            if (!Validator.isNumber(basketballID)){
-                return controlResult.parameterFormatError(map,basketballID+"不是篮球id",logger);
+            if (!Validator.isNumber(basketballID)) {
+                return controlResult.parameterFormatError(map, basketballID + "不是篮球id", logger);
             }
 
             Integer id = Integer.parseInt(basketballID);
 
-            if (id<0){
-                return controlResult.parameterFormatError(map,basketballID+"不是篮球id",logger);
+            if (id < 0) {
+                return controlResult.parameterFormatError(map, basketballID + "不是篮球id", logger);
             }
 
             User user = (User) session.getAttribute("user");
@@ -162,21 +163,66 @@ public class BasketballControl {
             }
 
             Basketball basketball = basketballDao.findById(id);
-            if (controlResult.isNull(basketball)){
-                return controlResult.inquireFail(map,"没有查找到这个篮球",logger);
+            if (controlResult.isNull(basketball)) {
+                return controlResult.inquireFail(map, "没有查找到这个篮球", logger);
             }
 
             user.setPassword(null);
             user.setOrders(null);
             user.setCreateTime(null);
-            map.put("user",user);
-            map.put("basketball",basketball);
-            map = controlResult.successfulContrl(map,user.getSchoolID()+"获取"+id+"篮球的详细信息成功",logger);
+            map.put("user", user);
+            map.put("basketball", basketball);
+            map = controlResult.successfulContrl(map, user.getSchoolID() + "获取" + id + "篮球的详细信息成功", logger);
             return map;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-            return controlResult.requestError(map,logger,e);
+            return controlResult.requestError(map, logger, e);
         }
     }
+
+    /**
+     * 机柜操作
+     *
+     * @return
+     */
+    @RequestMapping(value = "/cabinet", method = RequestMethod.POST)
+    public @ResponseBody
+    Map<String, Object> cabinet(HttpServletRequest req, HttpSession session) {
+
+        Map<String, Object> map = new HashMap<>();
+
+        try {
+            String basketballId = req.getParameter("basketballID");
+            String status = req.getParameter("status");
+
+            if (controlResult.isNull(basketballId,status)){
+                return controlResult.nullParameter(map,logger);
+            }
+
+            if (!Validator.isNumber(basketballId) || !Validator.isNumber(status)){
+                return controlResult.parameterFormatError(map,"数据格式错误",logger);
+            }
+
+            int basketInt = Integer.parseInt(basketballId);
+            int statusInt = Integer.parseInt(status);
+
+            if (statusInt != 0 && statusInt != 1){
+                return controlResult.dataIsNotAvailable(map,"请求参数" + statusInt+ "是个异常的值" , logger);
+            }
+
+            Basketball basketball = basketballDao.findById(basketInt);
+            if (controlResult.isNull(basketball)){
+                return controlResult.inquireFail(map,basketInt+"机柜的篮球找不到,请确认编号",logger);
+            }
+
+            basketball.setCabinet(statusInt);
+            basketballDao.update(basketball);
+            return controlResult.successfulContrl(map,"操作"+basketballId+"篮球机柜成功",logger);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return controlResult.requestError(map, logger, e);
+        }
+    }
+
 
 }

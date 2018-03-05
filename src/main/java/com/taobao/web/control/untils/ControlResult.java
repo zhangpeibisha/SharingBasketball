@@ -150,7 +150,7 @@ public class ControlResult {
      */
     public Map<String, Object> dataIsNotAvailable(Map<String, Object> map, String description, Logger logger) {
         map.put("data", "-21");
-        map.put("message", "数据不可用 " + description);
+        map.put("message",  description);
         logger.error("数据不可用 " + description);
         return map;
     }

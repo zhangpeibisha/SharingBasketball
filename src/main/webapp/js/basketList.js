@@ -76,17 +76,20 @@ $(document).ready(function () {
         var temp = [], showNum = listData.length;
 
         temp.push('<table class="table table-hover">');
-        temp.push('<thead><tr><th>篮球编号</th><th>篮球型号</th><th>压力标准值</th>' +
-            '<th>当前压力值</th><th>是否损坏</th><th>是否可借</th>'+
+        temp.push('<thead><tr><th>机柜编号</th><th>机柜状态</th><th>压力标准值</th>' +
+            '<th>当前压力值</th><th>是否损坏</th><th>是否借出</th>'+
             '<th>租借押金</th><th>小时租金</th></tr><tbody>');
         for (var i = 0; i < showNum; i++) {
             if(listData[i].isRent=="0")
-                listData[i].isRent ="可借";
-            else listData[i].isRent ="不可借";
+                listData[i].isRent ="否";
+            else listData[i].isRent ="是";
             if(listData[i].isBad=="0")
                 listData[i].isBad ="正常";
             else listData[i].isBad ="损坏";
-            temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].model + "</td><td>"
+            if(listData[i].cabinet=="0")
+                listData[i].cabinet ="打开";
+            else listData[i].cabinet ="关闭";
+            temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].cabinet + "</td><td>"
                 + listData[i].pressure+ "</td><td>" + listData[i].nowPerssure + "</td><td>"
                 + listData[i].isBad + "</td><td>" + listData[i].isRent + "</td><td>"
                 + listData[i].rent.deposit + "</td><td>" + listData[i].rent.billing + "</td><td>");
@@ -99,7 +102,7 @@ $(document).ready(function () {
     function noData() {
         var temp = [];
         temp.push('<table class="table table-hover">');
-        temp.push('<thead><tr><th>篮球编号</th><th>篮球型号</th><th>压力标准值</th>' +
+        temp.push('<thead><tr><th>机柜编号</th><th>机柜状态</th><th>压力标准值</th>' +
         '<th>当前压力值</th><th>是否损坏</th><th>是否可借</th>'+
         '<th>租借押金</th><th>小时租金</th></tr><tbody>');
         temp.push("<tr><td colspan='8' style='text-align: center'>暂无数据</td></tr>");

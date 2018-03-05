@@ -182,8 +182,8 @@
     deposit:用户存款,
     orderList:{
     orderId:订单编号,
-    basketballID:篮球编号, 
-    model:篮球型号,
+    basketballID:机柜编号, 
+    model:机柜状态,
     deposit:租借押金,
     billing:小时租金,
     lendTime:租借时间,
@@ -204,8 +204,8 @@
 }
 * 返回参数
 {
-    basketballID:篮球编号,
-    model:篮球型号,
+    basketballID:机柜编号,
+    model:机柜状态,
     pressure:压力标准值,
     nowPressure:当前压力值,
     isBad:是否损坏,
@@ -220,15 +220,15 @@
 * HTTP请求方式： POST
 *请求数据：
 {
-    basketballID:篮球编号
+    basketballID:机柜编号
 }
 *返回参数
 {
     user:账号名,
     phone:手机号,
     deposit:用户存款,
-    basketballID:篮球编号, 
-    model:篮球型号,
+    basketballID:机柜编号, 
+    model:机柜状态,
     isRent: 是否可借，
     deposit:租借押金,
     billing:小时租金
@@ -249,8 +249,8 @@
     deposit:用户存款,
     orderDetail:{
     orderId:订单编号,
-    basketballID:篮球编号, 
-    model:篮球型号,
+    basketballID:机柜编号, 
+    model:机柜状态,
     deposit:租借押金,
     billing:小时租金,
     lendTime:租借时间,
@@ -258,4 +258,18 @@
     time:当前计时（获取当前时间计算，不写入数据库）,
     nowCastMoney:欲消费金额（实时计算，不写入数据库）
     }
+}
+
+13. 机柜操作
+* 控制机柜的开关
+* URL：http://localhost:8080/cabinet.do
+* HTTP请求方式： POST
+*请求数据：
+{
+    basketballID:机柜编号,
+    status: 机柜状态（0为开，1为关）
+}
+*返回参数
+{
+    data:0操作成功
 }

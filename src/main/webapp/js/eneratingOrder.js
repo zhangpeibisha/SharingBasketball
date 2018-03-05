@@ -52,13 +52,18 @@ $(document).ready(function () {
     function info(bas,user) {
 
         if(bas.isRent=="0")
-            bas.isRent ="可借";
-        else bas.isRent ="不可借";
-
+            bas.isRent ="否";
+        else bas.isRent ="是";
+        if(bas.cabinet=="0")
+            bas.cabinet ="打开";
+        else {
+            $("#sub").attr("disabled","true");
+            bas.cabinet ="关闭";
+        }
         var temp = [];
-        temp.push('<div class="col-md-12"><p class="col-md-3">篮球编号:</p><span>'+ bas.basketballID +'</span></div>');
-        temp.push('<div class="col-md-12"><p class="col-md-3">篮球型号:</p><span>'+ bas.model +'</span></div>');
-        temp.push('<div class="col-md-12"><p class="col-md-3">是否可借:</p><span>'+ bas.isRent +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">机柜编号:</p><span>'+ bas.basketballID +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">机柜状态:</p><span>'+ bas.cabinet +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">是否借出:</p><span>'+ bas.isRent +'</span></div>');
         temp.push('<div class="col-md-12"><p class="col-md-3">租借押金:</p><span>'+ bas.rent.deposit +'</span></div>');
         temp.push('<div class="col-md-12"><p class="col-md-3">小时租金:</p><span>'+ bas.rent.billing +'</span></div>');
         $('#binfo').html(temp.join(''));

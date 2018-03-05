@@ -61,8 +61,8 @@ $(document).ready(function () {
 
         var temp = [];
         temp.push('<div class="col-md-12"><p class="col-md-3">订单编号:</p><span>'+ listData.orderID +'</span></div>');
-        temp.push('<div class="col-md-12"><p class="col-md-3">篮球编号:</p><span>'+ listData.basketball.basketballID +'</span></div>');
-        temp.push('<div class="col-md-12"><p class="col-md-3">篮球型号:</p><span>'+ listData.basketball.model +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">机柜编号:</p><span>'+ listData.basketball.basketballID +'</span></div>');
+        temp.push('<div class="col-md-12"><p class="col-md-3">机柜状态:</p><span>'+ listData.basketball.model +'</span></div>');
         temp.push('<div class="col-md-12"><p class="col-md-3">租借押金:</p><span>'+ listData.basketball.rent.deposit +'</span></div>');
         temp.push('<div class="col-md-12"><p class="col-md-3">小时租金:</p><span>'+ listData.basketball.rent.billing +'</span></div>');
         temp.push('<div class="col-md-12"><p class="col-md-3">租借时间:</p><span>'+ listData.lendTime +'</span></div>');

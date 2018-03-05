@@ -1,5 +1,6 @@
 $(document).ready(function () {
     var listUrl = "http://localhost:8080/rentList.do";
+    var cabinetUrl = "http://localhost:8080/cabinet.do";
     var pageLimit = 10;
     var currentPage = 1;
 
@@ -72,26 +73,43 @@ $(document).ready(function () {
     }
     
     function showData(listData) {
+
         var temp = [], showNum = listData.length;
 
         temp.push('<table class="table table-hover">');
         temp.push('<thead><tr><th>机柜编号</th><th>机柜状态</th><th>是否借出</th>' +
             '<th>租借押金</th><th>小时租金</th><th>机柜操作</th><th>操作</th></tr><tbody>');
         for (var i = 0; i < showNum; i++) {
+            function cabinetOpen(id) {
+                console.info(id);
+            }
+
             if(listData[i].isRent=="0")
                 listData[i].isRent ="否";
             else listData[i].isRent ="是";
-            if(listData[i].cabinet=="0")
+
+            var cabi;
+            if(listData[i].cabinet=="0"){
                 listData[i].cabinet ="打开";
-            else listData[i].cabinet ="关闭";
+                cabi ="<a class='rent-a' id='"+ listData[i].basketballID+ "close'>关闭</a></td>";
+            }
+            else {
+                listData[i].cabinet ="关闭";
+                cabi ="<a class='rent-a' id='"+ listData[i].basketballID+ "open'>打开</a></td>";
+            }
             var tempHref = "../html/eneratingOrder.html?id=" +listData[i].basketballID;
             temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].cabinet + "</td><td>"
                 + listData[i].isRent + "</td><td>"+ listData[i].rent.deposit + "</td><td>"
                 + listData[i].rent.billing + "</td><td>"
-                + "<a class='rent-a' >打开</a></td><td>"
-                + "<a class='rent-a' href="+ tempHref +">租借</a></td></tr>");
+                + cabi
+                + "<td><a class='rent-a' href="+ tempHref +">租借</a></td></tr>");
+
+            $("#"+listData[i].basketballID).click(function () {
+                alert('1');
+            })
         }
         temp.push('</tbody></table>');
+
 
         $('#list').html(temp.join(''));
     }
@@ -101,11 +119,17 @@ $(document).ready(function () {
         temp.push('<table class="table table-hover">');
         temp.push('<thead><tr><th>机柜编号</th><th>机柜状态</th><th>是否可借</th>' +
             '<th>租借押金</th><th>小时租金</th><th>机柜操作</th></th><th>操作</th></tr><tbody>');
-        temp.push("<tr><td colspan='6' style='text-align: center'>暂无数据</td></tr>");
+        temp.push("<tr><td colspan='7' style='text-align: center'>暂无数据</td></tr>");
         temp.push('</tbody></table>');
 
         $('#list').html(temp.join(''));
     }
 
+    $()
+
     init();
+
+
+
+
 });

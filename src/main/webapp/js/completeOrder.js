@@ -59,9 +59,9 @@ $(document).ready(function () {
         listData.returnTime = new Date(listData.returnTime).toLocaleString();
         totalTime = MillisecondToDate(totalTime);
 
-        if(listData[i].cabinet=="0")
-            listData[i].cabinet ="打开";
-        else listData[i].cabinet ="关闭";
+        if(listData.basketball.cabinet=="0")
+            listData.basketball.cabinet ="打开";
+        else listData.basketball.cabinet ="关闭";
 
         var temp = [];
         temp.push('<div class="col-md-12"><p class="col-md-3">订单编号:</p><span>'+ listData.orderID +'</span></div>');

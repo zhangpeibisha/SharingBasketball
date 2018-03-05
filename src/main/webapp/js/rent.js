@@ -1,6 +1,49 @@
+var cabinetUrl = "http://localhost:8080/cabinet.do";
+function cabinetOpen(id) {
+    console.info(id);
+    $.ajax({
+        type: 'POST',
+        url: cabinetUrl,
+        data: {
+            basketballID:id,
+            status:0
+        },
+        success: function (data) {
+            if(data.data=="0"){
+                window.location.reload();
+            }
+            else {
+                alert(data.message);
+            }
+        },
+        dataType: "json"
+    });
+}
+
+function cabinetClose(id) {
+    console.info(id);
+    $.ajax({
+        type: 'POST',
+        url: cabinetUrl,
+        data: {
+            basketballID:id,
+            status:1
+        },
+        success: function (data) {
+            if(data.data=="0"){
+                window.location.reload();
+            }
+            else {
+                alert(data.message);
+            }
+        },
+        dataType: "json"
+    });
+
+}
+
 $(document).ready(function () {
     var listUrl = "http://localhost:8080/rentList.do";
-    var cabinetUrl = "http://localhost:8080/cabinet.do";
     var pageLimit = 10;
     var currentPage = 1;
 
@@ -80,9 +123,6 @@ $(document).ready(function () {
         temp.push('<thead><tr><th>机柜编号</th><th>机柜状态</th><th>是否借出</th>' +
             '<th>租借押金</th><th>小时租金</th><th>机柜操作</th><th>操作</th></tr><tbody>');
         for (var i = 0; i < showNum; i++) {
-            function cabinetOpen(id) {
-                console.info(id);
-            }
 
             if(listData[i].isRent=="0")
                 listData[i].isRent ="否";
@@ -91,11 +131,11 @@ $(document).ready(function () {
             var cabi;
             if(listData[i].cabinet=="0"){
                 listData[i].cabinet ="打开";
-                cabi ="<a class='rent-a' id='"+ listData[i].basketballID+ "close'>关闭</a></td>";
+                cabi ="<a class='rent-a' onclick='cabinetClose("+listData[i].basketballID+")'>关闭</a></td>";
             }
             else {
                 listData[i].cabinet ="关闭";
-                cabi ="<a class='rent-a' id='"+ listData[i].basketballID+ "open'>打开</a></td>";
+                cabi ="<a class='rent-a' onclick='cabinetOpen("+listData[i].basketballID+")'>打开</a></td>";
             }
             var tempHref = "../html/eneratingOrder.html?id=" +listData[i].basketballID;
             temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].cabinet + "</td><td>"
@@ -125,7 +165,6 @@ $(document).ready(function () {
         $('#list').html(temp.join(''));
     }
 
-    $()
 
     init();
 

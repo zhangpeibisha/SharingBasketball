@@ -56,6 +56,7 @@ public class OrderControl {
             //表示请求什么列表
             String all = req.getParameter("all");
 
+            logger.error(all);
             if (controlResult.isNull(limit, currentPage, all)) {
                 return controlResult.nullParameter(map, logger);
             }
@@ -77,24 +78,31 @@ public class OrderControl {
 
             User dataUser = userDao.findById(user.getUserID());
             List<Order> orders;
-            Map<String, Object> result = new HashMap<>();
+            String sql;
+            long lengthOrder = 0;
             if (all.equals("0")) {
-                result = orderDao.findUserOrderList(dataUser, pageSize, start);
+                orders = orderDao.findUserOrderList(dataUser, pageSize, start);
+                sql = "SELECT count(*) FROM order_basketball_user where `user` = " +user.getUserID();
+                lengthOrder = orderDao.findCountBySQL(sql);
             } else if (all.equals("1")) {
-                result = orderDao.findUserUndoneOrderList(dataUser, pageSize, start, true);
+                orders = orderDao.findUserUndoneOrderList(dataUser, pageSize, start);
+                sql = "SELECT count(*) FROM order_basketball_user where `user` = " + user.getUserID() + " and castMoney = 0";
+                lengthOrder = orderDao.findCountBySQL(sql);
             } else if (all.equals("2")) {
-                result = orderDao.findUserUndoneOrderList(dataUser, pageSize, start, false);
+                orders = orderDao.findUserdoneOrderList(dataUser, pageSize, start);
+                sql = "SELECT count(*) FROM order_basketball_user where `user` = " + user.getUserID() + " and castMoney > 0";
+                lengthOrder = orderDao.findCountBySQL(sql);
             } else {
                 return controlResult.parameterFormatError(map, "参数错误", logger);
             }
-            orders = (List<Order>) result.get("listOrder");
+
             map = controlResult.successfulContrl(map, "获取用户订单成功", logger);
             map.put("user", dataUser.getSchoolID());
             map.put("phone", dataUser.getPhone());
             map.put("money", dataUser.getMoney());
 
             if (orders != null) {
-                map.put("total", result.get("length"));
+                map.put("total",lengthOrder);
                 map.put("orderList", orders);
             } else {
                 map.put("total", 0);

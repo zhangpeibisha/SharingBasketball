@@ -42,7 +42,7 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
      * @return
      */
     public List<Order> findUserUndoneOrderList(User user , int limit, int currentPage){
-        String sql = "SELECT * FROM order_basketball_user where `user` = ? and castMoney = 0 order by id desc LIMIT ? , ?";
+        String sql = "SELECT * FROM order_basketball_user where `user` = ? and castMoney = 0  LIMIT ? , ?";
         int start = (currentPage-1)*limit;
         return findBySql(sql,user.getUserID(),start,limit);
     }

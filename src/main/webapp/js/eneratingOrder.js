@@ -1,13 +1,13 @@
 $(document).ready(function () {
     var detailUrl = "http://localhost:8080/basketballDetail.do";
     var creatOrderUrl = "http://localhost:8080/rent.do";
-
     var loc = location.href;
     var n1 = loc.length;//地址的总长度
     var n2 = loc.indexOf("=");//取得=号的位置
     var basketID = decodeURI(loc.substr(n2+1, n1-n2));//从=号后面的内容
 
     function init() {
+        inn=true;
         $.ajax({
             type: 'GET',
             url: detailUrl,
@@ -18,7 +18,7 @@ $(document).ready(function () {
                 console.info(data);
                 if(data.data=="0"){
                     info(data.basketball,data.user);
-                    $("#sub").removeAttr("disabled");
+                    $("#subm").removeAttr("disabled");
                 }
                 else{
                     alert(data.message);
@@ -27,33 +27,6 @@ $(document).ready(function () {
             dataType: "json"
         });
     }
-
-    $("#sub").click(function () {
-        var pressure = $("#pressure").val();
-        if (pressure == null || pressure == "") {
-                alert("请输入当前篮球压力！");
-                return;
-        }
-        $.ajax({
-            type: 'POST',
-            url: creatOrderUrl,
-            data: {
-                basketballId:basketID,
-                pressure:pressure
-            },
-            success: function (data) {
-                console.info(data);
-                if(data.data=="0"){
-                    alert("租借成功！");
-                    $(location).attr('href', 'information.html');
-                }
-                else{
-                    alert(data.message);
-                }
-            },
-            dataType: "json"
-        });
-    });
 
     function info(bas,user) {
 
@@ -80,6 +53,35 @@ $(document).ready(function () {
         $('#pinfo').html(tempp.join(''));
     }
 
-    init();
 
+    $("#subm").click(function () {
+        var pressure = $("#pressure").val();
+        if (pressure == null || pressure == "") {
+            alert("请输入当前篮球压力！");
+            return false;
+        }
+
+        $.ajax({
+              type: 'POST',
+              url: creatOrderUrl,
+              data: {
+                  basketballId:basketID,
+                  pressure:pressure
+              },
+              success: function (data) {
+                  console.info(data);
+                  if(data.data=="0"){
+                      alert("租借成功！");
+                      $(location).attr('href','information.html');
+                  }
+                  else{
+                      alert(data.message);
+                      $(location).attr('href','rent.html');
+                  }
+              },
+              dataType: "json"
+        });
+    });
+
+    init();
 });

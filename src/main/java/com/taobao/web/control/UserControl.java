@@ -3,6 +3,7 @@ package com.taobao.web.control;
 import com.taobao.dao.databasesDaoImpl.*;
 import com.taobao.dao.entity.*;
 import com.taobao.service.sms.SendSMS;
+import com.taobao.utils.data.BasketballData;
 import com.taobao.utils.data.ManagementData;
 import com.taobao.utils.format.Validator;
 import com.taobao.utils.sign.MD5;
@@ -451,7 +452,7 @@ public class UserControl {
                 return controlResult.dataIsNotAvailable(map, basketballId + "机柜关闭"+"篮球不允许出租", logger);
             }
 
-            if (basketball.getPressure()>Double.parseDouble(pressure)){
+            if (BasketballData.bottomPerssure>Double.parseDouble(pressure) || Double.parseDouble(pressure)>BasketballData.topPerssure){
                 return controlResult.dataIsNotAvailable(map, basketballId +"篮球不允许出租，压力不足", logger);
             }
 
@@ -579,9 +580,18 @@ public class UserControl {
                 //更新篮球
                 String info = "";
                 Basketball basketball = order.getBasketball();
-                if (perssure<basketball.getPressure() || bad == 1){
+                if (BasketballData.bottomPerssure>perssure || perssure>BasketballData.topPerssure || bad == 1){
                     basketball.setIsRent(1);
                     String result =  sendSMS.send(ManagementData.MANAGE_PHONE,basketball.getBasketballID()+"号篮球已经损坏，请及时处理");
+
+                    if (Validator.isNumber(result)){
+                        double intResult = Double.parseDouble(result);
+                        if (intResult>0){
+                            controlResult.successfulContrl(map,basketball.getBasketballID()+"损坏，通知管理员成功",logger);
+                        }else {
+                            controlResult.dataIsNotAvailable(map,"发送信息给管理员失败 错误代码 " + result,logger);
+                        }
+                    }
                     info = basketball.getBasketballID() + "篮球损坏了";
                 }else {
                     basketball.setIsRent(0);

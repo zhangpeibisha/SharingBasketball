@@ -106,22 +106,30 @@ public class TestControl {
         for (int i = 0; i < 200; i++) {
             Basketball basketball = new Basketball();
             basketball.setCreateTime(new Date());
-            basketball.setPressure(0.06);//标准压力 0.06
+            basketball.setPressure(8);//标准压力 0.06
             //设置型号
             int tempClass = (int) (Math.random() * 3);
             basketball.setCabinet(Math.random()>0.5?1:0);
             //设置是否损坏
             int tempBad = Math.random() > 0.5 ? 1 : 0;
             basketball.setIsBad(tempBad);
-            double random = (Math.random() * 0.02);
-            double nowPerssuer =  0.06;
-            if (tempBad == 0 && random>=0) {
+            double random = (Math.random() * 5);
+            double nowPerssuer =  7;
+
+            //好的
+            if (tempBad == 0 && random<=2){
                 basketball.setIsRent(0);
                 basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer + random)));
-            } else {
-                basketball.setIsRent(1);
-                basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer - random)));
+            }else {
+                if (random<=2){
+                    basketball.setIsRent(1);
+                    basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer - random)));
+                }else {
+                    basketball.setIsRent(1);
+                    basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer + random)));
+                }
             }
+
             basketball.setRent(rentDao.findByProperty("id", 1));
             basketballDao.save(basketball);
         }

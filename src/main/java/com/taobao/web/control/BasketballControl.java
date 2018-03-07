@@ -4,6 +4,7 @@ import com.taobao.dao.databasesDaoImpl.BasketballDaoImpl;
 import com.taobao.dao.databasesDaoImpl.UserDaoImpl;
 import com.taobao.dao.entity.Basketball;
 import com.taobao.dao.entity.User;
+import com.taobao.utils.data.BasketballData;
 import com.taobao.utils.format.Validator;
 import com.taobao.web.control.untils.ControlResult;
 import org.apache.log4j.Logger;
@@ -66,7 +67,8 @@ public class BasketballControl {
 
             List<Basketball> basketballs = basketballDao.findRentList(start, pageSize);
             String sql = "select count(*) from basketball where isBad=0 and isRent=0\n" +
-                    "                    and basketball.nowPerssure>=basketball.pressure";
+                    "                    and basketball.pressure>" + BasketballData.topPerssure
+                    + " or basketball.pressure<" + BasketballData.bottomPerssure ;
             long count = basketballDao.findCountBySQL(sql);
 
             map.put("basketballs", basketballs);

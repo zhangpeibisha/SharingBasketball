@@ -11,8 +11,6 @@ $(document).ready(function(){
             return;
         }
         password= hex_md5(password);
-        console.info(name);
-        console.info(password);
         $.ajax({
             type: 'GET',
             url: loginUrl,

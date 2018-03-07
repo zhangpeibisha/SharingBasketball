@@ -85,24 +85,9 @@ $(document).ready(function () {
 
     $("#sub").click(function () {
         var pressure = $("#pressure").val();
-        var yes = $("#yes").attr('checked');
-        var no = $("#no").attr('checked');
-
         if (pressure == null || pressure == "" ) {
             alert("请输入当前篮球压力！");
             return;
-        }
-        if(yes==false&&no==false){
-            alert("请选择篮球是否损坏！");
-            return;
-        }
-
-        var isBad = 0;
-        if(yes==true&&no==false){
-            isBad = 0;
-        }
-        else {
-            isBad = 1;
         }
 
         $.ajax({
@@ -111,8 +96,7 @@ $(document).ready(function () {
             data: {
                 user: userId,
                 orderNumber: orderId,
-                nowperssure: pressure,
-                isbad: isBad
+                nowperssure: pressure
             },
             success: function (data) {
                 console.info(data);

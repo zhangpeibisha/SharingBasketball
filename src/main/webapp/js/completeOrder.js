@@ -86,10 +86,13 @@ $(document).ready(function () {
     $("#sub").click(function () {
         var pressure = $("#pressure").val();
         if (pressure == null || pressure == "" ) {
-            alert("请输入当前篮球压力！");
+            alert("请输入当前篮球压力(0-15磅)！");
             return;
         }
-
+        if (pressure<=0||pressure>15) {
+            alert("请输入正确的压力值(0-15磅)！");
+            return;
+        }
         $.ajax({
             type: 'POST',
             url: completeOrderUrl,

@@ -452,8 +452,11 @@ public class UserControl {
             }
 
             double nowPressure = Double.parseDouble(pressure);
+
             if (BasketballData.bottomPerssure> nowPressure|| nowPressure>BasketballData.topPerssure){
                 basketball.setNowPerssure(nowPressure);
+                basketball.setCabinet(1);
+                basketball.setIsBad(1);
                 basketballDao.update(basketball);
                 return controlResult.dataIsNotAvailable(map, basketballId +"篮球不允许出租，压力不足", logger);
             }
@@ -520,9 +523,9 @@ public class UserControl {
             //现在的压力值
             String nowperssure = req.getParameter("nowperssure");
             //是否损坏
-            String isbad = req.getParameter("isbad");
+//            String isbad = req.getParameter("isbad");
 
-            if (controlResult.isNull(user, orderNumber,nowperssure,isbad)) {
+            if (controlResult.isNull(user, orderNumber,nowperssure)) {
                 return controlResult.nullParameter(map, logger);
             }
 
@@ -539,13 +542,12 @@ public class UserControl {
                 return controlResult.parameterFormatError(map, orderNumber + "这个参数不是订单号", logger);
             }
 
-            if (!Validator.isNumber(nowperssure) || !Validator.isNumber(isbad)){
+            if (!Validator.isNumber(nowperssure)){
                 return controlResult.parameterFormatError(map, nowperssure + "这个参数不是压力值或者表示是否损坏", logger);
             }
 
             double perssure = Double.parseDouble(nowperssure);
 
-            int bad = Integer.parseInt(isbad);
 
             Order order = orderDao.findById(orderID);
             //计算时间
@@ -582,10 +584,11 @@ public class UserControl {
                 //更新篮球
                 String info = "";
                 Basketball basketball = order.getBasketball();
-                if (BasketballData.bottomPerssure>perssure || perssure>BasketballData.topPerssure || bad == 1){
+                if (BasketballData.bottomPerssure>perssure || perssure>BasketballData.topPerssure ){
                     basketball.setIsRent(1);
+                    basketball.setIsBad(1);
+                    basketball.setCabinet(1);
                     String result =  sendSMS.send(ManagementData.MANAGE_PHONE,basketball.getBasketballID()+"号篮球已经损坏，请及时处理");
-
                     if (Validator.isNumber(result)){
                         double intResult = Double.parseDouble(result);
                         if (intResult>0){
@@ -597,8 +600,9 @@ public class UserControl {
                     info = basketball.getBasketballID() + "篮球损坏了";
                 }else {
                     basketball.setIsRent(0);
+                    basketball.setIsBad(0);
+                    basketball.setCabinet(0);
                 }
-                basketball.setIsBad(bad);
                 basketball.setNowPerssure(perssure);
                 basketballDao.update(basketball);
 

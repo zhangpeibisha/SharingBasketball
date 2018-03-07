@@ -106,7 +106,7 @@ public class TestControl {
         for (int i = 0; i < 200; i++) {
             Basketball basketball = new Basketball();
             basketball.setCreateTime(new Date());
-            basketball.setPressure(8);//标准压力 0.06
+            basketball.setPressure(8);//标准压力 7-9磅
             //设置型号
             int tempClass = (int) (Math.random() * 3);
             //设置是否损坏
@@ -115,17 +115,16 @@ public class TestControl {
             double random = (Math.random() * 5);
             double nowPerssuer =  7;
 
+            //默认没有借出
+            basketball.setIsRent(0);
             //好的
             if (tempBad == 0 && random<=2){
-                basketball.setIsRent(0);
                 basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer + random)));
                 basketball.setCabinet(0);
             }else {
                 if (random<=2){
-                    basketball.setIsRent(1);
                     basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer - random)));
                 }else {
-                    basketball.setIsRent(1);
                     basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer + random)));
                 }
                 basketball.setCabinet(1);

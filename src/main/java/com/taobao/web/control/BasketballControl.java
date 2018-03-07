@@ -66,9 +66,12 @@ public class BasketballControl {
             int pageSize = Integer.parseInt(limit);
 
             List<Basketball> basketballs = basketballDao.findRentList(start, pageSize);
-            String sql = "select count(*) from basketball where isBad=0 and isRent=0\n" +
-                    "                    and basketball.pressure>" + BasketballData.topPerssure
-                    + " or basketball.pressure<" + BasketballData.bottomPerssure ;
+            String sql = "select count(*) from basketball where isBad=0 and isRent=0 \n" +
+                    "                    and basketball.pressure<=" + BasketballData.topPerssure
+                    + " and basketball.pressure>=" + BasketballData.bottomPerssure ;
+
+            logger.error("sql---- \n" + sql);
+
             long count = basketballDao.findCountBySQL(sql);
 
             map.put("basketballs", basketballs);

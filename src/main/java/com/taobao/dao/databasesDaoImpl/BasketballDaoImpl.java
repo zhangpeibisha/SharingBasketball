@@ -2,6 +2,7 @@ package com.taobao.dao.databasesDaoImpl;
 
 import com.taobao.dao.databasesDao.SupperBaseDAOImp;
 import com.taobao.dao.entity.Basketball;
+import com.taobao.utils.data.BasketballData;
 import org.apache.log4j.Logger;
 import org.hibernate.SQLQuery;
 import org.hibernate.query.Query;
@@ -47,9 +48,13 @@ public class BasketballDaoImpl extends SupperBaseDAOImp<Basketball> {
         logger.info("页码信息 star " + pageNo + " size " + pageSize);
 
         String sql = "select * from basketball \n" +
-                "               where isBad=0 and isRent=0\n" +
-                "               and basketball.nowPerssure>=basketball.pressure \n" +
-                "               LIMIT " + pageNo + "," + pageSize;
+                "               where isBad=0 and isRent=0 \n" +
+                "and basketball.pressure<=" + BasketballData.topPerssure +
+                "and basketball.pressure>=" + BasketballData.bottomPerssure +
+                "               LIMIT " + pageNo + "," + pageSize ;
+
+        logger.error("sql \n" + sql);
+
         List<Basketball> basketballs = findEntityBySQL(sql, Basketball.class);
 
         return basketballs;

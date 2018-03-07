@@ -451,7 +451,7 @@ public class UserControl {
                 return controlResult.dataIsNotAvailable(map, basketballId + "机柜关闭"+"篮球不允许出租", logger);
             }
 
-            if (basketball.getPressure()<Double.parseDouble(pressure)){
+            if (basketball.getPressure()>Double.parseDouble(pressure)){
                 return controlResult.dataIsNotAvailable(map, basketballId +"篮球不允许出租，压力不足", logger);
             }
 

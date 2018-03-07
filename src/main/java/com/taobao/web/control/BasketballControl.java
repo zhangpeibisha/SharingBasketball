@@ -157,6 +157,8 @@ public class BasketballControl {
             }
 
             User user = (User) session.getAttribute("user");
+
+
             user = userDao.findById(user.getUserID());
             if (controlResult.isNull(user)) {
                 return controlResult.identityOutTime(map, logger, "");

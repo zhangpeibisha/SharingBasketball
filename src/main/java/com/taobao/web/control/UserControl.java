@@ -453,6 +453,10 @@ public class UserControl {
 
             double nowPressure = Double.parseDouble(pressure);
 
+            if (nowPressure<0 || nowPressure >15){
+                return controlResult.parameterFormatError(map,"参数异常",logger);
+            }
+
             if (BasketballData.bottomPerssure> nowPressure|| nowPressure>BasketballData.topPerssure){
                 basketball.setNowPerssure(nowPressure);
                 basketball.setCabinet(1);
@@ -548,6 +552,9 @@ public class UserControl {
 
             double perssure = Double.parseDouble(nowperssure);
 
+            if (perssure<0 || perssure >15){
+                return controlResult.parameterFormatError(map,"参数异常",logger);
+            }
 
             Order order = orderDao.findById(orderID);
             //计算时间

@@ -1,6 +1,6 @@
 $(document).ready(function () {
     var orderListUrl = "http://localhost:8080/orderList.do";
-    var pageLimit = 10;
+    var pageLimit = 5;
     var currentPage = 1;
 
     function init() {

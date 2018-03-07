@@ -90,7 +90,7 @@ $(document).ready(function () {
                 listData[i].cabinet ="打开";
             else listData[i].cabinet ="关闭";
             temp.push("<tr><td>" + listData[i].basketballID + "</td><td>" + listData[i].cabinet + "</td><td>"
-                + listData[i].pressure+ "</td><td>" + listData[i].nowPerssure + "</td><td>"
+                + listData[i].pressure+ "磅</td><td>" + listData[i].nowPerssure + "磅</td><td>"
                 + listData[i].isBad + "</td><td>" + listData[i].isRent + "</td><td>"
                 + listData[i].rent.deposit + "</td><td>" + listData[i].rent.billing + "</td><td>");
         }

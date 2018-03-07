@@ -417,13 +417,15 @@ public class UserControl {
 
             //篮球id
             String basketballId = req.getParameter("basketballId");
+            //篮球药理
+            String pressure = req.getParameter("pressure");
 
-            if (controlResult.isNull( basketballId)) {
+            if (controlResult.isNull( basketballId,pressure)) {
                 return controlResult.nullParameter(map, logger);
             }
 
             //判断参数格式
-            if (!Validator.isNumber(basketballId)) {
+            if (!Validator.isNumber(basketballId) || !Validator.isNumber(pressure)) {
                 controlResult.parameterFormatError(map, "请输入的参数不是指定数据格式", logger);
             }
 
@@ -449,6 +451,10 @@ public class UserControl {
                 return controlResult.dataIsNotAvailable(map, basketballId + "机柜关闭"+"篮球不允许出租", logger);
             }
 
+            if (basketball.getPressure()<Double.parseDouble(pressure)){
+                return controlResult.dataIsNotAvailable(map, basketballId +"篮球不允许出租，压力不足", logger);
+            }
+
             //篮球租金
             double rentMoney = basketball.getRent().getDeposit();
             double userMoney = user1.getMoney();
@@ -465,6 +471,8 @@ public class UserControl {
                 userDao.update(saveUser);
 
                 //设置篮球不可以借
+                //设置当前压力值
+                basketball.setNowPerssure(Double.parseDouble(pressure));
                 basketball.setIsRent(1);
                 basketballDao.update(basketball);
 

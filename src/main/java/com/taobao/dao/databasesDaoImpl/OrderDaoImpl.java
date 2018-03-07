@@ -33,7 +33,7 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
     public List<Order> findUserOrderList(User user , int limit, int currentPage){
         String sql = "SELECT * FROM order_basketball_user where `user` = ? LIMIT ? , ?";
         int start = (currentPage-1)*limit;
-        return findBySql(sql,user.getUserID(),start,start+limit);
+        return findBySql(sql,user.getUserID(),start,limit);
     }
 
     /**
@@ -44,7 +44,7 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
     public List<Order> findUserUndoneOrderList(User user , int limit, int currentPage){
         String sql = "SELECT * FROM order_basketball_user where `user` = ? and castMoney = 0 LIMIT ? , ?";
         int start = (currentPage-1)*limit;
-        return findBySql(sql,user.getUserID(),start,start+limit);
+        return findBySql(sql,user.getUserID(),start,limit);
     }
 
     /**
@@ -55,6 +55,6 @@ public class OrderDaoImpl extends SupperBaseDAOImp<Order> {
     public List<Order> findUserdoneOrderList(User user, int limit, int currentPage){
         String sql = "SELECT * FROM order_basketball_user where `user` = ? and castMoney > 0 LIMIT ? , ?";
         int start = (currentPage-1)*limit;
-        return findBySql(sql,user.getUserID(),start,start+limit);
+        return findBySql(sql,user.getUserID(),start,limit);
     }
 }

@@ -443,8 +443,7 @@ public class UserControl {
                 return controlResult.inquireFail(map, "这个篮球不存在", logger);
             }
 
-            if (basketball.getIsBad() == 1 || basketball.getIsRent() == 1
-                    || basketball.getNowPerssure() < basketball.getPressure()) {
+            if (basketball.getIsBad() == 1 || basketball.getIsRent() == 1) {
                 return controlResult.dataIsNotAvailable(map, basketballId + "该篮球不允许出租", logger);
             }
 

@@ -29,11 +29,17 @@ $(document).ready(function () {
     }
 
     $("#sub").click(function () {
+        var pressure = $("#pressure").val();
+        if (pressure == null || pressure == "") {
+                alert("请输入当前篮球压力！");
+                return;
+        }
         $.ajax({
             type: 'POST',
             url: creatOrderUrl,
             data: {
-                basketballId:basketID
+                basketballId:basketID,
+                pressure:pressure
             },
             success: function (data) {
                 console.info(data);

@@ -156,7 +156,8 @@
 * HTTP请求方式： POST
 *请求数据：
 {
-    basketballId:篮球id
+    basketballId:篮球id,
+    pressure:当前篮球压力
 }
 * 返回参数
 {

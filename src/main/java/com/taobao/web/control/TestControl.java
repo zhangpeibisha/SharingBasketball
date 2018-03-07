@@ -109,7 +109,6 @@ public class TestControl {
             basketball.setPressure(8);//标准压力 0.06
             //设置型号
             int tempClass = (int) (Math.random() * 3);
-            basketball.setCabinet(Math.random()>0.5?1:0);
             //设置是否损坏
             int tempBad = Math.random() > 0.5 ? 1 : 0;
             basketball.setIsBad(tempBad);
@@ -120,6 +119,7 @@ public class TestControl {
             if (tempBad == 0 && random<=2){
                 basketball.setIsRent(0);
                 basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer + random)));
+                basketball.setCabinet(0);
             }else {
                 if (random<=2){
                     basketball.setIsRent(1);
@@ -128,6 +128,7 @@ public class TestControl {
                     basketball.setIsRent(1);
                     basketball.setNowPerssure(Double.parseDouble(df.format(nowPerssuer + random)));
                 }
+                basketball.setCabinet(1);
             }
 
             basketball.setRent(rentDao.findByProperty("id", 1));

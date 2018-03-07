@@ -1,6 +1,5 @@
 var cabinetUrl = "http://localhost:8080/cabinet.do";
 function cabinetOpen(id) {
-    console.info(id);
     $.ajax({
         type: 'POST',
         url: cabinetUrl,
@@ -21,7 +20,6 @@ function cabinetOpen(id) {
 }
 
 function cabinetClose(id) {
-    console.info(id);
     $.ajax({
         type: 'POST',
         url: cabinetUrl,
@@ -46,8 +44,6 @@ $(document).ready(function () {
     var listUrl = "http://localhost:8080/rentList.do";
     var pageLimit = 10;
     var currentPage = 1;
-
-
     function init() {
         $.ajax({
             type: 'GET',
@@ -57,6 +53,7 @@ $(document).ready(function () {
                 currentPage: currentPage
             },
             success: function (data) {
+                console.info(data);
                 if(data.data==0&&data.total!=0){
                     var listData = data.basketballs;
                     var total = data.total;

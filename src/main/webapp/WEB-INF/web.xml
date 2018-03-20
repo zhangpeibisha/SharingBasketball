@@ -133,12 +133,12 @@
 
   <!--用户每次访问时触发的监听器-->
   <listener>
-    <listener-class>com.taobao.web.listener.ServletRequest</listener-class>
+    <listener-class>com.bishe.web.listener.ServletRequest</listener-class>
   </listener>
 
   <!--系统初始化的时候触发的监听器-->
   <listener>
-    <listener-class>com.taobao.web.listener.ServletContext</listener-class>
+    <listener-class>com.bishe.web.listener.ServletContext</listener-class>
   </listener>
 
 

@@ -10,6 +10,6 @@
     <context:property-placeholder location="classpath:databases.properties"/>
 
     <!-- 扫描service自动注入为bean -->
-    <context:component-scan base-package="com.taobao" />
+    <context:component-scan base-package="com.bishe" />
 
 </beans>

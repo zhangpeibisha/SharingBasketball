@@ -28,7 +28,7 @@ public class Order {
     //消费金额 默认设置位 -1 -1则为未付款
     private double castMoney;
 
-    //一个订单对应一个篮球  一个篮球对应一个订单  维护端
+    //一个订单对应一个篮球  一个篮球对应多个订单  维护端
     private Basketball basketball;
 
     //一个订单对应一个用户  一个用户对应多个订单 维护端 ok
@@ -88,7 +88,7 @@ public class Order {
         this.user = user;
     }
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Basketball.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "basketball")
     public Basketball getBasketball() {
         return basketball;

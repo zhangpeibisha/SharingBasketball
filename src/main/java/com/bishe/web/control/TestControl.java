@@ -3,6 +3,7 @@ package com.bishe.web.control;
 import com.bishe.dao.databasesDaoImpl.*;
 import com.bishe.dao.entity.*;
 import com.bishe.utils.sign.MD5;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,15 +56,36 @@ public class TestControl {
     Map<String, String> testAddEntity() {
 
         Map<String, String> map = new HashMap<>();
-        SchoolCard schoolCard = new SchoolCard();
-        schoolCard.setMoney(100);
-        schoolCard.setPassword(md5.encryption("123456"));
-        schoolCard.setSchoolID("201410610113");
-        schoolCardDao.save(schoolCard);
 
+        for (int i = 0; i <1000 ; i++) {
+            SchoolCard schoolCard = new SchoolCard();
+            schoolCard.setMoney(100);
+            schoolCard.setPassword(md5.encryption("123456"));
+            schoolCard.setSchoolID("20141061"+getFor(i));
+            schoolCardDao.save(schoolCard);
+        }
         map.put("data", "添加成功");
         return map;
     }
+
+
+    public String getFor(int i){
+        String str = i+"";
+
+        int len = 4-str.length();
+
+        for (int j = 0; j <len ; j++) {
+            str = "0" + str;
+        }
+        return str;
+    }
+
+
+@Test
+public void test(){
+    System.out.println(getFor(10));
+}
+
 
     /**
      * 添加用户
@@ -199,4 +221,13 @@ public class TestControl {
         map.put("time", ((now - create) / 100 / 60.0));
         return map;
     }
+
+//
+//    @RequestMapping(value = "/test", method = RequestMethod.GET)
+//    public void allControll(){
+//
+//        testAddRent();
+//        testAddRole();
+//        testAddBasketball();
+//    }
 }

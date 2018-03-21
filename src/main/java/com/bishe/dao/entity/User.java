@@ -154,14 +154,14 @@ public class User implements HttpSessionBindingListener {
     @Override
     public void valueBound(HttpSessionBindingEvent httpSessionBindingEvent) {
         logger.info("用户 " + userID + " 上线了");
-        //获取到该用户的权限，并放入session中
-        User user = userDao.findById(userID);
-        //获取角色
-        Role role = user.getRole();
-        //通过角色获取到权限
-        Set<Permissions> permissions = role.getPermissions();
-        //存入session中
-        httpSessionBindingEvent.getSession().setAttribute("permissions", permissions);
+//        //获取到该用户的权限，并放入session中
+//        User user = userDao.findById(userID);
+//        //获取角色
+//        Role role = user.getRole();
+//        //通过角色获取到权限
+//        Set<Permissions> permissions = role.getPermissions();
+//        //存入session中
+//        httpSessionBindingEvent.getSession().setAttribute("permissions", permissions);
     }
 
     /**

@@ -5,6 +5,8 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Create by zhangpe0312@qq.com on 2018/2/24.
@@ -13,7 +15,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "basketball")
-@JsonIgnoreProperties(value={"handler","hibernateLazyInitializer","order"})
+@JsonIgnoreProperties(value = {"handler", "hibernateLazyInitializer", "orders"})
 public class Basketball {
 
     private int basketballID;
@@ -39,8 +41,10 @@ public class Basketball {
     //一个篮球只有一个出租规则 一个出租规则由多个篮球  多方 维护端
     private Rent rent;
 
-    //一个篮球属于一个订单 被维护端
-    private Order order;
+    //一个篮球属于多个订单 被维护端
+//    private Order order;
+    private Set<Order> orders = new HashSet<>();
+
 
     //set and get
 
@@ -84,9 +88,13 @@ public class Basketball {
     }
 
 
-    @OneToOne(mappedBy = "basketball", cascade = CascadeType.ALL , fetch = FetchType.LAZY)
-    public Order getOrder() {
-        return order;
+    //    @OneToOne(mappedBy = "basketball", cascade = CascadeType.ALL , fetch = FetchType.LAZY)
+//    public Order getOrder() {
+//        return order;
+//    }
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "basketball")
+    public Set<Order> getOrders() {
+        return orders;
     }
 
     @Column(name = "nowPerssure", length = 10)
@@ -134,7 +142,12 @@ public class Basketball {
         this.rent = rent;
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+//    public void setOrder(Order order) {
+//        this.order = order;
+//    }
+
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 }
